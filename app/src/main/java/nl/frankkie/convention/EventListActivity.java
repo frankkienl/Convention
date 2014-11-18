@@ -3,6 +3,7 @@ package nl.frankkie.convention;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 
 
 /**
@@ -20,8 +21,12 @@ import android.support.v4.app.FragmentActivity;
  * This activity also implements the required
  * {@link EventListFragment.Callbacks} interface
  * to listen for item selections.
+ *
+ * To use ActionBar and Fragments, extend from ActionBarActivity,
+ * as ActionBarActivity supports Fragments.
+ * http://stackoverflow.com/questions/18451575/action-bar-fragment-activity
  */
-public class EventListActivity extends FragmentActivity
+public class EventListActivity extends ActionBarActivity
         implements EventListFragment.Callbacks {
 
     /**
@@ -34,6 +39,7 @@ public class EventListActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
+
 
         if (findViewById(R.id.event_detail_container) != null) {
             // The detail container view will be present only in the
