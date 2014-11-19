@@ -19,7 +19,7 @@ public class EventDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sqlEvent = "CREATE TABLE " + EventEntry.TABLE_NAME + " ( "+
+        String sqlEvent = "CREATE TABLE " + EventEntry.TABLE_NAME + " ( " +
                 EventEntry._ID + " INTEGER PRIMARY KEY, " +
                 EventEntry.COLUMN_NAME_TITLE + " TEXT, " +
                 EventEntry.COLUMN_NAME_DESCRIPTION + " TEXT, " +
