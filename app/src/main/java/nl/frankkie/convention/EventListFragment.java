@@ -90,7 +90,6 @@ public class EventListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist,container,false);
-        mGridView.setNumColumns(2);
         mGridView.setAdapter(new ArrayAdapter<DummyContent.DummyItem>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,

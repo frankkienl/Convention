@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridView
-    android:id="@+id/event_list"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/event_list"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:numColumns="auto_fit"
+    android:columnWidth="120dp"/>
