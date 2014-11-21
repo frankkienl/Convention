@@ -78,13 +78,6 @@ public class EventListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: replace with a real list adapter.
-//        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-//                getActivity(),
-//                android.R.layout.simple_list_item_activated_1,
-//                android.R.id.text1,
-//                DummyContent.ITEMS));
     }
 
     @Override
@@ -92,7 +85,7 @@ public class EventListFragment extends Fragment {
         mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist,container,false);
         mGridView.setAdapter(new ArrayAdapter<DummyContent.DummyItem>(
                 getActivity(),
-                android.R.layout.simple_list_item_activated_1,
+                R.layout.gridview_item,
                 android.R.id.text1,
                 DummyContent.ITEMS));
 

@@ -22,7 +22,7 @@ public class TestDb extends AndroidTestCase {
         mContext.deleteDatabase(EventDbHelper.DATABASE_NAME);
         //Open database, this should also create databases
         SQLiteDatabase db = new EventDbHelper(mContext).getWritableDatabase();
-        assertEquals(true, db.isOpen());
+        assertTrue(db.isOpen());
         //Don't forget to close
         db.close();
     }
@@ -41,9 +41,8 @@ public class TestDb extends AndroidTestCase {
         values.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 0);
 
         long rowId = db.insert(EventContract.EventEntry.TABLE_NAME,null,values);
-        assertTrue(rowId != 1);
+        assertTrue(rowId != -1);
         Log.d(LOG_TAG, "rowId = " + rowId);
-
 
     }
 }

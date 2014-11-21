@@ -1,5 +1,6 @@
 package nl.frankkie.convention.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -53,6 +54,9 @@ public class EventDbHelper extends SQLiteOpenHelper {
                 SpeakersInEventsEntry.COLUMN_NAME_EVENT_ID + " INTEGER, " +
                 SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID + " INTEGER )";
         db.execSQL(sqlSpeakersInEvents);
+
+        //TODO remove dummydata
+        insertDummyData(db);
     }
 
     @Override
@@ -63,6 +67,43 @@ public class EventDbHelper extends SQLiteOpenHelper {
         db.execSQL(sql + LocationEntry.TABLE_NAME);
         db.execSQL(sql + SpeakerEntry.TABLE_NAME);
         db.execSQL(sql + SpeakersInEventsEntry.TABLE_NAME);
+    }
+
+    public void insertDummyData(SQLiteDatabase db){
+        //Event
+        ContentValues valuesOpening = new ContentValues();
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_TITLE, "Opening");
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, "The big opening");
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "opening, mandatory");
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#00FF00");
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 0);
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 0);
+        db.insert(EventEntry.TABLE_NAME,null,valuesOpening);
+        ContentValues VAPanel = new ContentValues();
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_TITLE, "VA Panel");
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, "Voice Actors panel");
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "VA, panel");
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#0000FF");
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 1);
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 1);
+        db.insert(EventEntry.TABLE_NAME,null,VAPanel);
+        ContentValues karaoke = new ContentValues();
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_TITLE, "Karaoke");
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, "Playing Karaoke");
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "game, karaoke");
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#00FFFF");
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 1);
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 1);
+        db.insert(EventEntry.TABLE_NAME,null,karaoke);
     }
 
 
