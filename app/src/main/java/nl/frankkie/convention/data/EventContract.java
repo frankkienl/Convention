@@ -1,5 +1,6 @@
 package nl.frankkie.convention.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.sql.DatabaseMetaData;
@@ -8,6 +9,13 @@ import java.sql.DatabaseMetaData;
  * Created by fbouwens on 19-11-14.
  */
 public class EventContract {
+
+    //Used for ContentProvider
+    public static final String CONTENT_AUTHORITY = "nl.frankkie.convention";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_EVENT = "event";
+    public static final String PATH_SPEAKER = "speaker";
+    public static final String PATH_LOCATION = "location";
 
     public static abstract class EventEntry implements BaseColumns {
         public static final String TABLE_NAME = "event";

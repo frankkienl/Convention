@@ -1,20 +1,18 @@
 package nl.frankkie.convention;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
-
-
-import nl.frankkie.convention.dummy.DummyContent;
 
 /**
  * A list fragment representing a list of Events. This fragment
@@ -25,7 +23,9 @@ import nl.frankkie.convention.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class EventListFragment extends Fragment {
+public class EventListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    EventAdapter mEventAdapter;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -43,6 +43,21 @@ public class EventListFragment extends Fragment {
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -74,6 +89,12 @@ public class EventListFragment extends Fragment {
     }
 
     GridView mGridView;
+    int mPosition;
+
+    public static final int COL_ID = 0;
+    public static final int COL_TITLE = 1;
+    public static final int COL_TIME = 2;
+    public static final int COL_IMAGE = 3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,17 +103,19 @@ public class EventListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist,container,false);
-        mGridView.setAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                R.layout.gridview_item,
-                android.R.id.text1,
-                DummyContent.ITEMS));
+        mEventAdapter = new EventAdapter(getActivity(), null, 0);
+
+        mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist, container, false);
+        mGridView.setAdapter(mEventAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+                Cursor cursor = mEventAdapter.getCursor();
+                if (cursor != null && cursor.moveToPosition(position)) {
+                    mCallbacks.onItemSelected("" + cursor.getInt(COL_ID));
+                }
+                mPosition = position;
             }
         });
         return mGridView;
@@ -112,21 +135,11 @@ public class EventListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
-        }
-
-        mCallbacks = (Callbacks) activity;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
     }
 
     @Override
