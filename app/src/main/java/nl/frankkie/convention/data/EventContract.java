@@ -3,8 +3,6 @@ package nl.frankkie.convention.data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * Created by fbouwens on 19-11-14.
  */
@@ -18,8 +16,12 @@ public class EventContract {
     public static final String PATH_LOCATION = "location";
 
     public static abstract class EventEntry implements BaseColumns {
-        public static final String TABLE_NAME = "event";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_EVENT;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_EVENT;
         //
+        public static final String TABLE_NAME = "event";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_KEYWORDS = "keywords";
@@ -32,6 +34,10 @@ public class EventContract {
     }
 
     public static abstract class SpeakerEntry implements BaseColumns {
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_SPEAKER;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_SPEAKER;
         public static final String TABLE_NAME = "speaker";
         //
         public static final String COLUMN_NAME_NAME = "name";
@@ -41,6 +47,10 @@ public class EventContract {
     }
 
     public static abstract class LocationEntry implements BaseColumns {
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
         public static final String TABLE_NAME = "location";
         //
         public static final String COLUMN_NAME_NAME = "name";

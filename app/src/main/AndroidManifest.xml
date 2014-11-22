@@ -24,6 +24,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".EventListActivity" />
         </activity>
+
+        <provider
+            android:authorities="nl.frankkie.convention"
+            android:name=".data.EventProvider" />
     </application>
 
 </manifest>
