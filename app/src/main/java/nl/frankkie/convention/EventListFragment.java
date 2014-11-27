@@ -1,8 +1,6 @@
 package nl.frankkie.convention;
 
 import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.support.v4.app.*;
+import android.support.v4.content.*;
+import nl.frankkie.convention.data.*;
+import android.net.*;
 
 /**
  * A list fragment representing a list of Events. This fragment
@@ -26,6 +28,7 @@ import android.widget.ListView;
 public class EventListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     EventAdapter mEventAdapter;
+	int EVENT_LOADER=1;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -44,19 +47,34 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
+  public static final int COL_ID = 0;
+  public static final int COL_TITLE = 1;
+  public static final int COL_TIME = 2;
+  public static final int COL_IMAGE = 3;
+	
+	public static final String[] EVENTCOLUMNS=new String[]{
+	  EventContract.EventEntry.TABLE_NAME + EventContract.EventEntry._ID,
+	  EventContract.EventEntry.COLUMN_NAME_TITLE,
+	  EventContract.EventEntry.COLUMN_NAME_START_TIME,
+	  EventContract.EventEntry.COLUMN_NAME_IMAGE
+	};
+	
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+	    Uri uri = Uri.parse(EventContract.PATH_EVENT);
+		String sortOrder=EventContract.EventEntry.COLUMN_NAME_START_TIME+" ASC";
+	  	CursorLoader cl = new CursorLoader(getActivity(),uri,EVENTCOLUMNS,null,null,sortOrder);
+        return cl;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+		mEventAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+mEventAdapter.swapCursor(null);
     }
 
     /**
@@ -91,10 +109,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     GridView mGridView;
     int mPosition;
 
-    public static final int COL_ID = 0;
-    public static final int COL_TITLE = 1;
-    public static final int COL_TIME = 2;
-    public static final int COL_IMAGE = 3;
+    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -118,6 +133,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                 mPosition = position;
             }
         });
+		
         return mGridView;
     }
 
@@ -131,6 +147,19 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
     }
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	  super.onActivityCreated(savedInstanceState);
+	  getLoaderManager().initLoader(EVENT_LOADER,null,this);
+	}
+
+	@Override
+	public void onResume() {
+	  super.onResume();
+	  getLoaderManager().restartLoader(EVENT_LOADER,null,this);
+	}
+	
 
     @Override
     public void onAttach(Activity activity) {
