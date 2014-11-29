@@ -2,9 +2,13 @@ package nl.frankkie.convention;
 
 import android.app.usage.UsageEvents;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
+
+import java.util.Map;
+import java.util.Set;
 
 import nl.frankkie.convention.data.EventContract;
 import nl.frankkie.convention.data.EventDbHelper;
@@ -44,5 +48,35 @@ public class TestDb extends AndroidTestCase {
         assertTrue(rowId != -1);
         Log.d(LOG_TAG, "rowId = " + rowId);
 
+    }
+
+    public static ContentValues getEventContentValues(){
+        ContentValues values = new ContentValues();
+        values.put(EventContract.EventEntry.COLUMN_NAME_TITLE, "Opening");
+        values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, "The big opening");
+        values.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "opening, mandatory");
+        values.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
+        values.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#00FF00");
+        values.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
+        values.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 0);
+        values.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 0);
+
+        return values;
+    }
+
+    static void validateCursor(Cursor valueCursor, ContentValues expectedValues) {
+        //From Sunshine
+        assertTrue(valueCursor.moveToFirst());
+
+        Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
+        for (Map.Entry<String, Object> entry : valueSet) {
+            String columnName = entry.getKey();
+            int idx = valueCursor.getColumnIndex(columnName);
+            assertFalse(idx == -1);
+            String expectedValue = entry.getValue().toString();
+            assertEquals(expectedValue, valueCursor.getString(idx));
+        }
+        valueCursor.close();
     }
 }

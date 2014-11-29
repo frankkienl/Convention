@@ -28,7 +28,7 @@ import android.net.*;
 public class EventListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     EventAdapter mEventAdapter;
-	int EVENT_LOADER=1;
+	int EVENT_LOADER=0;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -52,8 +52,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
   public static final int COL_TIME = 2;
   public static final int COL_IMAGE = 3;
 	
-	public static final String[] EVENTCOLUMNS=new String[]{
-	  EventContract.EventEntry.TABLE_NAME + EventContract.EventEntry._ID,
+	public static final String[] EVENT_COLUMNS = {
+	  EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID,
 	  EventContract.EventEntry.COLUMN_NAME_TITLE,
 	  EventContract.EventEntry.COLUMN_NAME_START_TIME,
 	  EventContract.EventEntry.COLUMN_NAME_IMAGE
@@ -61,9 +61,10 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 	
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-	    Uri uri = Uri.parse(EventContract.PATH_EVENT);
+	    //Uri uri = Uri.parse(EventContract.EventEntry.CONTENT_URI);
+        Uri uri = EventContract.EventEntry.CONTENT_URI;
 		String sortOrder=EventContract.EventEntry.COLUMN_NAME_START_TIME+" ASC";
-	  	CursorLoader cl = new CursorLoader(getActivity(),uri,EVENTCOLUMNS,null,null,sortOrder);
+	  	CursorLoader cl = new CursorLoader(getActivity(),uri, EVENT_COLUMNS,null,null,sortOrder);
         return cl;
     }
 
@@ -157,6 +158,7 @@ mEventAdapter.swapCursor(null);
 	@Override
 	public void onResume() {
 	  super.onResume();
+
 	  getLoaderManager().restartLoader(EVENT_LOADER,null,this);
 	}
 	

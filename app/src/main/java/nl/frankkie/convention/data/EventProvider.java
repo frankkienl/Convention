@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 /**
@@ -20,16 +21,40 @@ public class EventProvider extends ContentProvider {
      * speakers
      * location
      */
+    //content://nl.frankkie.convention/event/ (LIST)
     public static final int EVENT = 100;
+    //content://nl.frankkie.convention/event/ID (ITEM)
     public static final int EVENT_WITH_SPEAKERS = 101;
+    //content://nl.frankkie.convention/speaker/ (LIST)
     public static final int SPEAKER = 200;
+    //content://nl.frankkie.convention/speaker/ (ITEM)
     public static final int SPEAKER_ID = 201;
+    //content://nl.frankkie.convention/location/ (LIST)
     public static final int LOCATION = 300;
+    //content://nl.frankkie.convention/location/ID (ITEM)
     public static final int LOCATION_ID = 301;
 
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     SQLiteOpenHelper mOpenHelper;
+
+    private static final SQLiteQueryBuilder sEventWithLocationQueryBuilder;
+
+    static {
+        // Sunshine combines location with weather, this app will combine event and location
+        sEventWithLocationQueryBuilder = new SQLiteQueryBuilder();
+        // Lets hope 'INNER JOIN' does what I think it does.
+        // I should have paid better attention at Database-lessons at school... >.>
+        sEventWithLocationQueryBuilder.setTables(
+                EventContract.EventEntry.TABLE_NAME + " INNER JOIN " +
+                        EventContract.LocationEntry.TABLE_NAME +
+                        " ON " + EventContract.EventEntry.TABLE_NAME +
+                        "." + EventContract.EventEntry.COLUMN_NAME_LOCATION_ID +
+                        " = " + EventContract.LocationEntry.TABLE_NAME +
+                        "." + EventContract.LocationEntry._ID
+        );
+    }
+
 
 
     private static UriMatcher buildUriMatcher() {
@@ -39,7 +64,7 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKER, SPEAKER);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKER + "/#", SPEAKER_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_LOCATION, LOCATION);
-        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_LOCATION + "/#",LOCATION_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_LOCATION + "/#", LOCATION_ID);
         return matcher;
     }
 
@@ -57,29 +82,88 @@ public class EventProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case EVENT: {
                 //List of Events
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.EventEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
             case EVENT_WITH_SPEAKERS: {
                 //1 Event, with speakers
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.EventEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
             case SPEAKER: {
                 //list
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.SpeakerEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
             case SPEAKER_ID: {
                 //1 speaker
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.SpeakerEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
             case LOCATION: {
                 //List of location
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.LocationEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
             case LOCATION_ID: {
                 //1 location
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.LocationEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        //Register a content-observer (to watch for content changes)
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
 
