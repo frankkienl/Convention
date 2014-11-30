@@ -119,12 +119,9 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = mEventAdapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
-                    mCallbacks.onItemSelected("" + cursor.getInt(COL_ID));
+                    mCallbacks.onItemSelected("" + cursor.getLong(COL_ID));
                 }
                 setActivatedPosition(position);
-                //TODO: Don't forget Callback !!
-                //why is this a String instead of an Int??
-                ((Callbacks)getActivity()).onItemSelected("" + cursor.getInt(COL_ID));
             }
         });
 
@@ -146,6 +143,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(EVENT_LOADER, null, this);
+        mCallbacks = (Callbacks)getActivity();
     }
 
     @Override
@@ -179,7 +177,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
+        if (mActivatedPosition != GridView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
@@ -198,7 +196,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
+        if (position == GridView.INVALID_POSITION) {
             mGridView.setItemChecked(mActivatedPosition, false);
         } else {
             mGridView.setItemChecked(position, true);

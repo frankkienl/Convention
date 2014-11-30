@@ -95,6 +95,12 @@ public class EventProvider extends ContentProvider {
             }
             case EVENT_WITH_SPEAKERS: {
                 //1 Event, with speakers
+                //Override selection when empty
+                if (selection == null || "".equals(selection)) {
+                    selection = EventContract.EventEntry._ID + " = ?";
+                    //content://nl.frankkie.convention/event/0 <-- last segment is ID.
+                    selectionArgs = new String[]{uri.getLastPathSegment()};
+                }
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         EventContract.EventEntry.TABLE_NAME,
                         projection,
@@ -197,16 +203,19 @@ public class EventProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        //TODO: IMPLEMENT THIS
         return null;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+        //TODO: IMPLEMENT THIS
         return 0;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        //not implemented
         return 0;
     }
 }

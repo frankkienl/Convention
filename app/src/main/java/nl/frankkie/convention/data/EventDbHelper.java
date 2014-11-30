@@ -77,8 +77,8 @@ public class EventDbHelper extends SQLiteOpenHelper {
         valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "opening, mandatory");
         valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
         valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#00FF00");
-        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
-        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200); //Sat, 9:00
+        valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800); //Sat, 10:00
         valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 0);
         valuesOpening.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 0);
         db.insert(EventEntry.TABLE_NAME,null,valuesOpening);
@@ -88,8 +88,8 @@ public class EventDbHelper extends SQLiteOpenHelper {
         VAPanel.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "VA, panel");
         VAPanel.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
         VAPanel.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#0000FF");
-        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
-        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424512800); //Sat, 10:00
+        VAPanel.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424516400); //Sat, 11:00
         VAPanel.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 1);
         VAPanel.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 1);
         db.insert(EventEntry.TABLE_NAME,null,VAPanel);
@@ -99,8 +99,8 @@ public class EventDbHelper extends SQLiteOpenHelper {
         karaoke.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, "game, karaoke");
         karaoke.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, "");
         karaoke.put(EventContract.EventEntry.COLUMN_NAME_COLOR, "#00FFFF");
-        karaoke.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424509200);
-        karaoke.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424512800);
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, 1424510100); //Sat, 9:15
+        karaoke.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, 1424538000); //Sat, 17:00
         karaoke.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, 1);
         karaoke.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, 1);
         db.insert(EventEntry.TABLE_NAME,null,karaoke);

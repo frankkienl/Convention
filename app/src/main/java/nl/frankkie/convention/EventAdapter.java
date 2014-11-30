@@ -14,13 +14,14 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import nl.frankkie.convention.data.EventContract;
+
 /**
  * Created by fbouwens on 21-11-14.
  */
 public class EventAdapter extends CursorAdapter {
 
-    public static final String DATE_FORMAT = "E, HH:mm"; //example: Sunday, 16:30
-    SimpleDateFormat displayDataFormat = new SimpleDateFormat(DATE_FORMAT);
+
 
     public EventAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
@@ -42,7 +43,7 @@ public class EventAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         viewHolder.titleView.setText(cursor.getString(EventListFragment.COL_TITLE));
         long time = cursor.getLong(EventListFragment.COL_TIME);
-        viewHolder.timeView.setText(displayDataFormat.format(new Date(time)));
+        viewHolder.timeView.setText(EventContract.getDataTimeString(time));
         //TODO: dynamic image
         //viewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_launcher));
         //Set color

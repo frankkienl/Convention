@@ -4,6 +4,9 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by fbouwens on 19-11-14.
  */
@@ -84,6 +87,17 @@ public class EventContract {
         public static final String TABLE_NAME = "speakers_in_events";
         public static final String COLUMN_NAME_EVENT_ID = "event_id";
         public static final String COLUMN_NAME_SPEAKER_ID = "speaker_id";
+    }
+
+
+    public static final String DATE_FORMAT = "E, HH:mm"; //example: Sunday, 16:30
+    public static SimpleDateFormat displayDataFormat = new SimpleDateFormat(DATE_FORMAT);
+
+    public static String getDataTimeString(long timestamp){
+        //*1000, because
+        // http://www.onlineconversion.com/unix_time.htm
+        // uses SECONDS from 1970, but Date uses MILLISECONDS from 1970
+        return displayDataFormat.format(new Date(timestamp * 1000));
     }
 
 }

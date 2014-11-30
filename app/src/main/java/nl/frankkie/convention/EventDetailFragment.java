@@ -1,15 +1,20 @@
 package nl.frankkie.convention;
 
+import android.app.usage.UsageEvents;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import nl.frankkie.convention.data.EventContract;
 
 
 //import nl.frankkie.convention.dummy.DummyContent;
@@ -23,15 +28,46 @@ import android.widget.TextView;
 public class EventDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int EVENT_DETAIL_LOADER = 0;
+    public static final String[] EVENT_COLUMNS = {
+            EventContract.EventEntry._ID,
+            EventContract.EventEntry.COLUMN_NAME_TITLE,
+            EventContract.EventEntry.COLUMN_NAME_DESCRIPTION,
+            EventContract.EventEntry.COLUMN_NAME_KEYWORDS,
+            EventContract.EventEntry.COLUMN_NAME_START_TIME,
+            EventContract.EventEntry.COLUMN_NAME_END_TIME,
+            EventContract.EventEntry.COLUMN_NAME_LOCATION_ID,
+            EventContract.EventEntry.COLUMN_NAME_COLOR,
+            EventContract.EventEntry.COLUMN_NAME_IMAGE
+    };
+
+    String mId;
+    //Views
+    TextView mTitle;
+    TextView mDescription;
+    TextView mKeywords;
+    TextView mStartTime;
+    TextView mEndTime;
+    TextView mLocation;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return null;
+        Uri uri = EventContract.EventEntry.buildEventUri(Long.parseLong(mId));
+        String sortOrder = EventContract.EventEntry.COLUMN_NAME_START_TIME + " ASC";
+        CursorLoader cl = new CursorLoader(getActivity(), uri, EVENT_COLUMNS, null, null, sortOrder);
+        return cl;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         //set View-content
+        if (data != null && data.moveToFirst()) {
+            mTitle.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_TITLE)));
+            mDescription.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION)));
+            mKeywords.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_KEYWORDS)));
+            mStartTime.setText(EventContract.getDataTimeString(data.getLong(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_START_TIME))));
+            mEndTime.setText(EventContract.getDataTimeString(data.getLong(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_END_TIME))));
+            mLocation.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID)));
+        }
     }
 
     @Override
@@ -66,15 +102,11 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             // to load content from a content provider.
             //mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
             //TODO: USE CONTENT-PROVIDER !
+            mId = getArguments().getString(ARG_ITEM_ID);
         }
     }
 
-    TextView mTitle;
-    TextView mDescription;
-    TextView mKeywords;
-    TextView mStartTime;
-    TextView mEndTime;
-    TextView mLocation;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
