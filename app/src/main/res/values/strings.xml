@@ -11,7 +11,8 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
 
-    <string name="placeholder_short">Lorem ipsum</string>
-    <string name="placeholder_long">Lorem ipsum dolor sit amet.</string>
+    <string name="placeholder_short" translatable="false">Lorem ipsum</string>
+    <string name="placeholder_long" translatable="false">Lorem ipsum dolor sit amet.</string>
+    <string name="placeholder_very_long" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent viverra aliquam neque id ultrices. Nullam lobortis orci eu varius tincidunt. In convallis lorem diam. Maecenas auctor sagittis porttitor. Curabitur dapibus neque odio, in finibus orci rutrum non. Nullam dapibus elit id magna porta, id condimentum purus pretium. Aenean non erat rutrum, finibus dui ut, ornare odio. Aliquam mollis pretium neque, at consequat ligula posuere vitae. Vestibulum sed venenatis felis. Nullam lorem lorem, bibendum vitae urna nec, viverra consequat erat.</string>
 
 </resources>

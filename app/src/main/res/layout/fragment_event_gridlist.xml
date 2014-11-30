@@ -6,4 +6,6 @@
     android:layout_height="wrap_content"
     android:numColumns="auto_fit"
     android:layout_margin="10dp"
+    android:horizontalSpacing="10dp"
+    android:verticalSpacing="10dp"
     android:columnWidth="120dp"/>

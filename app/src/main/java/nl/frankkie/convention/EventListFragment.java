@@ -2,19 +2,21 @@ package nl.frankkie.convention;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.support.v4.app.*;
-import android.support.v4.content.*;
-import nl.frankkie.convention.data.*;
-import android.net.*;
+
+import nl.frankkie.convention.data.EventContract;
 
 /**
  * A list fragment representing a list of Events. This fragment
@@ -28,7 +30,8 @@ import android.net.*;
 public class EventListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     EventAdapter mEventAdapter;
-	int EVENT_LOADER=0;
+    int EVENT_LOADER = 0;
+    GridView mGridView;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -45,37 +48,39 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     /**
      * The current activated item position. Only used on tablets.
      */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
+    private int mActivatedPosition = GridView.INVALID_POSITION;
 
-  public static final int COL_ID = 0;
-  public static final int COL_TITLE = 1;
-  public static final int COL_TIME = 2;
-  public static final int COL_IMAGE = 3;
-	
-	public static final String[] EVENT_COLUMNS = {
-	  EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID,
-	  EventContract.EventEntry.COLUMN_NAME_TITLE,
-	  EventContract.EventEntry.COLUMN_NAME_START_TIME,
-	  EventContract.EventEntry.COLUMN_NAME_IMAGE
-	};
-	
+    public static final int COL_ID = 0;
+    public static final int COL_TITLE = 1;
+    public static final int COL_TIME = 2;
+    public static final int COL_IMAGE = 3;
+    public static final int COL_COLOR = 4;
+
+    public static final String[] EVENT_COLUMNS = {
+            EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID,
+            EventContract.EventEntry.COLUMN_NAME_TITLE,
+            EventContract.EventEntry.COLUMN_NAME_START_TIME,
+            EventContract.EventEntry.COLUMN_NAME_IMAGE,
+            EventContract.EventEntry.COLUMN_NAME_COLOR
+    };
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-	    //Uri uri = Uri.parse(EventContract.EventEntry.CONTENT_URI);
+        //Uri uri = Uri.parse(EventContract.EventEntry.CONTENT_URI);
         Uri uri = EventContract.EventEntry.CONTENT_URI;
-		String sortOrder=EventContract.EventEntry.COLUMN_NAME_START_TIME+" ASC";
-	  	CursorLoader cl = new CursorLoader(getActivity(),uri, EVENT_COLUMNS,null,null,sortOrder);
+        String sortOrder = EventContract.EventEntry.COLUMN_NAME_START_TIME + " ASC";
+        CursorLoader cl = new CursorLoader(getActivity(), uri, EVENT_COLUMNS, null, null, sortOrder);
         return cl;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mEventAdapter.swapCursor(data);
+        mEventAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-mEventAdapter.swapCursor(null);
+        mEventAdapter.swapCursor(null);
     }
 
     /**
@@ -91,26 +96,11 @@ mEventAdapter.swapCursor(null);
     }
 
     /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(String id) {
-        }
-    };
-
-    /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public EventListFragment() {
     }
-
-    GridView mGridView;
-    int mPosition;
-
-    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,10 +121,13 @@ mEventAdapter.swapCursor(null);
                 if (cursor != null && cursor.moveToPosition(position)) {
                     mCallbacks.onItemSelected("" + cursor.getInt(COL_ID));
                 }
-                mPosition = position;
+                setActivatedPosition(position);
+                //TODO: Don't forget Callback !!
+                //why is this a String instead of an Int??
+                ((Callbacks)getActivity()).onItemSelected("" + cursor.getInt(COL_ID));
             }
         });
-		
+
         return mGridView;
     }
 
@@ -149,19 +142,29 @@ mEventAdapter.swapCursor(null);
         }
     }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-	  super.onActivityCreated(savedInstanceState);
-	  getLoaderManager().initLoader(EVENT_LOADER,null,this);
-	}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(EVENT_LOADER, null, this);
+    }
 
-	@Override
-	public void onResume() {
-	  super.onResume();
+    @Override
+    public void onResume() {
+        super.onResume();
 
-	  getLoaderManager().restartLoader(EVENT_LOADER,null,this);
-	}
-	
+        getLoaderManager().restartLoader(EVENT_LOADER, null, this);
+    }
+
+    /**
+     * A dummy implementation of the {@link Callbacks} interface that does
+     * nothing. Used only when this fragment is not attached to an activity.
+     */
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onItemSelected(String id) {
+        }
+    };
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -190,8 +193,8 @@ mEventAdapter.swapCursor(null);
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
         mGridView.setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
+                ? GridView.CHOICE_MODE_SINGLE
+                : GridView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
