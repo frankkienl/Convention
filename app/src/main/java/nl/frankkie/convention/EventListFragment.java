@@ -32,6 +32,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     EventAdapter mEventAdapter;
     int EVENT_LOADER = 0;
     GridView mGridView;
+    //ListView mGridView;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -112,6 +113,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         mEventAdapter = new EventAdapter(getActivity(), null, 0);
 
         mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist, container, false);
+        //mGridView = (ListView) inflater.inflate(R.layout.fragment_event_gridlist, container, false);
         mGridView.setAdapter(mEventAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -183,6 +185,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    boolean mTwoPane = false;
+
     /**
      * Turns on activate-on-click mode. When this mode is on, list items will be
      * given the 'activated' state when touched.
@@ -193,6 +197,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         mGridView.setChoiceMode(activateOnItemClick
                 ? GridView.CHOICE_MODE_SINGLE
                 : GridView.CHOICE_MODE_NONE);
+
+        mTwoPane = activateOnItemClick;
     }
 
     private void setActivatedPosition(int position) {

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="actionbar_background">#F80</color>
+    <color name="gridview_clicked">#AAA</color>
+    <color name="gridview_active">#AAF</color>
 </resources>
