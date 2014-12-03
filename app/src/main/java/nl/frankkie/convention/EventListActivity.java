@@ -68,7 +68,12 @@ public class EventListActivity extends ActionBarActivity
                     .setActivateOnItemClick(true);
         }
 
+        initNavigationDrawer();
+        // TODO: If exposing deep links into your app, handle intents here.
+    }
 
+    public void initNavigationDrawer(){
+        //call from onCreate.
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -77,8 +82,6 @@ public class EventListActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     @Override
@@ -128,8 +131,28 @@ public class EventListActivity extends ActionBarActivity
         }
     }
 
+    /**
+     * Callback from Hamburger-menu
+     * @param position
+     */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-
+        switch (position){
+            case 0: {
+                //TODO: my schedule activity
+                break;
+            }
+            case 1: {
+                //do nothing, you are already here
+                break;
+            }
+            case 2: {
+                Intent i = new Intent();
+                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setClass(this,AboutActivity.class);
+                startActivity(i);
+                break;
+            }
+        }
     }
 }
