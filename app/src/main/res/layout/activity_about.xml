@@ -42,7 +42,71 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/about_details"
                         android:text="@string/about_description" />
+
+                    <!-- Location //-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/about_header"
+                        android:text="@string/about_location_header" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/about_details"
+                        android:text="@string/about_location_details" />
+                    <Button
+                        android:text="View on Map"
+                        android:id="@+id/about_view_maps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Date and Time //-->
+                    <TextView
+                        android:text="@string/about_date_header"
+                        android:layout_width="match_parent"
+                        style="@style/about_header"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="@string/about_date_details"
+                        android:layout_width="match_parent"
+                        style="@style/about_details"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Website //-->
+                    <TextView
+                        android:text="@string/about_website_header"
+                        style="@style/about_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="@string/about_website_details"
+                        android:layout_width="match_parent"
+                        style="@style/about_details"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Mail //-->
+                    <TextView
+                        android:text="@string/about_mail_header"
+                        style="@style/about_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="@string/about_mail_details"
+                        style="@style/about_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Banner image (change image when using for other convention) -->
+                    <ImageView
+                        android:paddingTop="15dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/hwcon_banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>

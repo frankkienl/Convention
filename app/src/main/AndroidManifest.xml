@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.frankkie.convention" >
 
+    <!--
+     TODO LIST
+    - Add search-feature (search-icon in actionbar)
+    - Add My Schedule screen
+    - Add Setting screen
+    - Map
+    //
+    -->
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -32,6 +40,10 @@
         <activity
             android:name="nl.frankkie.convention.AboutActivity"
             android:label="@string/title_activity_about" >
+        </activity>
+        <activity
+            android:name="nl.frankkie.convention.MapActivity"
+            android:label="@string/title_activity_map" >
         </activity>
     </application>
 

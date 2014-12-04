@@ -19,4 +19,13 @@
         <item name="background">@color/actionbar_background</item>
     </style>
 
+
+    <!-- TODO: About Screen text-styles //-->
+    <style name="about_header">
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:textSize">26sp</item>
+    </style>
+    <style name="about_details">
+
+    </style>
 </resources>
