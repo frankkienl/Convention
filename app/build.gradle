@@ -7,13 +7,13 @@ android {
         applicationId "nl.frankkie.convention"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 3
+        versionCode 4
         versionName "0.1"
     }
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //runProguard false
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     productFlavors {

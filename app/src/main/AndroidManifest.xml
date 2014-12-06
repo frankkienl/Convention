@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.frankkie.convention" >
+    package="nl.frankkie.convention">
 
     <!--
      TODO LIST
@@ -10,14 +10,20 @@
     - Map
     //
     -->
+
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name="nl.frankkie.convention.EventListActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +33,7 @@
         <activity
             android:name="nl.frankkie.convention.EventDetailActivity"
             android:label="@string/title_event_detail"
-            android:parentActivityName="nl.frankkie.convention.EventListActivity" >
+            android:parentActivityName="nl.frankkie.convention.EventListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".EventListActivity" />
@@ -35,16 +41,41 @@
 
         <provider
             android:name="nl.frankkie.convention.data.EventProvider"
-            android:authorities="nl.frankkie.convention" />
+            android:authorities="nl.frankkie.convention"
+            android:exported="false"
+            android:syncable="true" />
 
         <activity
             android:name="nl.frankkie.convention.AboutActivity"
-            android:label="@string/title_activity_about" >
-        </activity>
+            android:label="@string/title_activity_about"></activity>
         <activity
             android:name="nl.frankkie.convention.MapActivity"
-            android:label="@string/title_activity_map" >
-        </activity>
+            android:label="@string/title_activity_map"></activity>
+
+        <!-- SyncAdapter //-->
+        <service
+            android:name=".sync.ConventionAuthenticatorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <!-- Runs in :sync-process to reduce overhead. See docs.
+        android:process=":sync" in service-tag
+        //-->
+        <service
+            android:name=".sync.ConventionSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
     </application>
 
 </manifest>

@@ -1,11 +1,14 @@
 package nl.frankkie.convention;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 
 
@@ -24,7 +27,7 @@ import android.view.Menu;
  * This activity also implements the required
  * {@link EventListFragment.Callbacks} interface
  * to listen for item selections.
- *
+ * <p/>
  * To use ActionBar and Fragments, extend from ActionBarActivity,
  * as ActionBarActivity supports Fragments.
  * http://stackoverflow.com/questions/18451575/action-bar-fragment-activity
@@ -70,9 +73,28 @@ public class EventListActivity extends ActionBarActivity
 
         initNavigationDrawer();
         // TODO: If exposing deep links into your app, handle intents here.
+
+        //Create Account needed for SyncAdapter
+        Account acc = createDummyAccount();
+        //Sync
+        Bundle syncBundle = new Bundle();
+        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
+        ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
     }
 
-    public void initNavigationDrawer(){
+    public Account createDummyAccount() {
+        //TODO: Change domain when using for a different convention
+        Account account = new Account("dummyaccount", "nl.frankkie.convention");
+        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+        boolean success = accountManager.addAccountExplicitly(account, null, null);
+        if (!success) {
+            Log.e("Convention", "Cannot create account for Sync.");
+        }
+        return account;
+    }
+
+    public void initNavigationDrawer() {
         //call from onCreate.
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -133,11 +155,12 @@ public class EventListActivity extends ActionBarActivity
 
     /**
      * Callback from Hamburger-menu
+     *
      * @param position
      */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        switch (position){
+        switch (position) {
             case 0: {
                 //TODO: my schedule activity
                 break;
@@ -149,14 +172,14 @@ public class EventListActivity extends ActionBarActivity
             case 2: {
                 Intent i = new Intent();
                 i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                i.setClass(this,MapActivity.class);
+                i.setClass(this, MapActivity.class);
                 startActivity(i);
                 break;
             }
             case 3: {
                 Intent i = new Intent();
                 i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                i.setClass(this,AboutActivity.class);
+                i.setClass(this, AboutActivity.class);
                 startActivity(i);
                 break;
             }
