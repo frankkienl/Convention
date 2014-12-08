@@ -4,9 +4,12 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+
+import java.sql.SQLException;
 
 /**
  * Created by FrankkieNL on 22-11-2014.
@@ -203,19 +206,157 @@ public class EventProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        //TODO: IMPLEMENT THIS
-        return null;
+        //No idea why the db-var is final in Sunshine.
+        //Its only used in this method, so idk, might be performance?
+        //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/data/WeatherProvider.java#L221
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        Uri returnUri;
+        switch (match){
+            //*cough* code duplication *cough*
+            case EVENT: {
+                //Database insert returns row_id of new row.
+                long id = db.insert(EventContract.EventEntry.TABLE_NAME,null,values);
+                if (id != -1L){ //return -1 on error
+                    returnUri = EventContract.EventEntry.buildEventUri(id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert Event row into: " + uri);
+                }
+                break;
+            }
+            case LOCATION: {
+                long id = db.insert(EventContract.LocationEntry.TABLE_NAME,null,values);
+                if (id != -1L){
+                    returnUri = EventContract.LocationEntry.buildLocationUri(id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert Location row into: " + uri);
+                }
+                break;
+            }
+            case SPEAKER: {
+                long id = db.insert(EventContract.SpeakerEntry.TABLE_NAME,null,values);
+                if (id != -1L){
+                    returnUri = EventContract.SpeakerEntry.buildSpeakerUri(id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert Speaker row into: " + uri);
+                }
+                break;
+            }
+            default: throw new android.database.SQLException("Unknown uri: " + uri);
+        }
+        //Notify that DB has changed.
+        getContext().getContentResolver().notifyChange(uri,null);
+        return returnUri;
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        switch (match){
+            case EVENT: {
+                db.beginTransaction();
+                int returnInt = 0; //number of added rows
+                try {
+                    for (ContentValues value : values) {
+                        long id = db.insert(EventContract.EventEntry.TABLE_NAME, null, value);
+                        if (id != -1L) {
+                            returnInt++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                return returnInt;
+            }
+            case LOCATION: {
+                db.beginTransaction();
+                int returnInt = 0; //number of added rows
+                try {
+                    for (ContentValues value : values) {
+                        long id = db.insert(EventContract.LocationEntry.TABLE_NAME, null, value);
+                        if (id != -1L) {
+                            returnInt++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                return returnInt;
+            }
+            case SPEAKER: {
+                db.beginTransaction();
+                int returnInt = 0; //number of added rows
+                try {
+                    for (ContentValues value : values) {
+                        long id = db.insert(EventContract.SpeakerEntry.TABLE_NAME, null, value);
+                        if (id != -1L) {
+                            returnInt++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                return returnInt;
+            }
+            default: return super.bulkInsert(uri,values);
+        }
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        //TODO: IMPLEMENT THIS
-        return 0;
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int numberOfRowsDeleted = 0;
+        switch (match){
+            case EVENT: {
+                numberOfRowsDeleted = db.delete(EventContract.EventEntry.TABLE_NAME,selection,selectionArgs);
+                break;
+            }
+            case LOCATION: {
+                numberOfRowsDeleted = db.delete(EventContract.LocationEntry.TABLE_NAME,selection,selectionArgs);
+                break;
+            }
+            case SPEAKER: {
+                numberOfRowsDeleted = db.delete(EventContract.SpeakerEntry.TABLE_NAME,selection,selectionArgs);
+                break;
+            }
+            default: throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        //Null as selection deletes all rows
+        if (selection == null || numberOfRowsDeleted != 0){
+            //notify that DB has changed.
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return numberOfRowsDeleted;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        //not implemented
-        return 0;
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int rowsUpdated = 0;
+        switch (match){
+            case EVENT: {
+                rowsUpdated = db.update(EventContract.EventEntry.TABLE_NAME,values,selection,selectionArgs);
+                break;
+            }
+            case LOCATION: {
+                rowsUpdated = db.update(EventContract.LocationEntry.TABLE_NAME,values,selection,selectionArgs);
+                break;
+            }
+            case SPEAKER: {
+                rowsUpdated = db.update(EventContract.SpeakerEntry.TABLE_NAME,values,selection,selectionArgs);
+                break;
+            }
+            default: throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsUpdated != 0){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return rowsUpdated;
     }
 }

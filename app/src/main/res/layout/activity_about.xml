@@ -84,6 +84,7 @@
                     <TextView
                         android:text="@string/about_website_details"
                         android:layout_width="match_parent"
+                        android:autoLink="web"
                         style="@style/about_details"
                         android:layout_height="wrap_content" />
 
@@ -96,6 +97,7 @@
                     <TextView
                         android:text="@string/about_mail_details"
                         style="@style/about_details"
+                        android:autoLink="email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
