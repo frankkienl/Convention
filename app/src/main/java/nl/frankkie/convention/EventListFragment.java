@@ -32,7 +32,6 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     EventAdapter mEventAdapter;
     int EVENT_LOADER = 0;
     GridView mGridView;
-    //ListView mGridView;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -113,7 +112,6 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         mEventAdapter = new EventAdapter(getActivity(), null, 0);
 
         mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist, container, false);
-        //mGridView = (ListView) inflater.inflate(R.layout.fragment_event_gridlist, container, false);
         mGridView.setAdapter(mEventAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
