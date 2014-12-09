@@ -76,17 +76,15 @@
                 "name": "Mane Hall",
                 "description": "That big place",
                 "map_location": "",
-                "floor", 0
+                "floor": 0
             },
             {
-                            "_id": 1,
-                            "name": "Game Room",
-                            "description": "Here is Karaoke!",
-                            "map_location": "",
-                            "floor", 0
-                        },
-        ],
-
-
+                "_id": 1,
+                "name": "Game Room",
+                "description": "Here is Karaoke!",
+                "map_location": "",
+                "floor": 0
+            },
+        ]
     }
 }

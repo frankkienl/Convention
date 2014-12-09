@@ -100,7 +100,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
         //</editor-fold>
 
         //Time for JSON Parsing
-        
+
 
     }
 }
