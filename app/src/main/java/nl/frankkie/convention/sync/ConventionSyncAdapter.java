@@ -189,7 +189,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 sieCVs[i] = sieCV;
             }
             getContext().getContentResolver().delete(EventContract.SpeakersInEventsEntry.CONTENT_URI,null,null);
-            getContext().getContentResolver().bulkInsert(EventContract.SpeakersInEventsEntry.CONTENT_URI,locationCVs);
+            getContext().getContentResolver().bulkInsert(EventContract.SpeakersInEventsEntry.CONTENT_URI,sieCVs);
             getContext().getContentResolver().notifyChange(EventContract.SpeakersInEventsEntry.CONTENT_URI,null);
             //</editor-fold>
 
