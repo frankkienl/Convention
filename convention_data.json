@@ -2,7 +2,7 @@
     "data": {
         "events": [
             {
-                "_id": 0,
+                "_id": 1,
                 "title": "Opening",
                 "description": "The big opening!",
                 "keywords": "opening, mandatory",
@@ -10,11 +10,11 @@
                 "color": "#FFF",
                 "start_time": "1424509200",
                 "end_time": "1424512800",
-                "location_id": 0,
+                "location_id": 1,
                 "sort_order": 0
             },
             {
-                "_id": 1,
+                "_id": 2,
                 "title": "VA Panel",
                 "description": "Voice Actors Panel",
                 "keywords": "va, panel",
@@ -22,11 +22,11 @@
                 "color": "#0000FF",
                 "start_time": "1424512800",
                 "end_time": "1424516400",
-                "location_id": 1,
+                "location_id": 2,
                 "sort_order": 1
             },
             {
-                "_id": 2,
+                "_id": 3,
                 "title": "Karaoke",
                 "description": "Playing Karaoke Game",
                 "keywords": "game, karaoke",
@@ -34,35 +34,35 @@
                 "color": "#00FFFF",
                 "start_time": "1424510100",
                 "end_time": "1424538000",
-                "location_id": 1,
+                "location_id": 2,
                 "sort_order": 1
             }
         ],
 
         "speakers": [
             {
-                "_id": 0,
+                "_id": 1,
                 "name": "ElectroBLITZ",
                 "description": "VA from Legends of Equestria\nhttp://www.hwcon.nl/en/news/electroblitz",
                 "image": "http://www.hwcon.nl/bundles/hwconsite/images/news/blitz/banner.png",
                 "color": "#AAAAFF"
             },
             {
-                "_id": 1,
+                "_id": 2,
                 "name": "Abe The Storyteller",
                 "description": "Storyteller\nhttp://www.hwcon.nl/en/news/abe-the-storyteller",
                 "image":"http://www.hwcon.nl/bundles/hwconsite/images/news/abe/banner.png",
                 "color": "#0000AA"
             },
             {
-                "_id": 2,
+                "_id": 3,
                 "name": "Anneli Heed",
                 "description": "Swedish VA from Spitfire, Spike, Sweetie Belle, Queen Chrysalis, Cheerilee, Photo Finish, Princess Cadence, the singing voice of Rainbow Dash and several background characters.\nhttp://www.hwcon.nl/en/news/anneli-heed",
                 "image": "http://www.hwcon.nl/bundles/hwconsite/images/news/heed/banner.png",
                 "color": "#FFAAAA"
             },
             {
-                "_id": 3,
+                "_id": 4,
                 "name":"Lizemijn Libgott",
                 "description": "Dutch VA\nhttp://www.hwcon.nl/en/news/lizemijn-libgott",
                 "image": "http://www.hwcon.nl/bundles/hwconsite/images/news/libgott/banner.png",
@@ -72,19 +72,40 @@
 
         "locations": [
             {
-                "_id": 0,
+                "_id": 1,
                 "name": "Mane Hall",
                 "description": "That big place",
                 "map_location": "",
                 "floor": 0
             },
             {
-                "_id": 1,
+                "_id": 2,
                 "name": "Game Room",
                 "description": "Here is Karaoke!",
                 "map_location": "",
                 "floor": 0
             },
+        ],
+
+        "speakers_in_events": [
+            {
+                "_id": 1,
+                "_comment": "VA Panel, ElectroBLITZ",
+                "event_id": 2,
+                "speaker_id": 1
+            },
+            {
+                "_id": 2,
+                "_comment": "VA Panel, Anneli Heed",
+                "event_id": 2,
+                "speaker_id": 3
+            },
+            {
+                "_id": 3,
+                "_comment": "VA Panel, Lizemijn Libgott",
+                "event_id": 2,
+                "speaker_id": 4
+            }
         ]
     }
 }

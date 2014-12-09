@@ -48,6 +48,7 @@ public class EventProvider extends ContentProvider {
         sEventWithLocationQueryBuilder = new SQLiteQueryBuilder();
         // Lets hope 'INNER JOIN' does what I think it does.
         // I should have paid better attention at Database-lessons at school... >.>
+        //SELECT event.title, location.name FROM event JOIN location ON event.location_id = location._id WHERE event._id = 3
         sEventWithLocationQueryBuilder.setTables(
                 EventContract.EventEntry.TABLE_NAME + " INNER JOIN " +
                         EventContract.LocationEntry.TABLE_NAME +
