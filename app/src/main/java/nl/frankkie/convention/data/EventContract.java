@@ -18,6 +18,7 @@ public class EventContract {
     public static final String PATH_EVENT = "event";
     public static final String PATH_SPEAKER = "speaker";
     public static final String PATH_LOCATION = "location";
+    public static final String PATH_SPEAKERS_IN_EVENTS = "speakers_in_events";
 
     public static abstract class EventEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_EVENT).build();
@@ -37,9 +38,9 @@ public class EventContract {
         public static final String COLUMN_NAME_LOCATION_ID = "location_id";
         public static final String COLUMN_NAME_SORT_ORDER = "sort_order";
 
-        public static Uri buildEventUri(long id){
+        public static Uri buildEventUri(long id) {
             //This method is used in Sunshine
-            return ContentUris.withAppendedId(CONTENT_URI,id);
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
 
@@ -58,8 +59,8 @@ public class EventContract {
         public static final String COLUMN_NAME_IMAGE = "image";
         public static final String COLUMN_NAME_COLOR = "color";
 
-        public static Uri buildSpeakerUri(long id){
-            return ContentUris.withAppendedId(CONTENT_URI,id);
+        public static Uri buildSpeakerUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
 
@@ -76,24 +77,33 @@ public class EventContract {
         public static final String COLUMN_NAME_MAP_LOCATION = "map_location";
         public static final String COLUMN_NAME_FLOOR = "floor"; //where 0 is ground-level.
 
-        public static Uri buildLocationUri(long id){
-            return ContentUris.withAppendedId(CONTENT_URI,id);
+        public static Uri buildLocationUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
     }
 
 
     public static abstract class SpeakersInEventsEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SPEAKERS_IN_EVENTS).build();
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_SPEAKERS_IN_EVENTS;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_SPEAKERS_IN_EVENTS;
         public static final String TABLE_NAME = "speakers_in_events";
         public static final String COLUMN_NAME_EVENT_ID = "event_id";
         public static final String COLUMN_NAME_SPEAKER_ID = "speaker_id";
+
+        public static Uri buildSpeakersInEventsUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
 
     public static final String DATE_FORMAT = "E, HH:mm"; //example: Sunday, 16:30
     public static SimpleDateFormat displayDataFormat = new SimpleDateFormat(DATE_FORMAT);
 
-    public static String getDataTimeString(long timestamp){
+    public static String getDataTimeString(long timestamp) {
         //*1000, because
         // http://www.onlineconversion.com/unix_time.htm
         // uses SECONDS from 1970, but Date uses MILLISECONDS from 1970

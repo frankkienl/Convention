@@ -84,7 +84,7 @@
                 "description": "Here is Karaoke!",
                 "map_location": "",
                 "floor": 0
-            },
+            }
         ],
 
         "speakers_in_events": [
