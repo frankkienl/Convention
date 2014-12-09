@@ -38,6 +38,8 @@ public class EventProvider extends ContentProvider {
     public static final int SPEAKERS_IN_EVENTS = 400;
     //content://nl.frankkie.convention/speakers_in_events/ID (ITEM)
     public static final int SPEAKERS_IN_EVENTS_ID = 401;
+    //content://nl.frankkie.convention/speakers_in_events/event/ID (LIST of Speakers in Event)
+    public static final int SPEAKERS_IN_EVENTS_EVENT_ID = 402;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     SQLiteOpenHelper mOpenHelper;
@@ -71,6 +73,7 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_LOCATION + "/#", LOCATION_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS, SPEAKERS_IN_EVENTS);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/#", SPEAKERS_IN_EVENTS_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/event/#", SPEAKERS_IN_EVENTS_EVENT_ID);
         return matcher;
     }
 
@@ -102,20 +105,21 @@ public class EventProvider extends ContentProvider {
             case EVENT_ID: {
                 //1 Event, with speakers
                 //Override selection when empty
+                //SELECT event.title, location.name FROM event JOIN location ON event.location_id = location._id WHERE event._id = ?
                 if (selection == null || "".equals(selection)) {
-                    selection = EventContract.EventEntry._ID + " = ?";
+                    selection = EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID + " = ?";
                     //content://nl.frankkie.convention/event/0 <-- last segment is ID.
                     selectionArgs = new String[]{uri.getLastPathSegment()};
                 }
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        EventContract.EventEntry.TABLE_NAME,
+                retCursor = sEventWithLocationQueryBuilder.query(
+                        mOpenHelper.getReadableDatabase(),
                         projection,
                         selection,
                         selectionArgs,
-                        null, //having
-                        null, //group by
+                        null,
+                        null,
                         sortOrder
-                );
+                        );
                 break;
             }
             case SPEAKER: {
@@ -171,6 +175,51 @@ public class EventProvider extends ContentProvider {
                 break;
             }
 
+            case SPEAKERS_IN_EVENTS: {
+                //list of event and speaker ids
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.SpeakersInEventsEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
+                break;
+            }
+            case SPEAKERS_IN_EVENTS_ID: {
+                //1 row with an event id and a speaker id
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.SpeakersInEventsEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
+                break;
+            }
+            case SPEAKERS_IN_EVENTS_EVENT_ID: {
+                //all speakers of 1 event (from id)
+                if (selection == null || "".equals(selection)) {
+                    selection = EventContract.SpeakersInEventsEntry.TABLE_NAME + "." + EventContract.SpeakersInEventsEntry.COLUMN_NAME_EVENT_ID + " = ?";
+                    //content://nl.frankkie.convention/speakers_in_events/event/0 <-- last segment is ID.
+                    selectionArgs = new String[]{uri.getLastPathSegment()};
+                }
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.SpeakersInEventsEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -200,6 +249,12 @@ public class EventProvider extends ContentProvider {
             }
             case LOCATION_ID: {
                 return EventContract.LocationEntry.CONTENT_ITEM_TYPE; //1 location
+            }
+            case SPEAKERS_IN_EVENTS: {
+                return EventContract.SpeakersInEventsEntry.CONTENT_TYPE;
+            }
+            case SPEAKERS_IN_EVENTS_ID: {
+                return EventContract.SpeakersInEventsEntry.CONTENT_ITEM_TYPE;
             }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

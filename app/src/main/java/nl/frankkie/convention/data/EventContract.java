@@ -97,6 +97,10 @@ public class EventContract {
         public static Uri buildSpeakersInEventsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Uri buildSpeakersInEventUri(long eventId) {
+            return ContentUris.withAppendedId(CONTENT_URI.buildUpon().appendPath("event").build(), eventId);
+        }
     }
 
 

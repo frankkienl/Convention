@@ -28,16 +28,25 @@ import nl.frankkie.convention.data.EventContract;
 public class EventDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int EVENT_DETAIL_LOADER = 0;
+    public static final int EVENT_SPEAKERS_LOADER = 1;
     public static final String[] EVENT_COLUMNS = {
-            EventContract.EventEntry._ID,
+            EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID,
             EventContract.EventEntry.COLUMN_NAME_TITLE,
-            EventContract.EventEntry.COLUMN_NAME_DESCRIPTION,
+            EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry.COLUMN_NAME_DESCRIPTION,
             EventContract.EventEntry.COLUMN_NAME_KEYWORDS,
             EventContract.EventEntry.COLUMN_NAME_START_TIME,
             EventContract.EventEntry.COLUMN_NAME_END_TIME,
-            EventContract.EventEntry.COLUMN_NAME_LOCATION_ID,
             EventContract.EventEntry.COLUMN_NAME_COLOR,
-            EventContract.EventEntry.COLUMN_NAME_IMAGE
+            EventContract.EventEntry.COLUMN_NAME_IMAGE,
+            EventContract.LocationEntry.COLUMN_NAME_NAME,
+            EventContract.LocationEntry.TABLE_NAME + "." + EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION
+    };
+    public static final String[] SPEAKERS_COLUMNS = {
+            EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry._ID,
+            EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry.COLUMN_NAME_NAME,
+            EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry.COLUMN_NAME_DESCRIPTION,
+            EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry.COLUMN_NAME_COLOR,
+            EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry.COLUMN_NAME_IMAGE
     };
 
     String mId;
@@ -48,25 +57,46 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     TextView mStartTime;
     TextView mEndTime;
     TextView mLocation;
+    TextView mLocationDescription;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri uri = EventContract.EventEntry.buildEventUri(Long.parseLong(mId));
-        String sortOrder = EventContract.EventEntry.COLUMN_NAME_START_TIME + " ASC";
-        CursorLoader cl = new CursorLoader(getActivity(), uri, EVENT_COLUMNS, null, null, sortOrder);
-        return cl;
+        if (i == EVENT_DETAIL_LOADER) {
+            Uri uri = EventContract.EventEntry.buildEventUri(Long.parseLong(mId));
+            //Is sortOrder needed? We'll get only 1 row.
+            String sortOrder = EventContract.EventEntry.COLUMN_NAME_START_TIME + " ASC";
+            CursorLoader cl = new CursorLoader(getActivity(), uri, EVENT_COLUMNS, null, null, sortOrder);
+            return cl;
+        } else if (i == EVENT_SPEAKERS_LOADER) {
+            Uri uri = EventContract.SpeakersInEventsEntry.buildSpeakersInEventUri(Long.parseLong(mId));
+            String sortOrder = "";
+            CursorLoader cl = new CursorLoader(getActivity(), uri, SPEAKERS_COLUMNS, null, null, sortOrder);
+            return cl;
+        }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         //set View-content
-        if (data != null && data.moveToFirst()) {
-            mTitle.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_TITLE)));
-            mDescription.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION)));
-            mKeywords.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_KEYWORDS)));
-            mStartTime.setText(EventContract.getDataTimeString(data.getLong(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_START_TIME))));
-            mEndTime.setText(EventContract.getDataTimeString(data.getLong(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_END_TIME))));
-            mLocation.setText(data.getString(data.getColumnIndex(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID)));
+        if (cursorLoader.getId() == EVENT_DETAIL_LOADER) {
+            if (data != null && data.moveToFirst()) {
+                int eventId = data.getInt(0);
+                mTitle.setText(data.getString(1));
+                mDescription.setText(data.getString(2));
+                mKeywords.setText(data.getString(3));
+                mStartTime.setText(EventContract.getDataTimeString(data.getLong(4)));
+                mEndTime.setText(EventContract.getDataTimeString(data.getLong(5)));
+                String color = data.getString(6);
+                String image = data.getString(7);
+                mLocation.setText(data.getString(8));
+                mLocationDescription.setText(data.getString(9));
+            }
+        } else if (cursorLoader.getId() == EVENT_SPEAKERS_LOADER) {
+            //List of speakers of this Event.
+            if (data != null && data.moveToFirst()) {
+                //TODO: put this into some ListView Adapter to show a list of speakers.
+            }
         }
     }
 
@@ -82,10 +112,6 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
-     */
-    //private DummyContent.DummyItem mItem;
-    /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
@@ -97,26 +123,16 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            //mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-            //TODO: USE CONTENT-PROVIDER !
+            //Set the id, that will be used in onCreateLoader (CursorLoader)
             mId = getArguments().getString(ARG_ITEM_ID);
         }
     }
-
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        //if (mItem != null) {
-        //    ((TextView) rootView.findViewById(R.id.event_detail)).setText(mItem.content);
-        //}
 
         //Should I do this in a ViewHolder? Nah, its not a ListView item.
         mTitle = (TextView) rootView.findViewById(R.id.event_detail_title);
@@ -125,6 +141,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         mStartTime = (TextView) rootView.findViewById(R.id.event_detail_starttime);
         mEndTime = (TextView) rootView.findViewById(R.id.event_detail_endtime);
         mLocation = (TextView) rootView.findViewById(R.id.event_detail_location);
+        mLocationDescription = (TextView) rootView.findViewById(R.id.event_detail_location_description);
         return rootView;
     }
 
@@ -132,6 +149,6 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //Loaders depend on Activity not on Fragment!
-        getLoaderManager().initLoader(EVENT_DETAIL_LOADER,null,this);
+        getLoaderManager().initLoader(EVENT_DETAIL_LOADER, null, this);
     }
 }
