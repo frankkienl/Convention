@@ -11,38 +11,60 @@
     //-->
     <TextView
         android:id="@+id/event_detail_title"
-        style="?android:attr/textAppearanceLarge"
+        style="@style/textStyle_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textIsSelectable="true" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/event_detail_description"
+        style="@style/textStyle_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
+    <TextView
+        android:id="@+id/event_label_keywords"
+        style="@style/textStyle_header"
+        android:text="@string/label_keywords"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/event_detail_keywords"
+        style="@style/textStyle_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/event_label_time"
+        style="@style/textStyle_header"
+        android:text="@string/label_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
         android:id="@+id/event_detail_starttime"
+        style="@style/textStyle_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/event_detail_endtime"
+        style="@style/textStyle_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/event_label_location"
+        style="@style/textStyle_header"
+        android:text="@string/label_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/event_detail_location"
+        style="@style/textStyle_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
     <TextView
         android:id="@+id/event_detail_location_description"
+        style="@style/textStyle_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

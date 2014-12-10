@@ -171,14 +171,14 @@ public class EventListActivity extends ActionBarActivity
             }
             case 2: {
                 Intent i = new Intent();
-                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setFlags(Util.navigationDrawerIntentFlags);
                 i.setClass(this, MapActivity.class);
                 startActivity(i);
                 break;
             }
             case 3: {
                 Intent i = new Intent();
-                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setFlags(Util.navigationDrawerIntentFlags);
                 i.setClass(this, AboutActivity.class);
                 startActivity(i);
                 break;

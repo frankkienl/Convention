@@ -105,14 +105,14 @@ public class AboutActivity extends ActionBarActivity implements NavigationDrawer
             }
             case 1: {
                 Intent i = new Intent();
-                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setFlags(Util.navigationDrawerIntentFlags);
                 i.setClass(this,EventListActivity.class);
                 startActivity(i);
                 break;
             }
             case 2: {
                 Intent i = new Intent();
-                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setFlags(Util.navigationDrawerIntentFlags);
                 i.setClass(this,MapActivity.class);
                 startActivity(i);
                 break;

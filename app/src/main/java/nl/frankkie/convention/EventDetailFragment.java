@@ -1,6 +1,5 @@
 package nl.frankkie.convention;
 
-import android.app.usage.UsageEvents;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,9 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import nl.frankkie.convention.data.EventContract;
-
-
-//import nl.frankkie.convention.dummy.DummyContent;
 
 /**
  * A fragment representing a single Event detail screen.
@@ -85,8 +81,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 mTitle.setText(data.getString(1));
                 mDescription.setText(data.getString(2));
                 mKeywords.setText(data.getString(3));
-                mStartTime.setText(EventContract.getDataTimeString(data.getLong(4)));
-                mEndTime.setText(EventContract.getDataTimeString(data.getLong(5)));
+                mStartTime.setText(Util.getDataTimeString(data.getLong(4)));
+                mEndTime.setText(Util.getDataTimeString(data.getLong(5)));
                 String color = data.getString(6);
                 String image = data.getString(7);
                 mLocation.setText(data.getString(8));

@@ -91,7 +91,7 @@ public class MapActivity extends ActionBarActivity implements NavigationDrawerFr
             }
             case 1: {
                 Intent i = new Intent();
-                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setFlags(Util.navigationDrawerIntentFlags);
                 i.setClass(this, EventListActivity.class);
                 startActivity(i);
                 break;
@@ -102,7 +102,7 @@ public class MapActivity extends ActionBarActivity implements NavigationDrawerFr
             }
             case 3: {
                 Intent i = new Intent();
-                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.setFlags(Util.navigationDrawerIntentFlags);
                 i.setClass(this, AboutActivity.class);
                 startActivity(i);
                 break;

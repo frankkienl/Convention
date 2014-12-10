@@ -20,6 +20,10 @@ public class EventDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        createTables(db);
+    }
+
+    public void createTables(SQLiteDatabase db){
         String sqlEvent = "CREATE TABLE " + EventEntry.TABLE_NAME + " ( " +
                 EventEntry._ID + " INTEGER PRIMARY KEY, " +
                 EventEntry.COLUMN_NAME_TITLE + " TEXT, " +
@@ -64,6 +68,8 @@ public class EventDbHelper extends SQLiteOpenHelper {
         db.execSQL(sql + LocationEntry.TABLE_NAME);
         db.execSQL(sql + SpeakerEntry.TABLE_NAME);
         db.execSQL(sql + SpeakersInEventsEntry.TABLE_NAME);
+        //
+        createTables(db);
     }
 
 }

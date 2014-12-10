@@ -8,6 +8,10 @@
     - Add My Schedule screen
     - Add Setting screen
     - Map
+    - Fix back-stack when opening other activities from NavigationDrawer
+    - Add Speakers Screen
+    - Add News Screen
+    - Implement Notification
     //
     -->
 
@@ -26,7 +30,6 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

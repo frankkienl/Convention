@@ -43,7 +43,7 @@ public class EventAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         viewHolder.titleView.setText(cursor.getString(EventListFragment.COL_TITLE));
         long time = cursor.getLong(EventListFragment.COL_TIME);
-        viewHolder.timeView.setText(EventContract.getDataTimeString(time));
+        viewHolder.timeView.setText(Util.getDataTimeString(time));
         //TODO: dynamic image
         //viewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_launcher));
         //Set color
