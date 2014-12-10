@@ -36,7 +36,19 @@
                 "end_time": "1424538000",
                 "location_id": 2,
                 "sort_order": 1
-            }
+            },
+             {
+                "_id": 4,
+                "title": "Writers Panel",
+                "description": "Nikkie: \"Beter zet je in die app effe een waarschuwing voor het writer's panel dat word een grote clusterfuc.\"; Nightmare Rarity Belle: \"Can confirm\";",
+                "keywords": "writers, panel",
+                "image": "",
+                "color": "#FF0000",
+                "start_time": "1424523600",
+                "end_time": "1424527200",
+                "location_id": 2,
+                "sort_order": 1
+             }
         ],
 
         "speakers": [
@@ -63,10 +75,17 @@
             },
             {
                 "_id": 4,
-                "name":"Lizemijn Libgott",
+                "name": "Lizemijn Libgott",
                 "description": "Dutch VA\nhttp://www.hwcon.nl/en/news/lizemijn-libgott",
                 "image": "http://www.hwcon.nl/bundles/hwconsite/images/news/libgott/banner.png",
                 "color": "#00FF00"
+            },
+            {
+                "_id": 5,
+                "name": "(Nightmare) Rarity Belle",
+                "description": "Fanfic writer",
+                "image": "",
+                "color": "#FF0000"
             }
         ],
 
@@ -84,6 +103,13 @@
                 "description": "Here is Karaoke!",
                 "map_location": "",
                 "floor": 0
+            },
+            {
+                "_id": 3,
+                "name": "Small panel room",
+                "description": "Place for small panels",
+                "map_location": "",
+                "floor": 1
             }
         ],
 
