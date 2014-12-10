@@ -46,8 +46,8 @@
                 "color": "#FF0000",
                 "start_time": "1424523600",
                 "end_time": "1424527200",
-                "location_id": 2,
-                "sort_order": 1
+                "location_id": 3,
+                "sort_order": 0
              }
         ],
 
@@ -131,6 +131,12 @@
                 "_comment": "VA Panel, Lizemijn Libgott",
                 "event_id": 2,
                 "speaker_id": 4
+            },
+            {
+                "_id": 4,
+                "_comment": "Writers Panel, (Nightmare) Rarity Belle",
+                "event_id": 4,
+                "speaker_id": 5
             }
         ]
     }
