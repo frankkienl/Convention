@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -40,6 +41,10 @@ public class EventProvider extends ContentProvider {
     public static final int SPEAKERS_IN_EVENTS_ID = 401;
     //content://nl.frankkie.convention/speakers_in_events/event/ID (LIST of Speakers in Event)
     public static final int SPEAKERS_IN_EVENTS_EVENT_ID = 402;
+    //content://nl.frankkie.convention/favorites/ (LIST of favorites of all types)
+    public static final int FAVORITES = 500;
+    //content://nl.frankkie.convention/favorites/event/ID (LIST of favorites of event type)
+    public static final int FAVORITES_EVENTS = 501;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     SQLiteOpenHelper mOpenHelper;
@@ -74,6 +79,8 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS, SPEAKERS_IN_EVENTS);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/#", SPEAKERS_IN_EVENTS_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/event/#", SPEAKERS_IN_EVENTS_EVENT_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES, FAVORITES);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES + "/event/#", FAVORITES_EVENTS);
         return matcher;
     }
 
@@ -174,7 +181,6 @@ public class EventProvider extends ContentProvider {
                 );
                 break;
             }
-
             case SPEAKERS_IN_EVENTS: {
                 //list of event and speaker ids
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -219,7 +225,34 @@ public class EventProvider extends ContentProvider {
                 );
                 break;
             }
-
+            case FAVORITES: {
+               retCursor = mOpenHelper.getReadableDatabase().query(
+                       EventContract.FavoritesEntry.TABLE_NAME,
+                       projection,
+                       selection,
+                       selectionArgs,
+                       null, //having
+                       null, //group by
+                       sortOrder
+               );
+                break;
+            }
+            case FAVORITES_EVENTS: {
+                if (selection == null || "".equals(selection)) {
+                    selection = EventContract.FavoritesEntry.TABLE_NAME + "." + EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = " + EventContract.FavoritesEntry.TYPE_EVENT;
+                    selectionArgs = null;
+                }
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.FavoritesEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -230,7 +263,6 @@ public class EventProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-
         switch (sUriMatcher.match(uri)) {
             case EVENT: {
                 return EventContract.EventEntry.CONTENT_TYPE; //list
@@ -251,10 +283,16 @@ public class EventProvider extends ContentProvider {
                 return EventContract.LocationEntry.CONTENT_ITEM_TYPE; //1 location
             }
             case SPEAKERS_IN_EVENTS: {
-                return EventContract.SpeakersInEventsEntry.CONTENT_TYPE;
+                return EventContract.SpeakersInEventsEntry.CONTENT_TYPE; //list of all speakers in all events
             }
             case SPEAKERS_IN_EVENTS_ID: {
-                return EventContract.SpeakersInEventsEntry.CONTENT_ITEM_TYPE;
+                return EventContract.SpeakersInEventsEntry.CONTENT_TYPE; //list of speakers in 1 event
+            }
+            case FAVORITES: {
+                return EventContract.FavoritesEntry.CONTENT_TYPE; //list of all favorites of all types
+            }
+            case FAVORITES_EVENTS: {
+                return EventContract.FavoritesEntry.CONTENT_TYPE; //list of all favorites of type event
             }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -306,6 +344,15 @@ public class EventProvider extends ContentProvider {
                     returnUri = EventContract.SpeakersInEventsEntry.buildSpeakersInEventsUri(id);
                 } else {
                     throw new android.database.SQLException("Failed to insert SpeakersInEventsEntry row into: " + uri);
+                }
+                break;
+            }
+            case FAVORITES: {
+                long id = db.insert(EventContract.FavoritesEntry.TABLE_NAME, null, values);
+                if (id != -1L){
+                    returnUri = EventContract.FavoritesEntry.buildFavoriteUri(id);
+                } else {
+                    throw new SQLException("Failed to insert Favorite row into: " + uri);
                 }
                 break;
             }
@@ -413,6 +460,10 @@ public class EventProvider extends ContentProvider {
                 numberOfRowsDeleted = db.delete(EventContract.SpeakersInEventsEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
+            case FAVORITES: {
+                numberOfRowsDeleted = db.delete(EventContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -444,6 +495,10 @@ public class EventProvider extends ContentProvider {
             }
             case SPEAKERS_IN_EVENTS: {
                 rowsUpdated = db.update(EventContract.SpeakersInEventsEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            }
+            case FAVORITES: {
+                rowsUpdated = db.update(EventContract.FavoritesEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }
             default:

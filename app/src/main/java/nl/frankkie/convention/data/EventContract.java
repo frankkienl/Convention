@@ -19,8 +19,12 @@ public class EventContract {
     public static final String PATH_SPEAKER = "speaker";
     public static final String PATH_LOCATION = "location";
     public static final String PATH_SPEAKERS_IN_EVENTS = "speakers_in_events";
+    public static final String PATH_FAVORITES = "favorites";
 
-    public static abstract class EventEntry implements BaseColumns {
+    /**
+     * Events
+     */
+    public static final class EventEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_EVENT).build();
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_EVENT;
@@ -42,11 +46,12 @@ public class EventContract {
             //This method is used in Sunshine
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-
-
     }
 
-    public static abstract class SpeakerEntry implements BaseColumns {
+    /**
+     * Speakers
+     */
+    public static final class SpeakerEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SPEAKER).build();
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_SPEAKER;
@@ -64,7 +69,10 @@ public class EventContract {
         }
     }
 
-    public static abstract class LocationEntry implements BaseColumns {
+    /**
+     * Locations
+     */
+    public static final class LocationEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
@@ -80,11 +88,13 @@ public class EventContract {
         public static Uri buildLocationUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-
     }
 
 
-    public static abstract class SpeakersInEventsEntry implements BaseColumns {
+    /**
+     * Make a list of Speakers in a Event.
+     */
+    public static final class SpeakersInEventsEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SPEAKERS_IN_EVENTS).build();
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_SPEAKERS_IN_EVENTS;
@@ -103,4 +113,29 @@ public class EventContract {
         }
     }
 
+    /**
+     * Mark your favorite Events. (And later also other things)
+     * Your Favorite Events will be shown in My Schedule.
+     */
+    public static final class FavoritesEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITES).build();
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITES;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITES;
+        public static final String TABLE_NAME = "favorites";
+        public static final String COLUMN_NAME_TYPE = "type";
+        public static final String COLUMN_NAME_ITEM_ID = "item_id";
+
+        public static final String TYPE_EVENT = "event";
+        public static final String TYPE_LOCATION = "location";
+        public static final String TYPE_SPEAKER = "speaker";
+
+        public static Uri buildFavoriteUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static Uri buildFavoritesByTypeEventUri(long eventId){
+            return ContentUris.withAppendedId(CONTENT_URI.buildUpon().appendPath("event").build(), eventId);
+        }
+    }
 }

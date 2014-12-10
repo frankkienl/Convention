@@ -1,6 +1,5 @@
 package nl.frankkie.convention.data;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -11,7 +10,7 @@ import nl.frankkie.convention.data.EventContract.*;
  */
 public class EventDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "events.db";
 
     public EventDbHelper(Context context){
@@ -53,11 +52,17 @@ public class EventDbHelper extends SQLiteOpenHelper {
                 LocationEntry.COLUMN_NAME_FLOOR + " INTEGER )";
         db.execSQL(sqlLocation);
 
-        String sqlSpeakersInEvents = "CREATE TABLE " + SpeakersInEventsEntry.TABLE_NAME + " ( "+
+        String sqlSpeakersInEvents = "CREATE TABLE " + SpeakersInEventsEntry.TABLE_NAME + " ( " +
                 SpeakersInEventsEntry._ID + " INTEGER PRIMARY KEY, " +
                 SpeakersInEventsEntry.COLUMN_NAME_EVENT_ID + " INTEGER, " +
                 SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID + " INTEGER )";
         db.execSQL(sqlSpeakersInEvents);
+
+        String sqlFavorites = "CREATE TABLE " + FavoritesEntry.TABLE_NAME + " (" +
+                FavoritesEntry._ID + " INTEGER PRIMARY KEY, " +
+                FavoritesEntry.COLUMN_NAME_TYPE + " TEXT, " +
+                FavoritesEntry.COLUMN_NAME_ITEM_ID + " INTEGER )";
+        db.execSQL(sqlFavorites);
     }
 
     @Override
@@ -68,6 +73,8 @@ public class EventDbHelper extends SQLiteOpenHelper {
         db.execSQL(sql + LocationEntry.TABLE_NAME);
         db.execSQL(sql + SpeakerEntry.TABLE_NAME);
         db.execSQL(sql + SpeakersInEventsEntry.TABLE_NAME);
+        //For future updates, don't delete favorites, but upgrade.
+        db.execSQL(sql + FavoritesEntry.TABLE_NAME);
         //
         createTables(db);
     }

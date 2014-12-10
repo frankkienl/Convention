@@ -98,29 +98,6 @@ public class AboutActivity extends ActionBarActivity implements NavigationDrawer
      */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        switch (position){
-            case 0: {
-                //TODO: my schedule activity
-                break;
-            }
-            case 1: {
-                Intent i = new Intent();
-                i.setFlags(Util.navigationDrawerIntentFlags);
-                i.setClass(this,EventListActivity.class);
-                startActivity(i);
-                break;
-            }
-            case 2: {
-                Intent i = new Intent();
-                i.setFlags(Util.navigationDrawerIntentFlags);
-                i.setClass(this,MapActivity.class);
-                startActivity(i);
-                break;
-            }
-            case 3: {
-                //do nothing, you are already here
-                break;
-            }
-        }
+        Util.navigateFromNavDrawer(this, position);
     }
 }

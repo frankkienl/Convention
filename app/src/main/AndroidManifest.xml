@@ -8,10 +8,12 @@
     - Add My Schedule screen
     - Add Setting screen
     - Map
-    - Fix back-stack when opening other activities from NavigationDrawer
     - Add Speakers Screen
     - Add News Screen
     - Implement Notification
+    - Remove Example Action from actionbar
+    - Add GCM for when data should be synced again.
+    - Sync Favorites to the cloud
     //
     -->
 
