@@ -3,11 +3,14 @@
     package="nl.frankkie.convention">
 
     <!--
+    Note about version:
+    Change the versionName and versionCode in build.gradle (module: app).
+
      TODO LIST
-    - Add search-feature (search-icon in actionbar)
     - Add My Schedule screen
-    - Add Setting screen
     - Map
+    - Add search-feature (search-icon in actionbar)
+    - Add Setting screen
     - Add Speakers Screen
     - Add News Screen
     - Implement Notification
@@ -44,18 +47,18 @@
                 android:value=".EventListActivity" />
         </activity>
 
-        <provider
-            android:name="nl.frankkie.convention.data.EventProvider"
-            android:authorities="nl.frankkie.convention"
-            android:exported="false"
-            android:syncable="true" />
-
         <activity
             android:name="nl.frankkie.convention.AboutActivity"
             android:label="@string/title_activity_about"></activity>
         <activity
             android:name="nl.frankkie.convention.MapActivity"
             android:label="@string/title_activity_map"></activity>
+
+        <provider
+            android:name="nl.frankkie.convention.data.EventProvider"
+            android:authorities="nl.frankkie.convention"
+            android:exported="false"
+            android:syncable="true" />
 
         <!-- SyncAdapter //-->
         <service
