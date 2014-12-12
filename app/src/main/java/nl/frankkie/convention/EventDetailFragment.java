@@ -95,6 +95,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         } else if (cursorLoader.getId() == EVENT_SPEAKERS_LOADER) {
             //List of speakers of this Event.
             if (data == null || data.getCount() < 1) { //.getCount gives number of rows
+                //There are no rows, return.
                 return;
             }
             //There are speakers, make Speaker header visible
