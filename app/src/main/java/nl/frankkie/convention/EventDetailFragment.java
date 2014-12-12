@@ -11,6 +11,8 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import nl.frankkie.convention.data.EventContract;
@@ -54,6 +56,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     TextView mEndTime;
     TextView mLocation;
     TextView mLocationDescription;
+    TextView mSpeakersHeader;
+    LinearLayout mSpeakersContainer;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -90,8 +94,22 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             }
         } else if (cursorLoader.getId() == EVENT_SPEAKERS_LOADER) {
             //List of speakers of this Event.
-            if (data != null && data.moveToFirst()) {
-                //TODO: put this into some ListView Adapter to show a list of speakers.
+            if (data == null || data.getCount() < 1) { //.getCount gives number of rows
+                return;
+            }
+            //There are speakers, make Speaker header visible
+            mSpeakersHeader.setVisibility(View.VISIBLE);
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            mSpeakersContainer.removeAllViews(); //clear content
+            while (data.moveToNext()){
+                ViewGroup speakerItem = (ViewGroup) inflater.inflate(R.layout.event_detail_speaker_item, mSpeakersContainer, false);
+                TextView sName = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_name);
+                TextView sDescription = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_description);
+                ImageView sImage = (ImageView) speakerItem.findViewById(R.id.event_detail_speaker_item_image);
+                sName.setText(data.getString(1));
+                sDescription.setText(data.getString(2));
+                String imageUrl = data.getString(4);
+                mSpeakersContainer.addView(speakerItem);
             }
         }
     }
@@ -138,6 +156,9 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         mEndTime = (TextView) rootView.findViewById(R.id.event_detail_endtime);
         mLocation = (TextView) rootView.findViewById(R.id.event_detail_location);
         mLocationDescription = (TextView) rootView.findViewById(R.id.event_detail_location_description);
+        mSpeakersHeader = (TextView) rootView.findViewById(R.id.event_detail_label_speakers);
+        mSpeakersHeader.setVisibility(View.GONE); //Make visible (again) if there are Speakers for this event.
+        mSpeakersContainer = (LinearLayout) rootView.findViewById(R.id.event_detail_speakers_container);
         return rootView;
     }
 
@@ -146,5 +167,6 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         super.onActivityCreated(savedInstanceState);
         //Loaders depend on Activity not on Fragment!
         getLoaderManager().initLoader(EVENT_DETAIL_LOADER, null, this);
+        getLoaderManager().initLoader(EVENT_SPEAKERS_LOADER, null, this);
     }
 }

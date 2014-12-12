@@ -50,6 +50,7 @@ public class EventProvider extends ContentProvider {
     SQLiteOpenHelper mOpenHelper;
 
     private static final SQLiteQueryBuilder sEventWithLocationQueryBuilder;
+    private static final SQLiteQueryBuilder sSpeakersWithEventQueryBuilder;
 
     static {
         // Sunshine combines location with weather, this app will combine event and location
@@ -64,6 +65,15 @@ public class EventProvider extends ContentProvider {
                         "." + EventContract.EventEntry.COLUMN_NAME_LOCATION_ID +
                         " = " + EventContract.LocationEntry.TABLE_NAME +
                         "." + EventContract.LocationEntry._ID
+        );
+        // Get Speakers from Event
+        sSpeakersWithEventQueryBuilder = new SQLiteQueryBuilder();
+        sSpeakersWithEventQueryBuilder.setTables(
+                EventContract.SpeakersInEventsEntry.TABLE_NAME + " INNER JOIN " +
+                        EventContract.SpeakerEntry.TABLE_NAME + " ON " +
+                        EventContract.SpeakersInEventsEntry.TABLE_NAME +
+                         "." + EventContract.SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID +
+                        " = " + EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry._ID
         );
     }
 
@@ -215,7 +225,8 @@ public class EventProvider extends ContentProvider {
                     selectionArgs = new String[]{uri.getLastPathSegment()};
                 }
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        EventContract.SpeakersInEventsEntry.TABLE_NAME,
+                        //EventContract.SpeakersInEventsEntry.TABLE_NAME,
+                        sSpeakersWithEventQueryBuilder.getTables(),
                         projection,
                         selection,
                         selectionArgs,
