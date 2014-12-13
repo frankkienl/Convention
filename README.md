@@ -7,6 +7,12 @@ App for Convention, and for Android Course final project.
 Information for testers
 =======================
 
+Option A)  
+Download APK-file from the 'releases' section.
+
+Option B)  
+Use Google Play Store beta testing (recommended), see steps below.
+
 Step 1)
 Make sure that you have an Android Device (Smartphone of Tablet)  
 Make sure that you have logged in on the Google Play Store app, with a Google account that has Google+, and that you can use on the PC as well.
