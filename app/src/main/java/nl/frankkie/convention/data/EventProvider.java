@@ -1,5 +1,6 @@
 package nl.frankkie.convention.data;
 
+import android.app.usage.UsageEvents;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -57,14 +58,19 @@ public class EventProvider extends ContentProvider {
         sEventWithLocationQueryBuilder = new SQLiteQueryBuilder();
         // Lets hope 'INNER JOIN' does what I think it does.
         // I should have paid better attention at Database-lessons at school... >.>
-        //SELECT event.title, location.name FROM event JOIN location ON event.location_id = location._id WHERE event._id = 3
+        //SELECT event.title, location.name FROM event JOIN location ON event.location_id = location._id LEFT JOIN favorites ON event._id = favorites.item_id WHERE event._id = 3
         sEventWithLocationQueryBuilder.setTables(
-                EventContract.EventEntry.TABLE_NAME + " INNER JOIN " +
+                EventContract.EventEntry.TABLE_NAME + " JOIN " +
                         EventContract.LocationEntry.TABLE_NAME +
                         " ON " + EventContract.EventEntry.TABLE_NAME +
                         "." + EventContract.EventEntry.COLUMN_NAME_LOCATION_ID +
                         " = " + EventContract.LocationEntry.TABLE_NAME +
-                        "." + EventContract.LocationEntry._ID
+                        "." + EventContract.LocationEntry._ID +
+                        " LEFT JOIN " + EventContract.FavoritesEntry.TABLE_NAME +
+                        " ON " + EventContract.EventEntry.TABLE_NAME +
+                        "." + EventContract.EventEntry._ID +
+                        " = " + EventContract.FavoritesEntry.TABLE_NAME +
+                        "." + EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID
         );
         // Get Speakers from Event
         sSpeakersWithEventQueryBuilder = new SQLiteQueryBuilder();
@@ -127,7 +133,7 @@ public class EventProvider extends ContentProvider {
                     selection = EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID + " = ?";
                     //content://nl.frankkie.convention/event/0 <-- last segment is ID.
                     selectionArgs = new String[]{uri.getLastPathSegment()};
-                }
+                }/*0
                 retCursor = sEventWithLocationQueryBuilder.query(
                         mOpenHelper.getReadableDatabase(),
                         projection,
@@ -137,6 +143,16 @@ public class EventProvider extends ContentProvider {
                         null,
                         sortOrder
                         );
+                        */
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        sEventWithLocationQueryBuilder.getTables(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,null,
+                        sortOrder
+
+                );
                 break;
             }
             case SPEAKER: {

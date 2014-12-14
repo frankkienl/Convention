@@ -1,8 +1,13 @@
 package nl.frankkie.convention;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -11,6 +16,8 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,8 +43,10 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             EventContract.EventEntry.COLUMN_NAME_END_TIME,
             EventContract.EventEntry.COLUMN_NAME_COLOR,
             EventContract.EventEntry.COLUMN_NAME_IMAGE,
+            EventContract.LocationEntry.TABLE_NAME + "." + EventContract.LocationEntry._ID,
             EventContract.LocationEntry.COLUMN_NAME_NAME,
-            EventContract.LocationEntry.TABLE_NAME + "." + EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION
+            EventContract.LocationEntry.TABLE_NAME + "." + EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION,
+            EventContract.FavoritesEntry.TABLE_NAME + "." + EventContract.FavoritesEntry._ID //If filled, its starred.
     };
     public static final String[] SPEAKERS_COLUMNS = {
             EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry._ID,
@@ -58,6 +67,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     TextView mLocationDescription;
     TextView mSpeakersHeader;
     LinearLayout mSpeakersContainer;
+    CheckBox mStar;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -89,8 +99,24 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 mEndTime.setText(Util.getDataTimeString(data.getLong(5)));
                 String color = data.getString(6);
                 String image = data.getString(7);
-                mLocation.setText(data.getString(8));
-                mLocationDescription.setText(data.getString(9));
+                int locationId = data.getInt(8);
+                mLocation.setText(data.getString(9));
+                mLocationDescription.setText(data.getString(10));
+                //Star
+                mStar.setOnCheckedChangeListener(null); //remove before changing, add again later.
+                if (!data.isNull(11)) { //null when not starred.
+                    mStar.setChecked(true);
+                    //We don't actually care what the ID is,
+                    //We only care if its present or not.
+                } else {
+                    mStar.setChecked(false);
+                }
+                mStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        persistFavorite(isChecked);
+                    }
+                });
             }
         } else if (cursorLoader.getId() == EVENT_SPEAKERS_LOADER) {
             //List of speakers of this Event.
@@ -102,7 +128,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             mSpeakersHeader.setVisibility(View.VISIBLE);
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             mSpeakersContainer.removeAllViews(); //clear content
-            while (data.moveToNext()){
+            while (data.moveToNext()) {
                 ViewGroup speakerItem = (ViewGroup) inflater.inflate(R.layout.event_detail_speaker_item, mSpeakersContainer, false);
                 TextView sName = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_name);
                 TextView sDescription = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_description);
@@ -160,6 +186,10 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         mSpeakersHeader = (TextView) rootView.findViewById(R.id.event_detail_label_speakers);
         mSpeakersHeader.setVisibility(View.GONE); //Make visible (again) if there are Speakers for this event.
         mSpeakersContainer = (LinearLayout) rootView.findViewById(R.id.event_detail_speakers_container);
+        mStar = (CheckBox) rootView.findViewById(R.id.event_detail_star);
+
+        //
+        showStarTip();
         return rootView;
     }
 
@@ -169,5 +199,45 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         //Loaders depend on Activity not on Fragment!
         getLoaderManager().initLoader(EVENT_DETAIL_LOADER, null, this);
         getLoaderManager().initLoader(EVENT_SPEAKERS_LOADER, null, this);
+    }
+
+    public void showStarTip() {
+        //Show Star-tip
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean shownStarTip = prefs.getBoolean("prefs_shown_star_tip", false);
+        if (!shownStarTip) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.star_tip_title);
+            builder.setMessage(R.string.star_tip_message);
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Set to shown=true, when user presses the OK-button.
+                    prefs.edit().putBoolean("prefs_shown_star_tip", true).apply();
+                    //Using apply (instead of commit), because we don't want to stall the UI-thread.
+                    //apply will make the change in memory, and then save it to persistent story
+                    //on a background thread.
+                }
+            });
+            builder.create().show();
+        }
+    }
+
+    public void persistFavorite(boolean checked) {
+        if (checked) {
+            //If checked, add a row to DB
+            ContentValues cv = new ContentValues();
+            //cv.put(EventContract.FavoritesEntry._ID,null);
+            //giving null or no ID at all will generate an ID.
+            //We do not need to know what the ID of the row will be.
+            cv.put(EventContract.FavoritesEntry.COLUMN_NAME_TYPE, EventContract.FavoritesEntry.TYPE_EVENT);
+            cv.put(EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID, mId); //Id of this Event
+            getActivity().getContentResolver().insert(EventContract.FavoritesEntry.CONTENT_URI, cv);
+        } else {
+            //If not checked, remove row from DB
+            getActivity().getContentResolver().delete(EventContract.FavoritesEntry.CONTENT_URI,
+                    EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = '" + EventContract.FavoritesEntry.TYPE_EVENT +
+                            "' AND " + EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID + " = ?", new String[]{mId});
+        }
     }
 }
