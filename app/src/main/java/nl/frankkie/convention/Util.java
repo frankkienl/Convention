@@ -33,7 +33,8 @@ public class Util {
     public static void navigateFromNavDrawer(Activity thisAct, int position) {
         switch (position) {
             case 0: {
-                //TODO: my schedule activity
+                if (!(thisAct instanceof ScheduleActivity))
+                navigateFromNavDrawer(thisAct,new Intent(thisAct,ScheduleActivity.class));
                 break;
             }
             case 1: {

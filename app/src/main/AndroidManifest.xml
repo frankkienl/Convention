@@ -54,6 +54,8 @@
         <activity
             android:name="nl.frankkie.convention.MapActivity"
             android:label="@string/title_activity_map"></activity>
+        <activity android:name=".ScheduleActivity"
+            android:label="@string/title_activity_schedule"></activity>
 
         <provider
             android:name="nl.frankkie.convention.data.EventProvider"

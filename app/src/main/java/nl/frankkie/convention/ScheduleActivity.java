@@ -13,6 +13,8 @@ import android.view.Menu;
 
 
 /**
+ * THIS IS LIKE A COPY OF EventListActivity
+ *
  * An activity representing a list of Events. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
@@ -32,8 +34,8 @@ import android.view.Menu;
  * as ActionBarActivity supports Fragments.
  * http://stackoverflow.com/questions/18451575/action-bar-fragment-activity
  */
-public class EventListActivity extends ActionBarActivity
-        implements EventListFragment.Callbacks, NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class ScheduleActivity extends ActionBarActivity
+        implements ScheduleListFragment.Callbacks, NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -54,8 +56,7 @@ public class EventListActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //See: R.values-sw600dp.refs
-        setContentView(R.layout.activity_event_list);
+        setContentView(R.layout.activity_schedule_list);
 
 
         if (findViewById(R.id.event_detail_container) != null) {
@@ -67,32 +68,12 @@ public class EventListActivity extends ActionBarActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((EventListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.event_list))
+            ((ScheduleListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.schedule_list))
                     .setActivateOnItemClick(true);
         }
 
         initNavigationDrawer();
-        // TODO: If exposing deep links into your app, handle intents here.
-
-        //Create Account needed for SyncAdapter
-        Account acc = createDummyAccount();
-        //Sync
-        Bundle syncBundle = new Bundle();
-        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
-        ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
-    }
-
-    public Account createDummyAccount() {
-        //TODO: Change domain when using for a different convention
-        Account account = new Account("dummyaccount", "nl.frankkie.convention");
-        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        boolean success = accountManager.addAccountExplicitly(account, null, null);
-        if (!success) {
-            Log.e("Convention", "Cannot create account for Sync.");
-        }
-        return account;
     }
 
     public void initNavigationDrawer() {

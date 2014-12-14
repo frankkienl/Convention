@@ -235,6 +235,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             getActivity().getContentResolver().insert(EventContract.FavoritesEntry.CONTENT_URI, cv);
         } else {
             //If not checked, remove row from DB
+            //We use EventID in where-clause, hence, we don't need to know the RowID of the Favorite.
             getActivity().getContentResolver().delete(EventContract.FavoritesEntry.CONTENT_URI,
                     EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = '" + EventContract.FavoritesEntry.TYPE_EVENT +
                             "' AND " + EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID + " = ?", new String[]{mId});

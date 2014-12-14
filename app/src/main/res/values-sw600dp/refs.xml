@@ -7,4 +7,5 @@
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     -->
     <item type="layout" name="activity_event_list">@layout/activity_event_twopane</item>
+    <item type="layout" name="activity_schedule_list">@layout/activity_schedule_twopane</item>
 </resources>

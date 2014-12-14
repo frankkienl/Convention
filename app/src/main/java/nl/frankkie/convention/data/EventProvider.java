@@ -44,7 +44,7 @@ public class EventProvider extends ContentProvider {
     public static final int SPEAKERS_IN_EVENTS_EVENT_ID = 402;
     //content://nl.frankkie.convention/favorites/ (LIST of favorites of all types)
     public static final int FAVORITES = 500;
-    //content://nl.frankkie.convention/favorites/event/ID (LIST of favorites of event type)
+    //content://nl.frankkie.convention/favorites/event (LIST of favorites of event type)
     public static final int FAVORITES_EVENTS = 501;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -52,6 +52,7 @@ public class EventProvider extends ContentProvider {
 
     private static final SQLiteQueryBuilder sEventWithLocationQueryBuilder;
     private static final SQLiteQueryBuilder sSpeakersWithEventQueryBuilder;
+    private static final SQLiteQueryBuilder sFavoriteEventsWithLocationQueryBuilder;
 
     static {
         // Sunshine combines location with weather, this app will combine event and location
@@ -81,6 +82,21 @@ public class EventProvider extends ContentProvider {
                          "." + EventContract.SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID +
                         " = " + EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry._ID
         );
+        //Get all favorite Events (with location)
+        //SELECT event.title, event.start_time, location.name, favorites._id FROM event JOIN location ON event.location_id = location._id JOIN favorites ON favorites.item_id = event._id WHERE favorites.type = 'event'
+        sFavoriteEventsWithLocationQueryBuilder = new SQLiteQueryBuilder();
+        sFavoriteEventsWithLocationQueryBuilder.setTables(
+                EventContract.EventEntry.TABLE_NAME + " JOIN " +
+                       EventContract.LocationEntry.TABLE_NAME + " ON " +
+                        EventContract.EventEntry.TABLE_NAME +
+                        "." + EventContract.EventEntry.COLUMN_NAME_LOCATION_ID +
+                        " = " + EventContract.LocationEntry.TABLE_NAME + "." +
+                        EventContract.LocationEntry._ID + " JOIN " +
+                        EventContract.FavoritesEntry.TABLE_NAME + " ON " +
+                        EventContract.FavoritesEntry.TABLE_NAME + "." +
+                        EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID + " = " +
+                        EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID
+        );
     }
 
 
@@ -96,7 +112,7 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/#", SPEAKERS_IN_EVENTS_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/event/#", SPEAKERS_IN_EVENTS_EVENT_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES, FAVORITES);
-        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES + "/event/#", FAVORITES_EVENTS);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES + "/event", FAVORITES_EVENTS);
         return matcher;
     }
 
@@ -133,17 +149,7 @@ public class EventProvider extends ContentProvider {
                     selection = EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID + " = ?";
                     //content://nl.frankkie.convention/event/0 <-- last segment is ID.
                     selectionArgs = new String[]{uri.getLastPathSegment()};
-                }/*0
-                retCursor = sEventWithLocationQueryBuilder.query(
-                        mOpenHelper.getReadableDatabase(),
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                        );
-                        */
+                }
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         sEventWithLocationQueryBuilder.getTables(),
                         projection,
@@ -266,11 +272,11 @@ public class EventProvider extends ContentProvider {
             }
             case FAVORITES_EVENTS: {
                 if (selection == null || "".equals(selection)) {
-                    selection = EventContract.FavoritesEntry.TABLE_NAME + "." + EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = " + EventContract.FavoritesEntry.TYPE_EVENT;
-                    selectionArgs = null;
+                    selection = EventContract.FavoritesEntry.TABLE_NAME + "." + EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = ?";
+                    selectionArgs = new String[]{EventContract.FavoritesEntry.TYPE_EVENT};
                 }
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        EventContract.FavoritesEntry.TABLE_NAME,
+                        sFavoriteEventsWithLocationQueryBuilder.getTables(),
                         projection,
                         selection,
                         selectionArgs,
