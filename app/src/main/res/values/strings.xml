@@ -26,7 +26,7 @@
     <string name="label_speakers">Speakers</string>
 
     <string name="star_tip_title">Tip</string>
-    <string name="star_tip_message">Click the star to add this Event to \'My Schedule\'. Do this for all events you intend to attend.</string>
+    <string name="star_tip_message">Click the Star to add this Event to \'My Schedule\'. Do this for all Events you intend to attend.</string>
     <!--
         Specific for this convention
         Change these when using for another convention

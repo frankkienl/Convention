@@ -34,4 +34,7 @@
     <string name="label_time">Tijd</string>
     <string name="label_location">Lokatie</string>
     <string name="label_speakers">Speakers</string>
+    <string name="star_tip_message">Klik op de Ster om dit Event toe te voegen aan \'Mijn Planning\'. Doe dit voor alle Event die je wilt bijwonen.</string>
+    <string name="star_tip_title">Hint</string>
+    <string name="title_activity_schedule">Planning</string>
 </resources>
