@@ -30,26 +30,35 @@ import nl.frankkie.convention.data.EventContract;
 public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
 
     ContentResolver mContentResolver;
-    public ConventionSyncAdapter(Context c, boolean autoInit){
-        super(c,autoInit);
+
+    public ConventionSyncAdapter(Context c, boolean autoInit) {
+        super(c, autoInit);
         mContentResolver = c.getContentResolver();
     }
 
-    public ConventionSyncAdapter(Context c, boolean autoInit, boolean allowParallel){
-        super(c,autoInit,allowParallel);
+    public ConventionSyncAdapter(Context c, boolean autoInit, boolean allowParallel) {
+        super(c, autoInit, allowParallel);
         mContentResolver = c.getContentResolver();
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        //TODO: sync data from server to database
-        Log.d("Convention","SyncAdapter: onPerformSync");
+        //Placed it (download and parsing) into separate methods, because the IDE complained this method was too complex.
+        Log.d("Convention", "SyncAdapter: onPerformSync");
+        String json = httpDownload();
+        if (json == null) {
+            return; //error or empty
+        }
+        parseJSON(json);
+    }
+
+    public String httpDownload() {
         //<editor-fold desc="boring http downloading code">
         String json = null;
         HttpURLConnection urlConnection = null;
         BufferedReader br = null;
 
-        try{
+        try {
             //CHANGE THIS URL WHEN USING FOR OTHER CONVENTION
             //URL url = new URL("http://frankkie.nl/pony/hwcon/convention_data.json");
             URL url = new URL("https://raw.githubusercontent.com/frankkienl/Convention/master/convention_data.json");
@@ -64,10 +73,10 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L118
             //</rant>
             InputStream is = urlConnection.getInputStream();
-            if (is == null){
+            if (is == null) {
                 //Apparently there is no inputstream.
                 //We're done here
-                return;
+                return null;
             }
 
             //Why does Sunshine use a StringBuffer instead of a StringBuilder?
@@ -80,36 +89,43 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             StringBuilder sb = new StringBuilder();
             br = new BufferedReader(new InputStreamReader(is));
             String line;
-            while (true){
+            while (true) {
                 line = br.readLine();
-                if (line == null){break;}
+                if (line == null) {
+                    break;
+                }
                 //Chained append is better than concat
                 //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L132
                 sb.append(line).append("\n");
             }
-            if (sb.length() == 0){
+            if (sb.length() == 0) {
                 //empty
-                return;
+                return null;
             }
 
             json = sb.toString();
         } catch (IOException e) {
-            Log.e("Convention","Error while downloading convention data ", e);
-            return;
+            Log.e("Convention", "Error while downloading convention data ", e);
+            return null;
         } finally {
-            if (urlConnection!=null){
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            if (br != null){
+            if (br != null) {
                 //*cough* boilerplate *cough*
-                try {br.close();}catch(IOException e) {Log.e("Convention","Error closing BufferedReader",e);}
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Log.e("Convention", "Error closing BufferedReader", e);
+                }
             }
         }
         //</editor-fold>
+        return json;
+    }
 
-        Log.v("Covention",json);
-
-        //Time for JSON Parsing
+    public void parseJSON(String json){
+        //<editor-fold desc="boring json parsing and DB inserting code">
         try {
             JSONObject data = new JSONObject(json).getJSONObject("data");
 
@@ -117,86 +133,86 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             JSONArray events = data.getJSONArray("events");
             //Yes thats a word now
             ContentValues[] eventCVs = new ContentValues[events.length()];
-            for (int i = 0; i < events.length(); i++){
+            for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);
                 ContentValues values = new ContentValues();
-                values.put(EventContract.EventEntry._ID,event.getInt("_id"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_TITLE,event.getString("title"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION,event.getString("description"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS,event.getString("keywords"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_IMAGE,event.getString("image"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_COLOR,event.getString("color"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_START_TIME,event.getString("start_time"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_END_TIME,event.getString("end_time"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID,event.getInt("location_id"));
-                values.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER,event.getInt("sort_order"));
+                values.put(EventContract.EventEntry._ID, event.getInt("_id"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_TITLE, event.getString("title"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, event.getString("description"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, event.getString("keywords"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, event.getString("image"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_COLOR, event.getString("color"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_START_TIME, event.getString("start_time"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_END_TIME, event.getString("end_time"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION_ID, event.getInt("location_id"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_SORT_ORDER, event.getInt("sort_order"));
                 eventCVs[i] = values;
             }
 
             //Delete old values
-            getContext().getContentResolver().delete(EventContract.EventEntry.CONTENT_URI,null,null); //null deletes all rows
+            getContext().getContentResolver().delete(EventContract.EventEntry.CONTENT_URI, null, null); //null deletes all rows
             //Insert new ones
-            getContext().getContentResolver().bulkInsert(EventContract.EventEntry.CONTENT_URI,eventCVs);
+            getContext().getContentResolver().bulkInsert(EventContract.EventEntry.CONTENT_URI, eventCVs);
             //Notify observers
-            getContext().getContentResolver().notifyChange(EventContract.EventEntry.CONTENT_URI,null);
+            getContext().getContentResolver().notifyChange(EventContract.EventEntry.CONTENT_URI, null);
             //</editor-fold>
 
             //<editor-fold desc="speakers">
             JSONArray speakers = data.getJSONArray("speakers");
             ContentValues[] speakerCVs = new ContentValues[speakers.length()];
-            for (int i = 0; i < speakers.length(); i++){
+            for (int i = 0; i < speakers.length(); i++) {
                 JSONObject speaker = speakers.getJSONObject(i);
                 ContentValues values = new ContentValues();
-                values.put(EventContract.SpeakerEntry._ID,speaker.getInt("_id"));
-                values.put(EventContract.SpeakerEntry.COLUMN_NAME_NAME,speaker.getString("name"));
-                values.put(EventContract.SpeakerEntry.COLUMN_NAME_DESCRIPTION,speaker.getString("description"));
-                values.put(EventContract.SpeakerEntry.COLUMN_NAME_IMAGE,speaker.getString("image"));
-                values.put(EventContract.SpeakerEntry.COLUMN_NAME_COLOR,speaker.getString("color"));
+                values.put(EventContract.SpeakerEntry._ID, speaker.getInt("_id"));
+                values.put(EventContract.SpeakerEntry.COLUMN_NAME_NAME, speaker.getString("name"));
+                values.put(EventContract.SpeakerEntry.COLUMN_NAME_DESCRIPTION, speaker.getString("description"));
+                values.put(EventContract.SpeakerEntry.COLUMN_NAME_IMAGE, speaker.getString("image"));
+                values.put(EventContract.SpeakerEntry.COLUMN_NAME_COLOR, speaker.getString("color"));
                 speakerCVs[i] = values;
             }
-            getContext().getContentResolver().delete(EventContract.SpeakerEntry.CONTENT_URI,null,null);
-            getContext().getContentResolver().bulkInsert(EventContract.SpeakerEntry.CONTENT_URI,speakerCVs);
-            getContext().getContentResolver().notifyChange(EventContract.SpeakerEntry.CONTENT_URI,null);
+            getContext().getContentResolver().delete(EventContract.SpeakerEntry.CONTENT_URI, null, null);
+            getContext().getContentResolver().bulkInsert(EventContract.SpeakerEntry.CONTENT_URI, speakerCVs);
+            getContext().getContentResolver().notifyChange(EventContract.SpeakerEntry.CONTENT_URI, null);
             //</editor-fold>
 
             //<editor-fold desc="locations">
             JSONArray locations = data.getJSONArray("locations");
             ContentValues[] locationCVs = new ContentValues[locations.length()];
-            for (int i = 0; i < locations.length(); i++){
+            for (int i = 0; i < locations.length(); i++) {
                 JSONObject location = locations.getJSONObject(i);
                 ContentValues values = new ContentValues();
-                values.put(EventContract.LocationEntry._ID,location.getInt("_id"));
-                values.put(EventContract.LocationEntry.COLUMN_NAME_NAME,location.getString("name"));
-                values.put(EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION,location.getString("description"));
-                values.put(EventContract.LocationEntry.COLUMN_NAME_MAP_LOCATION,location.getString("map_location"));
-                values.put(EventContract.LocationEntry.COLUMN_NAME_FLOOR,location.getInt("floor"));
+                values.put(EventContract.LocationEntry._ID, location.getInt("_id"));
+                values.put(EventContract.LocationEntry.COLUMN_NAME_NAME, location.getString("name"));
+                values.put(EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION, location.getString("description"));
+                values.put(EventContract.LocationEntry.COLUMN_NAME_MAP_LOCATION, location.getString("map_location"));
+                values.put(EventContract.LocationEntry.COLUMN_NAME_FLOOR, location.getInt("floor"));
                 locationCVs[i] = values;
             }
-            getContext().getContentResolver().delete(EventContract.LocationEntry.CONTENT_URI,null,null);
-            getContext().getContentResolver().bulkInsert(EventContract.LocationEntry.CONTENT_URI,locationCVs);
-            getContext().getContentResolver().notifyChange(EventContract.LocationEntry.CONTENT_URI,null);
+            getContext().getContentResolver().delete(EventContract.LocationEntry.CONTENT_URI, null, null);
+            getContext().getContentResolver().bulkInsert(EventContract.LocationEntry.CONTENT_URI, locationCVs);
+            getContext().getContentResolver().notifyChange(EventContract.LocationEntry.CONTENT_URI, null);
             //</editor-fold>
 
             //<editor-fold desc="speakers in events">
             JSONArray speakersInEvents = data.getJSONArray("speakers_in_events");
             ContentValues[] sieCVs = new ContentValues[speakersInEvents.length()];
-            for (int i = 0; i < speakersInEvents.length(); i++){
+            for (int i = 0; i < speakersInEvents.length(); i++) {
                 JSONObject sie = speakersInEvents.getJSONObject(i);
                 ContentValues sieCV = new ContentValues();
-                sieCV.put(EventContract.SpeakersInEventsEntry._ID,sie.getInt("_id"));
-                sieCV.put(EventContract.SpeakersInEventsEntry.COLUMN_NAME_EVENT_ID,sie.getInt("event_id"));
-                sieCV.put(EventContract.SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID,sie.getInt("speaker_id"));
+                sieCV.put(EventContract.SpeakersInEventsEntry._ID, sie.getInt("_id"));
+                sieCV.put(EventContract.SpeakersInEventsEntry.COLUMN_NAME_EVENT_ID, sie.getInt("event_id"));
+                sieCV.put(EventContract.SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID, sie.getInt("speaker_id"));
                 sieCVs[i] = sieCV;
             }
-            getContext().getContentResolver().delete(EventContract.SpeakersInEventsEntry.CONTENT_URI,null,null);
-            getContext().getContentResolver().bulkInsert(EventContract.SpeakersInEventsEntry.CONTENT_URI,sieCVs);
-            getContext().getContentResolver().notifyChange(EventContract.SpeakersInEventsEntry.CONTENT_URI,null);
+            getContext().getContentResolver().delete(EventContract.SpeakersInEventsEntry.CONTENT_URI, null, null);
+            getContext().getContentResolver().bulkInsert(EventContract.SpeakersInEventsEntry.CONTENT_URI, sieCVs);
+            getContext().getContentResolver().notifyChange(EventContract.SpeakersInEventsEntry.CONTENT_URI, null);
             //</editor-fold>
 
-        } catch (JSONException e){
+        } catch (JSONException e) {
             Log.e("Convention", "Error in SyncAdapter.onPerformSync, JSON ", e);
             return;
         }
-
+        //</editor-fold>
     }
 }

@@ -7,17 +7,20 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Add My Schedule screen
     - Map
-    - Add search-feature (search-icon in actionbar)
-    - Add Setting screen
+    - Remove Example Action from ActionBar
+    - Add ShareActionProvider
+    - Star as ActionBarItem ?
     - Add Speakers Screen
     - Add News Screen
+    - Add search-feature (search-icon in actionbar)
+    - Add Setting screen (What settings are there?)
     - Implement Notification
-    - Remove Example Action from actionbar
     - Add GCM for when data should be synced again.
-    - Sync Favorites to the cloud
-    - NFC Hunt (but give it a catchy friendship related name)
+    - Implement Sync Favorites to the cloud
+    - Add NFC Hunt (but give it a catchy friendship-related name)
+    - Add Android Wear companion app
+    - Make it Android 2.3.3 compatible (now its 4.0+)
     //
     -->
 
