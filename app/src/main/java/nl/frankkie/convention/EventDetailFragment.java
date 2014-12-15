@@ -26,8 +26,8 @@ import nl.frankkie.convention.data.EventContract;
 
 /**
  * A fragment representing a single Event detail screen.
- * This fragment is either contained in a {@link EventListActivity}
- * in two-pane mode (on tablets) or a {@link EventDetailActivity}
+ * This fragment is either contained in a {@link nl.frankkie.convention.EventListActivity} or {@link nl.frankkie.convention.ScheduleActivity}
+ * in two-pane mode (on tablets) or a {@link nl.frankkie.convention.EventDetailActivity}
  * on handsets.
  */
 public class EventDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
