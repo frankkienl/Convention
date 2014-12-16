@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 
 
 public class MapActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -32,7 +33,9 @@ public class MapActivity extends ActionBarActivity implements NavigationDrawerFr
     }
 
     public void initUI() {
-        //TODO
+        WebView wv = (WebView) findViewById(R.id.map_webview);
+        wv.loadUrl("file:///android_asset/map.html");
+        wv.getSettings().setBuiltInZoomControls(true);
     }
 
 
