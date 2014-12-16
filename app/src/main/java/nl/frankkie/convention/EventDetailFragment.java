@@ -3,6 +3,7 @@ package nl.frankkie.convention;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,13 +14,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import nl.frankkie.convention.data.EventContract;
@@ -157,6 +163,25 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
      * fragment (e.g. upon screen orientation changes).
      */
     public EventDetailFragment() {
+        setHasOptionsMenu(true); //for ShareActionProvider
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.eventdetailfragment,menu);
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+        android.support.v7.widget.ShareActionProvider mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        mShareActionProvider.setShareIntent(createShareIntent());
+    }
+
+    public Intent createShareIntent(){
+        //Like in Sunshine
+        Intent i = new Intent(Intent.ACTION_SEND);
+        //We should use FLAG_ACTIVITY_NEW_DOCUMENT instead, but it has the same value (0x00080000)
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_text),mTitle.getText().toString()));
+        return i;
     }
 
     @Override

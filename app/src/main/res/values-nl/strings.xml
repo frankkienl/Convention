@@ -13,6 +13,9 @@
     <string name="navigation_drawer_close">Close navigatie paneel</string>
     <string name="action_example">Voorbeeld actie</string>
     <string name="action_settings">Instellingen</string>
+    <string name="action_share">Delen</string>
+
+    <string name="share_text">Ik ga naar het event \'%s\' tijdens HWcon 2015! #hwcon2015</string>
 
     <string name="about_mail_header">Email</string>
     <string name="about_date_header">Datum</string>
