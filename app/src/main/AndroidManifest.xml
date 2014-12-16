@@ -7,7 +7,6 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Map
     - Star as ActionBarItem ?
     - Add Speakers Screen
     - Add News Screen
