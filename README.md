@@ -3,6 +3,7 @@ Convention
 
 App for Convention, and for Android Course final project.
 
+Demonstration video: https://www.youtube.com/watch?v=Kor07PKys-c
 
 Information for testers
 =======================
