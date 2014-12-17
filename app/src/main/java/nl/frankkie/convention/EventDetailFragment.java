@@ -52,6 +52,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             EventContract.LocationEntry.TABLE_NAME + "." + EventContract.LocationEntry._ID,
             EventContract.LocationEntry.COLUMN_NAME_NAME,
             EventContract.LocationEntry.TABLE_NAME + "." + EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION,
+            EventContract.LocationEntry.COLUMN_NAME_FLOOR,
             EventContract.FavoritesEntry.TABLE_NAME + "." + EventContract.FavoritesEntry._ID //If filled, its starred.
     };
     public static final String[] SPEAKERS_COLUMNS = {
@@ -71,6 +72,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     TextView mEndTime;
     TextView mLocation;
     TextView mLocationDescription;
+    TextView mLocationFloor;
     TextView mSpeakersHeader;
     LinearLayout mSpeakersContainer;
     CheckBox mStar;
@@ -92,6 +94,19 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         return null;
     }
 
+    public String getFloorName(int floor) {
+        switch (floor) {
+            case 0:
+                return getString(R.string.map_floor0);
+            case 1:
+                return getString(R.string.map_floor1);
+            case 2:
+                return getString(R.string.map_floor2);
+            default:
+                return "";
+        }
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         //set View-content
@@ -108,9 +123,11 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 int locationId = data.getInt(8);
                 mLocation.setText(data.getString(9));
                 mLocationDescription.setText(data.getString(10));
+                int floor = data.getInt(11);
+                mLocationFloor.setText(getFloorName(floor));
                 //Star
                 mStar.setOnCheckedChangeListener(null); //remove before changing, add again later.
-                if (!data.isNull(11)) { //null when not starred.
+                if (!data.isNull(12)) { //null when not starred.
                     mStar.setChecked(true);
                     //We don't actually care what the ID is,
                     //We only care if its present or not.
@@ -168,19 +185,19 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.eventdetailfragment,menu);
+        inflater.inflate(R.menu.eventdetailfragment, menu);
         MenuItem menuItem = menu.findItem(R.id.action_share);
         android.support.v7.widget.ShareActionProvider mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
         mShareActionProvider.setShareIntent(createShareIntent());
     }
 
-    public Intent createShareIntent(){
+    public Intent createShareIntent() {
         //Like in Sunshine
         Intent i = new Intent(Intent.ACTION_SEND);
         //We should use FLAG_ACTIVITY_NEW_DOCUMENT instead, but it has the same value (0x00080000)
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_text),mTitle.getText().toString()));
+        i.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_text), mTitle.getText().toString()));
         return i;
     }
 
@@ -208,6 +225,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         mEndTime = (TextView) rootView.findViewById(R.id.event_detail_endtime);
         mLocation = (TextView) rootView.findViewById(R.id.event_detail_location);
         mLocationDescription = (TextView) rootView.findViewById(R.id.event_detail_location_description);
+        mLocationFloor = (TextView) rootView.findViewById(R.id.event_detail_location_floor);
         mSpeakersHeader = (TextView) rootView.findViewById(R.id.event_detail_label_speakers);
         mSpeakersHeader.setVisibility(View.GONE); //Make visible (again) if there are Speakers for this event.
         mSpeakersContainer = (LinearLayout) rootView.findViewById(R.id.event_detail_speakers_container);
