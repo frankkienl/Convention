@@ -48,3 +48,6 @@ http://stackoverflow.com/questions/355089/stringbuilder-and-stringbuffer
 
 How to make Spinning Navigation-Drawer Indicator  
 http://www.nkdroid.com/2014/11/Android-Lollipop-Navigation-Drawer-Example-Using-Appcompat-21.html
+
+Ion, for loading images
+https://github.com/koush/ion#get-ion

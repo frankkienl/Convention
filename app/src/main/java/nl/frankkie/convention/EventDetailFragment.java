@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import nl.frankkie.convention.data.EventContract;
 
 /**
@@ -155,11 +157,19 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 ViewGroup speakerItem = (ViewGroup) inflater.inflate(R.layout.event_detail_speaker_item, mSpeakersContainer, false);
                 TextView sName = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_name);
                 TextView sDescription = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_description);
-                ImageView sImage = (ImageView) speakerItem.findViewById(R.id.event_detail_speaker_item_image);
+                ImageView sImageView = (ImageView) speakerItem.findViewById(R.id.event_detail_speaker_item_image);
                 sName.setText(data.getString(1));
                 sDescription.setText(data.getString(2));
-                String imageUrl = data.getString(4);
+                String sImageUrl = data.getString(4);
                 mSpeakersContainer.addView(speakerItem);
+
+                //Load image
+                Ion.with(this)
+                        .load(sImageUrl)
+                        .withBitmap()
+                        .error(R.drawable.ic_launcher)
+                        .placeholder(R.drawable.ic_launcher)
+                        .intoImageView(sImageView);
             }
         }
     }

@@ -19,4 +19,7 @@
     <style name="textStyle_details">
 
     </style>
+    <style name="textStyle_speakername">
+        <item name="android:textSize">26sp</item>
+    </style>
 </resources>
