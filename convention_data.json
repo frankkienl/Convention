@@ -4,7 +4,7 @@
             {
                 "_id": 1,
                 "title": "Opening",
-                "description": "The big opening!",
+                "description": "The big opening! The special guests will be introduced here.",
                 "keywords": "opening, mandatory",
                 "image": "",
                 "color": "#FFF",
@@ -16,7 +16,7 @@
             {
                 "_id": 2,
                 "title": "VA Panel",
-                "description": "Voice Actors Panel",
+                "description": "The voice actors will give a presentation on how it's like to be a Voice Actor. And they will explain how the produce the different voices for the show.",
                 "keywords": "va, panel",
                 "image": "",
                 "color": "#0000FF",
@@ -28,7 +28,7 @@
             {
                 "_id": 3,
                 "title": "Karaoke",
-                "description": "Playing Karaoke Game",
+                "description": "Playing Karaoke Game. This game, made by Renard, will feature most of the songs from the show as well as community-made songs.",
                 "keywords": "game, karaoke",
                 "image": "",
                 "color": "#00FFFF",
@@ -37,7 +37,7 @@
                 "location_id": 2,
                 "sort_order": 1
             },
-             {
+            {
                 "_id": 4,
                 "title": "Writers Panel",
                 "description": "A panel with some of the best fanfic writers the community has to offer. This is panel also includes the eplanation of the fanfic contest. The results of the fanfic contest will be announced at the end of the day. Jury will consist of Nightmare Rarity Belle and a random visitor.",
@@ -48,9 +48,20 @@
                 "end_time": "1424527200",
                 "location_id": 3,
                 "sort_order": 0
-             }
+            },
+            {
+                "_id": 5,
+                "title": "Story Time",
+                "description": "Abe the Storyteller will tell us a story.",
+                "keywords": "story",
+                "image": "",
+                "color": "#AAAAAA",
+                "start_time": "1424527200",
+                "end_time": "1424530800",
+                "location_id": 3,
+                "sort_order": 0
+            }
         ],
-
         "speakers": [
             {
                 "_id": 1,
@@ -63,7 +74,7 @@
                 "_id": 2,
                 "name": "Abe The Storyteller",
                 "description": "Storyteller\nhttp://www.hwcon.nl/en/news/abe-the-storyteller",
-                "image":"http://www.hwcon.nl/bundles/hwconsite/images/news/abe/banner.png",
+                "image": "http://www.hwcon.nl/bundles/hwconsite/images/news/abe/banner.png",
                 "color": "#0000AA"
             },
             {
@@ -88,7 +99,6 @@
                 "color": "#FF0000"
             }
         ],
-
         "locations": [
             {
                 "_id": 1,
@@ -112,7 +122,6 @@
                 "floor": 1
             }
         ],
-
         "speakers_in_events": [
             {
                 "_id": 1,
@@ -137,6 +146,12 @@
                 "_comment": "Writers Panel, (Nightmare) Rarity Belle",
                 "event_id": 4,
                 "speaker_id": 5
+            },
+            {
+                "_id": 5,
+                "_comment": "Story Time, Abe the Storyteller",
+                "event_id": 5,
+                "speaker_id": 2
             }
         ]
     }
