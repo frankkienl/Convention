@@ -4,12 +4,16 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 
 /**
@@ -35,12 +39,7 @@ import android.view.Menu;
 public class EventListActivity extends ActionBarActivity
         implements EventListFragment.Callbacks, NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
-
+    //<editor-fold desc="ActionBar Stuff">
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -51,12 +50,70 @@ public class EventListActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
 
+    Toolbar mToolbar;
+    ActionBarDrawerToggle mDrawerToggle;
+
+    public void initToolbar() {
+        mTitle = getTitle();
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(mTitle);
+        setSupportActionBar(mToolbar);
+        ///
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        // Set up the drawer.
+        mDrawerToggle = mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void restoreActionBar() {
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    /**
+     * Callback from Hamburger-menu
+     *
+     * @param position
+     */
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        Util.navigateFromNavDrawer(this, position);
+    }
+    //</editor-fold>
+
+    /**
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
+     * device.
+     */
+    private boolean mTwoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //See: R.values-sw600dp.refs
         setContentView(R.layout.activity_event_list);
-
+        initToolbar();
 
         if (findViewById(R.id.event_detail_container) != null) {
             // The detail container view will be present only in the
@@ -71,10 +128,6 @@ public class EventListActivity extends ActionBarActivity
                     .findFragmentById(R.id.event_list))
                     .setActivateOnItemClick(true);
         }
-
-        initNavigationDrawer();
-        // TODO: If exposing deep links into your app, handle intents here.
-
         //Create Account needed for SyncAdapter
         Account acc = createDummyAccount();
         //Sync
@@ -95,18 +148,6 @@ public class EventListActivity extends ActionBarActivity
         return account;
     }
 
-    public void initNavigationDrawer() {
-        //call from onCreate.
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
@@ -118,13 +159,6 @@ public class EventListActivity extends ActionBarActivity
             return true;
         }
         return super.onCreateOptionsMenu(menu);
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
     }
 
     /**
@@ -152,15 +186,5 @@ public class EventListActivity extends ActionBarActivity
             detailIntent.putExtra(EventDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
-    }
-
-    /**
-     * Callback from Hamburger-menu
-     *
-     * @param position
-     */
-    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        Util.navigateFromNavDrawer(this, position);
     }
 }
