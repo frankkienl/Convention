@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -27,7 +28,7 @@ import nl.frankkie.convention.data.EventContract;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class ScheduleListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ScheduleListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     ScheduleListAdapter mScheduleListAdapter;
     int SCHEDULE_LOADER = 0;
@@ -111,9 +112,18 @@ public class ScheduleListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_schedule_list, container, false);
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mScheduleListAdapter = new ScheduleListAdapter(getActivity(), null, 0);
 
-        mListView = (ListView) inflater.inflate(R.layout.fragment_schedule_list, container, false);
+        mListView = getListView();
+        //mListView = (ListView) inflater.inflate(R.layout.fragment_schedule_list, container, false);
         mListView.setAdapter(mScheduleListAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,13 +136,6 @@ public class ScheduleListFragment extends Fragment implements LoaderManager.Load
                 setActivatedPosition(position);
             }
         });
-
-        return mListView;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
