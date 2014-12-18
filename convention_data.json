@@ -97,6 +97,13 @@
                 "description": "Fanfic writer",
                 "image": "",
                 "color": "#FF0000"
+            },
+            {
+            	"_id": 6,
+            	"name": "LaserPony",
+            	"description": "Pony with freaking lasers attached to his head!",
+            	"image": "",
+            	"color": ""
             }
         ],
         "locations": [
