@@ -60,6 +60,18 @@
                 "end_time": "1424530800",
                 "location_id": 3,
                 "sort_order": 0
+            },
+            { 
+            	"_id": 6,
+            	"title": "Lasers!",
+            	"description": "Laserpony is firing his laser",
+            	"keywords": "laser, panel",
+            	"image": "",
+            	"color": "",
+            	"start_time": "1424530800",
+            	"end_time": "1424540800",
+            	"location_id": 3,
+            	"sort_order": 0
             }
         ],
         "speakers": [
@@ -159,6 +171,13 @@
                 "_comment": "Story Time, Abe the Storyteller",
                 "event_id": 5,
                 "speaker_id": 2
+            },
+            {
+            	"_id": 6,
+            	"_comment": "laserpony",
+            	"event_id": 6,
+            	"speaker_id": 6
+
             }
         ]
     }
