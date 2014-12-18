@@ -64,7 +64,7 @@
             { 
             	"_id": 6,
             	"title": "Lasers!",
-            	"description": "Laserpony is firing his laser",
+            	"description": "LaserPon3 is firing his laser",
             	"keywords": "laser, panel",
             	"image": "",
             	"color": "",
@@ -112,8 +112,8 @@
             },
             {
             	"_id": 6,
-            	"name": "LaserPony",
-            	"description": "Pony with freaking lasers attached to his head!",
+            	"name": "LaserPon3",
+            	"description": "Pony with freaking lasers attached to his head! \nhttp://www.hwcon.nl/en/news/laserpon3",
             	"image": "",
             	"color": ""
             }
@@ -174,7 +174,7 @@
             },
             {
             	"_id": 6,
-            	"_comment": "laserpony",
+            	"_comment": "laserpon3",
             	"event_id": 6,
             	"speaker_id": 6
 
