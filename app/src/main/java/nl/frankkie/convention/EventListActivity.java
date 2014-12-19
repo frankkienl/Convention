@@ -204,7 +204,8 @@ public class EventListActivity extends ActionBarActivity
         } else {
             //GCM is available!!
             String regId = Util.gcmGetRegId(this);
-            //not using String.isEmpty
+            //not using String.isEmpty, as this might not work on some older Android versions.
+            //not sure from which version isEmpty is supported, not taking any chances here.
             if (regId == null || "".equals(regId)){
                 //not registered yet
                 Util.gcmRegister(this);

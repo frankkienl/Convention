@@ -99,5 +99,6 @@ public class Util {
 
     public static void gcmRegister(Context context){
         //TODO
+        //http://developer.android.com/google/gcm/client.html
     }
 }
