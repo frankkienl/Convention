@@ -1,5 +1,6 @@
 package nl.frankkie.convention;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 public class AboutActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -103,7 +105,12 @@ public class AboutActivity extends ActionBarActivity implements NavigationDrawer
                 //i.setData(Uri.parse("geo:52.3118607,4.6636143"));
                 //i.setData(Uri.parse("geo:0,0?q=52.3118607,4.6636143(Venue)"));
                 i.setData(Uri.parse("geo:0,0?q=IJweg%201094%202133%20MH%20Hoofddorp"));
-                startActivity(i);
+                try {
+                    startActivity(i);
+                } catch (ActivityNotFoundException anfe) {
+                    //This happens on the emulator, when google maps is not installed
+                    Toast.makeText(AboutActivity.this, R.string.about_map_app_not_found, Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

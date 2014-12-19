@@ -46,4 +46,5 @@
     <string name="about_website_details">www.hwcon.nl</string>
     <string name="about_date_details">20-21 februari 2015</string>
     <string name="schedule_empty">Er staat nog niets in je Planning! \nKlik op de Sterren bij Events in de Bladeren-sectie om ze toe te voegen aan \'Mijn Planning\'.  \nDoe dit voor alle Events die je wilt bijwonen.</string>
+    <string name="about_map_app_not_found">Er is geen kaart app (zoals Google Maps) geinstalleerd. Installeer een kaar app en probeer opnieuw.</string>
 </resources>
