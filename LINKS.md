@@ -51,3 +51,9 @@ http://www.nkdroid.com/2014/11/Android-Lollipop-Navigation-Drawer-Example-Using-
 
 Ion, for loading images
 https://github.com/koush/ion#get-ion
+
+WebView
+http://developer.android.com/reference/android/webkit/WebView.html
+
+Handling Runtime Changes
+http://developer.android.com/guide/topics/resources/runtime-changes.html

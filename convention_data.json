@@ -69,7 +69,7 @@
             	"image": "",
             	"color": "",
             	"start_time": "1424530800",
-            	"end_time": "1424540800",
+            	"end_time": "1424538000",
             	"location_id": 3,
             	"sort_order": 0
             }
@@ -107,7 +107,7 @@
                 "_id": 5,
                 "name": "(Nightmare) Rarity Belle",
                 "description": "Fanfic writer",
-                "image": "",
+                "image": "http://frankkie.nl/pony/hwcon/2014-10-18 13.08.01.jpg",
                 "color": "#FF0000"
             },
             {

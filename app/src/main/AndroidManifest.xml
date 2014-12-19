@@ -53,8 +53,14 @@
         <activity
             android:name="nl.frankkie.convention.AboutActivity"
             android:label="@string/title_activity_about"></activity>
+        <!--
+        Don't reload WebView onConfigChange.
+        http://developer.android.com/reference/android/webkit/WebView.html
+        http://developer.android.com/guide/topics/resources/runtime-changes.html
+        //-->
         <activity
             android:name="nl.frankkie.convention.MapActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_map"></activity>
         <activity android:name=".ScheduleActivity"
             android:label="@string/title_activity_schedule"></activity>
