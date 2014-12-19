@@ -7,13 +7,15 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 
 /**
@@ -185,6 +187,18 @@ public class EventListActivity extends ActionBarActivity
             Intent detailIntent = new Intent(this, EventDetailActivity.class);
             detailIntent.putExtra(EventDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Check for Google Play Service
+        int flag = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (flag != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(flag)) {
+                GooglePlayServicesUtil.showErrorNotification(flag, this);
+            }
         }
     }
 }
