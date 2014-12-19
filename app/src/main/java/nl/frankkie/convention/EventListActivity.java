@@ -198,6 +198,16 @@ public class EventListActivity extends ActionBarActivity
         if (flag != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(flag)) {
                 GooglePlayServicesUtil.showErrorNotification(flag, this);
+            } else {
+                Log.e(getString(R.string.app_name), "Google Play Services not supported.");
+            }
+        } else {
+            //GCM is available!!
+            String regId = Util.gcmGetRegId(this);
+            //not using String.isEmpty
+            if (regId == null || "".equals(regId)){
+                //not registered yet
+                Util.gcmRegister(this);
             }
         }
     }
