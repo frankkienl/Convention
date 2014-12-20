@@ -104,6 +104,11 @@ public class Util {
         task.execute();
     }
 
+    public static void gcmUnregister(Context context) {
+        GcmUnregisterTask task = new GcmUnregisterTask(context);
+        task.execute();
+    }
+
     /**
      * This is called from the AsyncTask started in gcmRegister.
      *
@@ -123,6 +128,80 @@ public class Util {
     }
 
     /**
+     * This is called from the AsyncTask started in gcmUnregister
+     *
+     * @param context
+     * @param regId
+     * @throws java.io.IOException will be handled in AsyncTask :P
+     */
+    public static void gcmSendUnregisterToServer(Context context, String regId) throws IOException {
+        HttpURLConnection urlConnection = null;
+        BufferedReader br = null;
+        PrintWriter pw = null;
+        String postData = "regId=" + regId;
+        try {
+            //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
+            URL url = new URL("http://frankkie.nl/pony/hwcon/gcmunregister.php");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            //http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true); //output, because post-data
+            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            //urlConnection.setRequestProperty("charset","utf-8");
+            urlConnection.setRequestProperty("Content-Length", "" + postData.getBytes().length); //simple int to String casting.
+            urlConnection.setUseCaches(false);
+            urlConnection.connect();
+            OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
+            pw = new PrintWriter(os);
+            pw.print(postData);
+            pw.flush();
+            pw.close();
+            InputStream is = urlConnection.getInputStream();
+            StringBuilder sb = new StringBuilder();
+            br = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while (true) {
+                line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                sb.append(line).append("\n");
+            }
+            if (sb.length() == 0) {
+                Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer: Empty Response");
+            } else {
+                Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer response:\n" + sb.toString());
+                if (!"ok".equals(sb.toString())) {
+                    //Server should return 'ok' onSucces, something else otherwise
+                    //So some error has occured
+                    throw new IOException("gcmSendUnregisterToServer: Server did not send 'ok', something must be wrong.");
+                }
+            }
+        } catch (IOException ioe) {
+            Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer: IOException");
+            ioe.printStackTrace();
+            throw new IOException(ioe); //throw to method that called this.
+        } finally {
+            //*cough* boilerplate *cough*
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Log.e(context.getString(R.string.app_name), "Error closing BufferedReader", e);
+                    e.printStackTrace();
+                }
+            }
+            if (pw != null) {
+                pw.close();
+            }
+        }
+    }
+
+    /**
      * This is called from the AsyncTask started in gcmRegister
      *
      * @param context
@@ -133,7 +212,7 @@ public class Util {
         HttpURLConnection urlConnection = null;
         BufferedReader br = null;
         PrintWriter pw = null;
-        String postData = "regId=" + regId + "&deviceName=" + URLEncoder.encode(getDeviceName(),"UTF-8");
+        String postData = "regId=" + regId + "&deviceName=" + URLEncoder.encode(getDeviceName(), "UTF-8");
         try {
             //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
             URL url = new URL("http://frankkie.nl/pony/hwcon/gcmregister.php");
@@ -167,7 +246,7 @@ public class Util {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId: Empty Response");
             } else {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId response:\n" + sb.toString());
-                if (!"ok".equals(sb.toString())){
+                if (!"ok".equals(sb.toString())) {
                     //Server should return 'ok' onSucces, something else otherwise
                     //So some error has occured
                     throw new IOException("gcmSendRegId: Server did not send 'ok', something must be wrong.");
@@ -201,6 +280,10 @@ public class Util {
         return ans;
     }
 
+    public static void gcmHandleMessage(Context context, Intent intent) {
+        //TODO
+    }
+
     public static class GcmRegisterTask extends AsyncTask<Void, Void, Void> {
 
         Context context;
@@ -218,6 +301,32 @@ public class Util {
                 regId = gcm.register(GCM_PROJECT_ID);
                 gcmSendRegIdToServer(context, regId);
                 gcmSetRegId(context, regId);
+            } catch (IOException ioe) {
+                Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM\n" + ioe);
+                ioe.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public static class GcmUnregisterTask extends AsyncTask<Void, Void, Void> {
+
+        Context context;
+
+        public GcmUnregisterTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String regId;
+            try {
+                GoogleCloudMessaging gcm;
+                gcm = GoogleCloudMessaging.getInstance(context);
+                gcm.unregister();
+                regId = gcmGetRegId(context);
+                gcmSendUnregisterToServer(context, regId);
+                gcmSetRegId(context, "");
             } catch (IOException ioe) {
                 Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM\n" + ioe);
                 ioe.printStackTrace();
