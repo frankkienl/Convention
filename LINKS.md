@@ -49,18 +49,18 @@ http://stackoverflow.com/questions/355089/stringbuilder-and-stringbuffer
 How to make Spinning Navigation-Drawer Indicator  
 http://www.nkdroid.com/2014/11/Android-Lollipop-Navigation-Drawer-Example-Using-Appcompat-21.html
 
-Ion, for loading images
+Ion, for loading images  
 https://github.com/koush/ion#get-ion
 
-WebView
+WebView  
 http://developer.android.com/reference/android/webkit/WebView.html
 
-Handling Runtime Changes
+Handling Runtime Changes  
 http://developer.android.com/guide/topics/resources/runtime-changes.html
 
-How to add sound to notification
+How to add sound to notification  
 http://stackoverflow.com/questions/8801122/set-notification-sound-from-assets-folder
 
-How to send parameters via post-method.
+How to send parameters via post-method.  
 http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
 
