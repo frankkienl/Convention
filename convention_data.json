@@ -203,7 +203,12 @@
             	"_comment": "laserpon3",
             	"event_id": 6,
             	"speaker_id": 6
-
+            },
+            {
+            "_id": 7,
+            "_comment": "anon",
+            "event_id":7,
+            "speaker_id":7
             }
         ]
     }
