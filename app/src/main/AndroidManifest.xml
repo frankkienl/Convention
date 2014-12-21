@@ -27,12 +27,24 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!--
+        GCM
+        permission get accounts not needed, because minVersion >= android 4.0.4 (api 15)
+    //-->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <permission
+        android:name="nl.frankkie.convention.permission.C2D_MESSAGE"
+        android:protectionLevel="signature"></permission>
+    <uses-permission android:name="nl.frankkie.convention.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name="nl.frankkie.convention.EventListActivity"
             android:label="@string/app_name">
@@ -62,7 +74,8 @@
             android:name="nl.frankkie.convention.MapActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_map"></activity>
-        <activity android:name=".ScheduleActivity"
+        <activity
+            android:name=".ScheduleActivity"
             android:label="@string/title_activity_schedule"></activity>
 
         <provider
@@ -95,6 +108,24 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
+
+        <!--
+       Google Play Service for GCM
+       //-->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- GCM //-->
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="nl.frankkie.convention" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".GcmIntentService" />
     </application>
 
 </manifest>

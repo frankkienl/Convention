@@ -3,17 +3,20 @@ package nl.frankkie.convention;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 
 /**
@@ -128,24 +131,8 @@ public class EventListActivity extends ActionBarActivity
                     .findFragmentById(R.id.event_list))
                     .setActivateOnItemClick(true);
         }
-        //Create Account needed for SyncAdapter
-        Account acc = createDummyAccount();
-        //Sync
-        Bundle syncBundle = new Bundle();
-        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
-        ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
-    }
-
-    public Account createDummyAccount() {
-        //TODO: Change domain when using for a different convention
-        Account account = new Account("dummyaccount", "nl.frankkie.convention");
-        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        boolean success = accountManager.addAccountExplicitly(account, null, null);
-        if (!success) {
-            Log.e("Convention", "Cannot create account for Sync.");
-        }
-        return account;
+        //Sync ContentProvider using SyncAdapter
+        Util.syncData(this);
     }
 
     @Override
@@ -185,6 +172,29 @@ public class EventListActivity extends ActionBarActivity
             Intent detailIntent = new Intent(this, EventDetailActivity.class);
             detailIntent.putExtra(EventDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Check for Google Play Service
+        int flag = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (flag != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(flag)) {
+                GooglePlayServicesUtil.showErrorNotification(flag, this);
+            } else {
+                Log.e(getString(R.string.app_name), "Google Play Services not supported.");
+            }
+        } else {
+            //GCM is available!!
+            String regId = GcmUtil.gcmGetRegId(this);
+            //not using String.isEmpty, as this might not work on some older Android versions.
+            //not sure from which version isEmpty is supported, not taking any chances here.
+            if (regId == null || "".equals(regId)){
+                //not registered yet
+                GcmUtil.gcmRegister(this);
+            }
         }
     }
 }
