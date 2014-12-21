@@ -72,6 +72,18 @@
             	"end_time": "1424538000",
             	"location_id": 3,
             	"sort_order": 0
+            },
+            {
+                "_id": 7,
+                "title": "Cooking with Anon and Pinkie Pie",
+                "description": "The chef-cook 'The Dutch Anon' will demonstrate how to make cupcakes, with some help from Pinkie Pie",
+                "keywords": "cooking, panel, cupcakes",
+                "image": "",
+                "color": "",
+                "start_time": "1424530800",
+            	"end_time": "1424538000",
+            	"location_id": 4,
+            	"sort_order": 1
             }
         ],
         "speakers": [
@@ -116,6 +128,13 @@
             	"description": "Pony with freaking lasers attached to his head! \nhttp://www.hwcon.nl/en/news/laserpon3",
             	"image": "http://www.hwcon.nl/bundles/hwconsite/images/news/laserpon3/banner.png",
             	"color": ""
+            },
+            {
+                "_id": 7,
+                "name": "The Dutch Anon",
+                "description": "A chef-cook from the Netherlands",
+                "image": "",
+                "color": ""
             }
         ],
         "locations": [
@@ -139,6 +158,13 @@
                 "description": "Place for small panels",
                 "map_location": "",
                 "floor": 1
+            },
+            {
+                "_id": 4,
+                "name": "Kitchen",
+                "description": "The restaurant, get your food here",
+                "map_location": "",
+                "floor": 0
             }
         ],
         "speakers_in_events": [
