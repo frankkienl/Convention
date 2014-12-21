@@ -3,6 +3,7 @@ package nl.frankkie.convention;
 import android.app.Application;
 import android.util.Log;
 
+import org.acra.ACRA;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;

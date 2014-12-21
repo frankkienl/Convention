@@ -2,12 +2,15 @@ package nl.frankkie.convention;
 
 import android.app.Application;
 
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
+
 /**
  * Created by FrankkieNL on 21-12-2014.
  */
 @ReportsCrashes(
         formKey = "", // This is required for backward compatibility but not used
-        formUri = "", //SECRET to be set later
+        formUri = "http://wofje.8s.nl:5984/acra-hwcon/_design/acra-storage/_update/report", //password is SECRET, to be set later
         reportType = org.acra.sender.HttpSender.Type.JSON,
         httpMethod = org.acra.sender.HttpSender.Method.PUT,
         formUriBasicAuthLogin = "", //SECRET to be set later
@@ -23,8 +26,5 @@ public class MyApplication extends Application {
         ACRA.init(this);
         //Set the Secret Password
         SecretAcraKey.providePassword(this);
-
-        //DEBUG
-        //Debug.startMethodTracing("bronylivewallpaper.debugtrace");
     }
 }
