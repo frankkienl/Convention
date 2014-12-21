@@ -4,3 +4,9 @@
 /.idea/libraries
 .DS_Store
 /build
+app/src/main/assets/acrapassword.json
+app/src/main/assets/acrapassword.json
+*.db
+GCM.txt
+app/app-release.apk
+.idea/workspace (Exemplaar met conflict van win8desk_f 2014-11-18).xml
