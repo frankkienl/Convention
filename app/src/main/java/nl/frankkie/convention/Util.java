@@ -1,7 +1,19 @@
 package nl.frankkie.convention;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,5 +67,45 @@ public class Util {
                 break;
             }
         }
+    }
+
+    public static Account createDummyAccount(Context context) {
+        //TODO: Change domain when using for a different convention
+        Account account = new Account("dummyaccount", "nl.frankkie.convention");
+        AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+        boolean success = accountManager.addAccountExplicitly(account, null, null);
+        if (!success) {
+            Log.e(context.getString(R.string.app_name), "Cannot create account for Sync.");
+        }
+        return account;
+    }
+
+    public static void syncData(Context context){
+        //Create Account needed for SyncAdapter
+        Account acc = createDummyAccount(context);
+        //Sync
+        Bundle syncBundle = new Bundle();
+        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
+        ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
+    }
+
+    public static void showNotification(Context context, String message){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setContentTitle(context.getString(R.string.app_name));
+        builder.setContentText(message);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        builder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+        builder.setVibrate(new long[]{50, 250, 50, 250}); //delay,vibrate,delay,etc.
+        //http://stackoverflow.com/questions/8801122/set-notification-sound-from-assets-folder
+        //The docs are not clear about how to add sound, StackOverflow to the rescue!
+        builder.setSound(Uri.parse("android.resource://nl.frankkie.convention/raw/yay"));
+        builder.setSmallIcon(R.drawable.ic_stat_amber_notification);
+        Intent i = new Intent(context,EventListActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(context,0,i,0);
+        builder.setContentIntent(pi);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(1,builder.build());
     }
 }

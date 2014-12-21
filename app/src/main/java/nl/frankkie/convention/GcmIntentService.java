@@ -21,6 +21,10 @@ public class GcmIntentService extends IntentService {
         super(name);
     }
 
+    public GcmIntentService() {
+        super("GcmIntentService");
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -29,7 +33,7 @@ public class GcmIntentService extends IntentService {
         if (!extras.isEmpty()) {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.v(getString(R.string.app_name), "gcm message received");
-                Util.gcmHandleMessage(this, intent);
+                GcmUtil.gcmHandleMessage(this, intent);
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);

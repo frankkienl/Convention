@@ -3,6 +3,7 @@ package nl.frankkie.convention;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -130,24 +131,8 @@ public class EventListActivity extends ActionBarActivity
                     .findFragmentById(R.id.event_list))
                     .setActivateOnItemClick(true);
         }
-        //Create Account needed for SyncAdapter
-        Account acc = createDummyAccount();
-        //Sync
-        Bundle syncBundle = new Bundle();
-        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
-        ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
-    }
-
-    public Account createDummyAccount() {
-        //TODO: Change domain when using for a different convention
-        Account account = new Account("dummyaccount", "nl.frankkie.convention");
-        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-        boolean success = accountManager.addAccountExplicitly(account, null, null);
-        if (!success) {
-            Log.e("Convention", "Cannot create account for Sync.");
-        }
-        return account;
+        //Sync ContentProvider using SyncAdapter
+        Util.syncData(this);
     }
 
     @Override

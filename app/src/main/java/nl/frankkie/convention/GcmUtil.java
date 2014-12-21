@@ -196,7 +196,7 @@ public class GcmUtil {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId: Empty Response");
             } else {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId response:\n" + sb.toString());
-                if (!"ok".equals(sb.toString())) {
+                if (!"ok".equals(sb.toString().trim())) { //remove whitespace
                     //Server should return 'ok' onSucces, something else otherwise
                     //So some error has occured
                     throw new IOException("gcmSendRegId: Server did not send 'ok', something must be wrong.");
@@ -232,6 +232,13 @@ public class GcmUtil {
 
     public static void gcmHandleMessage(Context context, Intent intent) {
         //TODO
+        String action = intent.getStringExtra("action");
+        if ("sync".equals(action)) {
+            Util.syncData(context);
+        } else if ("notification".equals(action)){
+            String message = intent.getStringExtra("message");
+            Util.showNotification(context, message);
+        }
     }
 
     public static class GcmRegisterTask extends AsyncTask<Void, Void, Void> {
