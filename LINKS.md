@@ -57,3 +57,10 @@ http://developer.android.com/reference/android/webkit/WebView.html
 
 Handling Runtime Changes
 http://developer.android.com/guide/topics/resources/runtime-changes.html
+
+How to add sound to notification
+http://stackoverflow.com/questions/8801122/set-notification-sound-from-assets-folder
+
+How to send parameters via post-method.
+http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
+
