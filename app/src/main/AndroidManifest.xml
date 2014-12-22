@@ -7,20 +7,22 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Keep Map on correct floor onOrientationChange
     - Star as ActionBarItem ?
     - Use custom view for Map
-    - Implement Notification
     - Add Speakers Screen
     - Add News Screen
     - Add search-feature (search-icon in actionbar)
     - Add Setting screen (What settings are there?)
-    - Add GCM for when data should be synced again.
     - Implement Sync Favorites to the cloud
     - Add NFC Hunt (but give it a catchy friendship-related name)
     - Add Android Wear companion app
     - Make it Android 2.3.3 compatible (now its 4.0+)
     //
+
+    DONE:
+    - Keep Map on correct floor onOrientationChange
+    - Implement Notification
+    - Add GCM for when data should be synced again.
     -->
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />

@@ -14,6 +14,8 @@
     <string name="action_example">Voorbeeld actie</string>
     <string name="action_settings">Instellingen</string>
     <string name="action_share">Delen</string>
+    <string name="action_star_add">Toevoegen aan favorieten</string>
+    <string name="action_star_remove">Verwijderen uit favorieten</string>
 
     <string name="share_text">Ik ga naar het event \'%s\' tijdens HWcon 2015! #hwcon2015</string>
 

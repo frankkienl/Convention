@@ -15,6 +15,8 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="action_share">Share</string>
+    <string name="action_star_add">Add to favorites</string>
+    <string name="action_star_remove">Remove from favorites</string>
 
     <string name="share_text">I\'ll go to the event \'%s\' during HWcon 2015! #hwcon2015</string>
 
