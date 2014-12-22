@@ -77,8 +77,10 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     TextView mLocationFloor;
     TextView mSpeakersHeader;
     LinearLayout mSpeakersContainer;
-    CheckBox mStar;
     MenuItem mStarMenuItem;
+    //workaround for when onLoadFinished is called before actionbar is loaded
+    boolean isLoadingFinished = false;
+    boolean isLoadingFinished_isFavorite = false;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -129,7 +131,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 int floor = data.getInt(11);
                 mLocationFloor.setText(getFloorName(floor));
                 //Star
-                handleStar(data.isNull(12));
+                handleStar(!data.isNull(12));
             }
         } else if (cursorLoader.getId() == EVENT_SPEAKERS_LOADER) {
             //List of speakers of this Event.
@@ -162,28 +164,25 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
-    public void handleStar(boolean isFavorite){
-        mStar.setOnCheckedChangeListener(null); //remove before changing, add again later.
+    public void handleStar(boolean isFavorite) {
+        //workaround for when onLoadFinished is called before actionbar is loaded
+        isLoadingFinished = true;
+        isLoadingFinished_isFavorite = isFavorite;
+        if (mStarMenuItem == null) {
+            return;
+        }
+        //endof workaround
         mStarMenuItem.setVisible(true);
-        mStarMenuItem.setCheckable(true);
         if (isFavorite) { //column in database is null when not starred.
-            mStar.setChecked(true);
             mStarMenuItem.setChecked(true);
             mStarMenuItem.setTitle(R.string.action_star_remove);
-            mStarMenuItem.setIcon(android.R.drawable.star_big_on);
+            mStarMenuItem.setIcon(android.R.drawable.btn_star_big_on);
         } else {
-            mStar.setChecked(false);
             mStarMenuItem.setChecked(false);
             mStarMenuItem.setTitle(R.string.action_star_add);
-            mStarMenuItem.setIcon(android.R.drawable.star_big_off);
+            mStarMenuItem.setIcon(android.R.drawable.btn_star_big_off);
         }
-        mStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                persistFavorite(isChecked);
-                handleStar(isChecked); //to update MenuItem as well
-            }
-        });
+        persistFavorite(isFavorite);
     }
 
     @Override
@@ -211,15 +210,25 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         MenuItem menuItem = menu.findItem(R.id.action_share);
         android.support.v7.widget.ShareActionProvider mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
         mShareActionProvider.setShareIntent(createShareIntent());
-        //
         mStarMenuItem = menu.findItem(R.id.action_star);
         mStarMenuItem.setVisible(false); //set invisible here, make visible when data is loaded.
+        mStarMenuItem.setCheckable(true);
+        /*
+        Apparently, this method sometimes get called AFTER onLoaderFinished.
+        This give problems with setting the star, because its still null at that point.
+        This is a workaround
+        When loading is finished, the value will be saved in isLoadingFinished_isFavorite
+        So we can set the correct value, now, when the menu is made.
+        */
+        if (isLoadingFinished){
+            handleStar(isLoadingFinished_isFavorite);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_star){
+        if (id == R.id.action_star) {
             handleStar(!item.isChecked());
             return true;
         }
@@ -264,8 +273,6 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         mSpeakersHeader = (TextView) rootView.findViewById(R.id.event_detail_label_speakers);
         mSpeakersHeader.setVisibility(View.GONE); //Make visible (again) if there are Speakers for this event.
         mSpeakersContainer = (LinearLayout) rootView.findViewById(R.id.event_detail_speakers_container);
-        mStar = (CheckBox) rootView.findViewById(R.id.event_detail_star);
-
         //
         showStarTip();
         return rootView;
@@ -311,6 +318,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             cv.put(EventContract.FavoritesEntry.COLUMN_NAME_TYPE, EventContract.FavoritesEntry.TYPE_EVENT);
             cv.put(EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID, mId); //Id of this Event
             getActivity().getContentResolver().insert(EventContract.FavoritesEntry.CONTENT_URI, cv);
+            //I made favorites.type && favorites.item_id UNIQUE, to prevent duplicates.
         } else {
             //If not checked, remove row from DB
             //We use EventID in where-clause, hence, we don't need to know the RowID of the Favorite.

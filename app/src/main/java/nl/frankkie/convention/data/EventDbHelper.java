@@ -3,6 +3,7 @@ package nl.frankkie.convention.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import nl.frankkie.convention.data.EventContract.*;
 
 /**
@@ -10,11 +11,11 @@ import nl.frankkie.convention.data.EventContract.*;
  */
 public class EventDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "events.db";
 
-    public EventDbHelper(Context context){
-        super(context,DATABASE_NAME, null, DATABASE_VERSION);
+    public EventDbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -22,7 +23,7 @@ public class EventDbHelper extends SQLiteOpenHelper {
         createTables(db);
     }
 
-    public void createTables(SQLiteDatabase db){
+    public void createTables(SQLiteDatabase db) {
         String sqlEvent = "CREATE TABLE " + EventEntry.TABLE_NAME + " ( " +
                 EventEntry._ID + " INTEGER PRIMARY KEY, " +
                 EventEntry.COLUMN_NAME_TITLE + " TEXT, " +
@@ -61,7 +62,9 @@ public class EventDbHelper extends SQLiteOpenHelper {
         String sqlFavorites = "CREATE TABLE " + FavoritesEntry.TABLE_NAME + " (" +
                 FavoritesEntry._ID + " INTEGER PRIMARY KEY, " +
                 FavoritesEntry.COLUMN_NAME_TYPE + " TEXT, " +
-                FavoritesEntry.COLUMN_NAME_ITEM_ID + " INTEGER )";
+                FavoritesEntry.COLUMN_NAME_ITEM_ID + " INTEGER, " +
+                "UNIQUE(" + FavoritesEntry.COLUMN_NAME_TYPE + "," + //Made type & id unique to prevent duplicates
+                FavoritesEntry.COLUMN_NAME_ITEM_ID + ") ON CONFLICT REPLACE" + " )";
         db.execSQL(sqlFavorites);
     }
 
