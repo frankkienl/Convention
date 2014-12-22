@@ -121,8 +121,8 @@ public class GcmUtil {
             if (sb.length() == 0) {
                 Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer: Empty Response");
             } else {
-                Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer response:\n" + sb.toString());
-                if (!"ok".equals(sb.toString())) {
+                Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer response:\n" + sb.toString().trim());
+                if (!"ok".equals(sb.toString().trim())) {
                     //Server should return 'ok' onSucces, something else otherwise
                     //So some error has occured
                     throw new IOException("gcmSendUnregisterToServer: Server did not send 'ok', something must be wrong.");
@@ -195,7 +195,7 @@ public class GcmUtil {
             if (sb.length() == 0) {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId: Empty Response");
             } else {
-                Log.e(context.getString(R.string.app_name), "gcmSendRegId response:\n" + sb.toString());
+                Log.e(context.getString(R.string.app_name), "gcmSendRegId response:\n" + sb.toString().trim());
                 if (!"ok".equals(sb.toString().trim())) { //remove whitespace
                     //Server should return 'ok' onSucces, something else otherwise
                     //So some error has occured

@@ -7,7 +7,6 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Star as ActionBarItem ?
     - Use custom view for Map
     - Add Speakers Screen
     - Add News Screen
@@ -20,6 +19,7 @@
     //
 
     DONE:
+    - Star as ActionBarItem ?
     - Keep Map on correct floor onOrientationChange
     - Implement Notification
     - Add GCM for when data should be synced again.
