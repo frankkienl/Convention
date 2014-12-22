@@ -45,7 +45,7 @@ public class SecretAcraKey {
         } catch (Exception ex) {
             //Apparantly something went wrong, so no Crash Reporting.
             //Kinda ironic..
-            Log.e(app.getString(R.string.app_name),"Could not start ACRA Crash Reporting in BronyLiveWallpaper");
+            Log.e(app.getString(R.string.app_name),"Could not start ACRA Crash Reporting");
             ex.printStackTrace();
         }
     }
