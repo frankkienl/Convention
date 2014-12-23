@@ -84,6 +84,18 @@
             	"end_time": "1424538000",
             	"location_id": 4,
             	"sort_order": 1
+            },
+            {
+                "_id": 8,
+                "title": "Przewalski Concert",
+                "description": "Hearth's Warming Con proudly presents a whole brony rock band that will attend our convention: you're reading this right, the Przewalski's Ponies will come all the way from Russia to perform for the visitors on Hearth's Warming Day!",
+                "keywords": "music, concert",
+                "image":"",
+                "color":"",
+                "start_time":"1424541600",
+                "end_time":"1424548800",
+                "location_id": 1,
+                "sort_order": 0
             }
         ],
         "speakers": [
@@ -134,6 +146,13 @@
                 "name": "The Dutch Anon",
                 "description": "A chef-cook from the Netherlands",
                 "image": "",
+                "color": ""
+            },
+            {
+                "_id": 8,
+                "name": "Przewalski's Ponies",
+                "description": "The Przewalski's Ponies are well known in the My Little Pony Community ever since 2012, when they started touring European pony conventions.\nhttp://www.hwcon.nl/en/news/przewalskisponies",
+                "image": "http://www.hwcon.nl/bundles/hwconsite/images/news/przewalskisponies/banner.png",
                 "color": ""
             }
         ],
@@ -205,10 +224,16 @@
             	"speaker_id": 6
             },
             {
-            "_id": 7,
-            "_comment": "anon",
-            "event_id":7,
-            "speaker_id":7
+                "_id": 7,
+                "_comment": "anon",
+                "event_id":7,
+                "speaker_id":7
+            },
+            {
+                "_id": 8,
+                "_comment": "Przewalski",
+                "event_id": 8,
+                "speaker_id":8
             }
         ]
     }
