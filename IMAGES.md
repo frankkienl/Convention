@@ -46,14 +46,18 @@ Other Images:
   
 - Speaker Images  
   Every speaker should have an image.  
-  <img width="400" height="286" src="http://www.hwcon.nl/bundles/hwconsite/images/news/blitz/banner.png" alt="electroblitz" />  
+  <img width="400" height="286" src="http://www.hwcon.nl/bundles/hwconsite/images/news/blitz/banner.png" alt="electroblitz" />
   &nbsp; --&gt; &nbsp;
   <img width="384" height="640" src="https://raw.githubusercontent.com/frankkienl/Convention/master/screenshots/Phone/device-2014-12-23-135147.png" alt="result" />
     
-
-- Speaker Colors
-- Event Images
-- Event Colors
+Optional Stuff:
+---------------
+- Speaker Colors  
+  Every speaker should have a color, when the speakers has no image, this color will used instead. (not implemented yet)
+- Event Images  
+  Every Event should have an image, can be shown in detail-screen, and browse-screen. (not implemented yet)
+- Event Colors  
+  Every speaker should have a color, when the speakers has no image, this color will used instead. (not implemented yet)
 
 
 
