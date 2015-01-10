@@ -3,6 +3,7 @@ package nl.frankkie.convention;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -10,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import org.acra.ACRA;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -158,7 +161,7 @@ public class GcmUtil {
      * @param regId
      * @throws java.io.IOException will be handled in AsyncTask :P
      */
-    public static void gcmSendRegIdToServer(Context context, String regId) throws IOException {
+    public static void gcmSendRegIdToServer(Context context, String regId) throws IOException, PackageManager.NameNotFoundException {
         HttpURLConnection urlConnection = null;
         BufferedReader br = null;
         PrintWriter pw = null;
@@ -167,7 +170,9 @@ public class GcmUtil {
         _id	regId	userId	androidVersion	androidVersionInt	appVersion	brand	model	lastConnect	locale	comment
          */
         String locale = Locale.getDefault().toString();
-        String postData = "regId=" + regId + "&androidVersion=" + Build.VERSION.RELEASE + "&androidVersionInt=" + Build.VERSION.SDK_INT + "&brand=" + Build.BRAND + "&model=" + Build.MODEL + "&locale=" + locale;
+        PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        int appVersion= pInfo.versionCode;
+        String postData = "regId=" + regId + "&androidVersion=" + Build.VERSION.RELEASE + "&androidVersionInt=" + Build.VERSION.SDK_INT + "&brand=" + Build.BRAND + "&model=" + Build.MODEL + "&locale=" + locale + "&appVersion="+appVersion;
         try {
             //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
             URL url = new URL("http://wofje.8s.nl/hwcon/api/v1/gcmregister.php");
@@ -238,6 +243,10 @@ public class GcmUtil {
         } else if ("notification".equals(action)) {
             String message = intent.getStringExtra("message");
             Util.showNotification(context, message);
+        } else if ("downloadFavorites".equals(action)){
+            Util.syncData(context,Util.SYNCFLAG_DOWNLOAD_FAVORITES);            
+        } else if ("generateErrorReport".equals(action)){
+            ACRA.getErrorReporter().handleException(new RuntimeException("Error Report triggered by GCM"));            
         }
     }
 
@@ -261,6 +270,9 @@ public class GcmUtil {
             } catch (IOException ioe) {
                 Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM\n" + ioe);
                 ioe.printStackTrace();
+            } catch(PackageManager.NameNotFoundException e){
+                Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM, packagename not found\n" + e);
+                e.printStackTrace();      
             }
             return null;
         }
