@@ -1,9 +1,5 @@
 package nl.frankkie.convention;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -132,7 +128,7 @@ public class EventListActivity extends ActionBarActivity
                     .setActivateOnItemClick(true);
         }
         //Sync ContentProvider using SyncAdapter
-        Util.syncData(this);
+        Util.syncConventionData(this);
     }
 
     @Override

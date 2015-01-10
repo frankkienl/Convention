@@ -19,9 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
+import nl.frankkie.convention.GcmUtil;
+import nl.frankkie.convention.Util;
 import nl.frankkie.convention.data.EventContract;
 
 /**
@@ -45,23 +46,38 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         //Placed it (download and parsing) into separate methods, because the IDE complained this method was too complex.
         Log.d("Convention", "SyncAdapter: onPerformSync");
-        String json = httpDownload();
-        if (json == null) {
-            return; //error or empty
+        int syncFlags = extras.getInt("syncflags", Util.SYNCFLAG_CONVENTION_DATA);
+        //http://stackoverflow.com/questions/6067411/checking-flag-bits-java
+        if ((syncFlags & Util.SYNCFLAG_CONVENTION_DATA) == Util.SYNCFLAG_CONVENTION_DATA) {
+            String regId = GcmUtil.gcmGetRegId(getContext());
+            //CHANGE THIS URL WHEN USING FOR OTHER CONVENTION
+            String json = httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadconventiondata.php?regId=" + regId);
+            if (json != null) {
+                parseConventionDataJSON(json);
+            }
         }
-        parseJSON(json);
+        if ((syncFlags & Util.SYNCFLAG_DOWNLOAD_FAVORITES) == Util.SYNCFLAG_DOWNLOAD_FAVORITES) {
+            String regId = GcmUtil.gcmGetRegId(getContext());
+            //TODO add Username here, when google login is ready for use. "&username=" 
+            String json = httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadfavorites.php?regId=" + regId);
+            if (json != null) {
+                parseFavoritesDataJson(json);
+            }
+        }
+        if ((syncFlags & Util.SYNCFLAG_UPLOAD_FAVORITES) == Util.SYNCFLAG_UPLOAD_FAVORITES){
+            //this is for uploading all the favorites. For a delta, use Asynctask instead.
+        }
     }
 
-    public String httpDownload() {
+    public String httpDownload(String urlToDownload) {
         //<editor-fold desc="boring http downloading code">
         String json = null;
         HttpURLConnection urlConnection = null;
         BufferedReader br = null;
 
         try {
-            //CHANGE THIS URL WHEN USING FOR OTHER CONVENTION
-            //URL url = new URL("http://frankkie.nl/pony/hwcon/convention_data.json");
-            URL url = new URL("https://raw.githubusercontent.com/frankkienl/Convention/master/convention_data.json");
+            URL url = new URL(urlToDownload);
+            //sending regId to update the lastConnected-status on the database
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -105,7 +121,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
 
             json = sb.toString();
         } catch (IOException e) {
-            Log.e("Convention", "Error while downloading convention data ", e);
+            Log.e("Convention", "Error while downloading http data from " + urlToDownload, e);
             return null;
         } finally {
             if (urlConnection != null) {
@@ -124,7 +140,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
         return json;
     }
 
-    public void parseJSON(String json){
+    public void parseConventionDataJSON(String json) {
         //<editor-fold desc="boring json parsing and DB inserting code">
         try {
             JSONObject data = new JSONObject(json).getJSONObject("data");
@@ -210,9 +226,30 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             //</editor-fold>
 
         } catch (JSONException e) {
-            Log.e("Convention", "Error in SyncAdapter.onPerformSync, JSON ", e);
-            return;
+            Log.e("Convention", "Error in SyncAdapter.onPerformSync, ConventionData JSON ", e);
         }
         //</editor-fold>
+    }
+
+    public void parseFavoritesDataJson(String json) {
+        try {
+            JSONObject root = new JSONObject(json);
+            JSONObject data = root.getJSONObject("data");
+            JSONArray events = data.getJSONArray("events");
+            ContentValues[] eCVs = new ContentValues[events.length()];
+            for (int i = 0; i < events.length(); i++) {
+                int id = Integer.parseInt(events.getString(i));
+                ContentValues eCV = new ContentValues();
+                eCV.put(EventContract.FavoritesEntry.COLUMN_NAME_TYPE, EventContract.FavoritesEntry.TYPE_EVENT);
+                eCV.put(EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID, id);
+                eCVs[i] = eCV;
+            }
+            getContext().getContentResolver().delete(EventContract.FavoritesEntry.CONTENT_URI,null,null);
+            getContext().getContentResolver().bulkInsert(EventContract.FavoritesEntry.CONTENT_URI,eCVs);
+            getContext().getContentResolver().notifyChange(EventContract.FavoritesEntry.CONTENT_URI,null);
+            //TODO add code to sync other types of favorites.
+        } catch (JSONException e) {
+            Log.e("Convention", "Error in SyncAdapter.onPerformSync, ConventionData JSON ", e);
+        }
     }
 }

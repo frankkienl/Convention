@@ -80,14 +80,24 @@ public class Util {
         return account;
     }
 
-    public static void syncData(Context context){
+    public static final int SYNCFLAG_NONE = 0;
+    public static final int SYNCFLAG_CONVENTION_DATA = 1;
+    public static final int SYNCFLAG_DOWNLOAD_FAVORITES = 2;
+    public static final int SYNCFLAG_UPLOAD_FAVORITES = 4;
+    
+    public static void syncData(Context context, int syncWhatFlags){
         //Create Account needed for SyncAdapter
         Account acc = createDummyAccount(context);
         //Sync
         Bundle syncBundle = new Bundle();
+        syncBundle.putInt("syncflag",syncWhatFlags);
         syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
         ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
+    }
+    
+    public static void syncConventionData(Context context){
+        syncData(context, SYNCFLAG_CONVENTION_DATA);
     }
 
     public static void showNotification(Context context, String message){

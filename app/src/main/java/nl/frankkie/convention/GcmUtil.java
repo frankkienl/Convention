@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.util.Locale;
 
 /**
  * Created by FrankkieNL on 20-12-2014.
@@ -91,7 +91,7 @@ public class GcmUtil {
         String postData = "regId=" + regId;
         try {
             //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
-            URL url = new URL("http://frankkie.nl/pony/hwcon/gcmunregister.php");
+            URL url = new URL("http://wofje.8s.nl/hwcon/api/v1/gcmunregister.php");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             //http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
@@ -162,10 +162,15 @@ public class GcmUtil {
         HttpURLConnection urlConnection = null;
         BufferedReader br = null;
         PrintWriter pw = null;
-        String postData = "regId=" + regId + "&deviceName=" + URLEncoder.encode(getDeviceName(), "UTF-8");
+        //String postData = "regId=" + regId + "&deviceName=" + URLEncoder.encode(getDeviceName(), "UTF-8");
+        /*
+        _id	regId	userId	androidVersion	androidVersionInt	appVersion	brand	model	lastConnect	locale	comment
+         */
+        String locale = Locale.getDefault().toString();
+        String postData = "regId=" + regId + "&androidVersion=" + Build.VERSION.RELEASE + "&androidVersionInt=" + Build.VERSION.SDK_INT + "&brand=" + Build.BRAND + "&model=" + Build.MODEL + "&locale=" + locale;
         try {
             //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
-            URL url = new URL("http://frankkie.nl/pony/hwcon/gcmregister.php");
+            URL url = new URL("http://wofje.8s.nl/hwcon/api/v1/gcmregister.php");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             //http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
@@ -225,17 +230,12 @@ public class GcmUtil {
         }
     }
 
-    public static String getDeviceName() {
-        String ans = Build.BRAND + " " + Build.MODEL + " ( Android " + Build.VERSION.RELEASE + ", SDK " + Build.VERSION.SDK_INT + " )";
-        return ans;
-    }
-
     public static void gcmHandleMessage(Context context, Intent intent) {
         //TODO
         String action = intent.getStringExtra("action");
-        if ("sync".equals(action)) {
-            Util.syncData(context);
-        } else if ("notification".equals(action)){
+        if ("downloadConventionData".equals(action)) {
+            Util.syncConventionData(context);
+        } else if ("notification".equals(action)) {
             String message = intent.getStringExtra("message");
             Util.showNotification(context, message);
         }
