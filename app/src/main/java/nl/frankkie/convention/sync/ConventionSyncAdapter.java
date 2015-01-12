@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -14,14 +15,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import nl.frankkie.convention.GcmUtil;
+import nl.frankkie.convention.R;
 import nl.frankkie.convention.Util;
 import nl.frankkie.convention.data.EventContract;
 
@@ -51,7 +56,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
         if ((syncFlags & Util.SYNCFLAG_CONVENTION_DATA) == Util.SYNCFLAG_CONVENTION_DATA) {
             String regId = GcmUtil.gcmGetRegId(getContext());
             //CHANGE THIS URL WHEN USING FOR OTHER CONVENTION
-            String json = httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadconventiondata.php?regId=" + regId);
+            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadconventiondata.php?regId=" + regId);
             if (json != null) {
                 parseConventionDataJSON(json);
             }
@@ -59,85 +64,50 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
         if ((syncFlags & Util.SYNCFLAG_DOWNLOAD_FAVORITES) == Util.SYNCFLAG_DOWNLOAD_FAVORITES) {
             String regId = GcmUtil.gcmGetRegId(getContext());
             //TODO add Username here, when google login is ready for use. "&username=" 
-            String json = httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadfavorites.php?regId=" + regId);
+            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadfavorites.php?regId=" + regId);
             if (json != null) {
                 parseFavoritesDataJson(json);
             }
         }
-        if ((syncFlags & Util.SYNCFLAG_UPLOAD_FAVORITES) == Util.SYNCFLAG_UPLOAD_FAVORITES){
-            //this is for uploading all the favorites. For a delta, use Asynctask instead.
-        }
-    }
-
-    public String httpDownload(String urlToDownload) {
-        //<editor-fold desc="boring http downloading code">
-        String json = null;
-        HttpURLConnection urlConnection = null;
-        BufferedReader br = null;
-
-        try {
-            URL url = new URL(urlToDownload);
-            //sending regId to update the lastConnected-status on the database
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            //<rant>
-            //Read it with streams, using much boilerplate,
-            //because apparently that is more awesome compared to just using the Apache HttpClient Libs.
-            //Srsly, this is 2014, we have libs to do this for us now.
-            //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L118
-            //</rant>
-            InputStream is = urlConnection.getInputStream();
-            if (is == null) {
-                //Apparently there is no inputstream.
-                //We're done here
-                return null;
-            }
-
-            //Why does Sunshine use a StringBuffer instead of a StringBuilder?
-            //A StringBuffer is ThreadSafe (Synchronised) but has worse performance.
-            //There is no need to use a ThreadSafe StringBuffer here, this sync-option will never be called multiple times from other threads.
-            //Because of 'android:allowParallelSyncs="false"' in R.xml.syncadapter
-            //See:
-            //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L120
-            //http://stackoverflow.com/questions/355089/stringbuilder-and-stringbuffer
-            StringBuilder sb = new StringBuilder();
-            br = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while (true) {
-                line = br.readLine();
-                if (line == null) {
-                    break;
+        if ((syncFlags & Util.SYNCFLAG_UPLOAD_FAVORITES) == Util.SYNCFLAG_UPLOAD_FAVORITES) {
+            //this is for uploading all the favorites. For a delta, use Asynctask instead. See Util.
+            try {
+                Cursor cursor = getContext().getContentResolver().query(EventContract.FavoritesEntry.CONTENT_URI,
+                        new String[]{EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID},
+                        EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = 'event'", null, null);
+                if (cursor.getCount() == 0 ){
+                    //no favorites.
+                    //nothing to send.
+                    //Maybe fix this some other way than to just return.
+                    return;
                 }
-                //Chained append is better than concat
-                //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L132
-                sb.append(line).append("\n");
-            }
-            if (sb.length() == 0) {
-                //empty
-                return null;
-            }
-
-            json = sb.toString();
-        } catch (IOException e) {
-            Log.e("Convention", "Error while downloading http data from " + urlToDownload, e);
-            return null;
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (br != null) {
-                //*cough* boilerplate *cough*
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    Log.e("Convention", "Error closing BufferedReader", e);
+                JSONObject root = new JSONObject();
+                JSONArray events = new JSONArray();
+                cursor.moveToFirst();
+                do {
+                    events.put(cursor.getString(0));
+                } while (cursor.moveToNext());
+                cursor.close();
+                root.put("events", events);
+                JSONObject device = new JSONObject();
+                device.put("regId",GcmUtil.gcmGetRegId(getContext()));
+                root.put("device",device);
+                JSONObject wrapper = new JSONObject();
+                wrapper.put("data",root);
+                String json =wrapper.toString();
+                String postData = "json="+json;
+                ////////////////////////////
+               String response = Util.httpPost(getContext(),"http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php",postData);
+                if (!"ok".equals(response.trim())){
+                    //There muse be something wrong                    
                 }
+                /////////////////////////////
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        //</editor-fold>
-        return json;
     }
 
     public void parseConventionDataJSON(String json) {
@@ -244,9 +214,9 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 eCV.put(EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID, id);
                 eCVs[i] = eCV;
             }
-            getContext().getContentResolver().delete(EventContract.FavoritesEntry.CONTENT_URI,null,null);
-            getContext().getContentResolver().bulkInsert(EventContract.FavoritesEntry.CONTENT_URI,eCVs);
-            getContext().getContentResolver().notifyChange(EventContract.FavoritesEntry.CONTENT_URI,null);
+            getContext().getContentResolver().delete(EventContract.FavoritesEntry.CONTENT_URI, null, null);
+            getContext().getContentResolver().bulkInsert(EventContract.FavoritesEntry.CONTENT_URI, eCVs);
+            getContext().getContentResolver().notifyChange(EventContract.FavoritesEntry.CONTENT_URI, null);
             //TODO add code to sync other types of favorites.
         } catch (JSONException e) {
             Log.e("Convention", "Error in SyncAdapter.onPerformSync, ConventionData JSON ", e);

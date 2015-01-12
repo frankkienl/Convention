@@ -8,13 +8,23 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import org.acra.ACRA;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -84,23 +94,28 @@ public class Util {
     public static final int SYNCFLAG_CONVENTION_DATA = 1;
     public static final int SYNCFLAG_DOWNLOAD_FAVORITES = 2;
     public static final int SYNCFLAG_UPLOAD_FAVORITES = 4;
-    
-    public static void syncData(Context context, int syncWhatFlags){
+
+    public static void syncData(Context context, int syncWhatFlags) {
         //Create Account needed for SyncAdapter
         Account acc = createDummyAccount(context);
         //Sync
         Bundle syncBundle = new Bundle();
-        syncBundle.putInt("syncflag",syncWhatFlags);
+        syncBundle.putInt("syncflags", syncWhatFlags);
         syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         syncBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //as in: run NOW.
         ContentResolver.requestSync(acc, "nl.frankkie.convention", syncBundle);
     }
-    
-    public static void syncConventionData(Context context){
+
+    public static void syncConventionData(Context context) {
         syncData(context, SYNCFLAG_CONVENTION_DATA);
     }
 
-    public static void showNotification(Context context, String message){
+    public static void sendFavoriteDelta(Context context, String id, boolean isFavorite) {
+        //This does send all favorites, not just a delta. because im lazy
+        Util.syncData(context, Util.SYNCFLAG_UPLOAD_FAVORITES);
+    }
+
+    public static void showNotification(Context context, String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(context.getString(R.string.app_name));
         builder.setContentText(message);
@@ -112,10 +127,177 @@ public class Util {
         //The docs are not clear about how to add sound, StackOverflow to the rescue!
         builder.setSound(Uri.parse("android.resource://nl.frankkie.convention/raw/yay"));
         builder.setSmallIcon(R.drawable.ic_stat_amber_notification);
-        Intent i = new Intent(context,EventListActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(context,0,i,0);
+        Intent i = new Intent(context, EventListActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
         builder.setContentIntent(pi);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1,builder.build());
+        notificationManager.notify(1, builder.build());
+    }
+
+    public static String httpDownload(String urlToDownload) {
+        //<editor-fold desc="boring http downloading code">
+        String json = null;
+        HttpURLConnection urlConnection = null;
+        BufferedReader br = null;
+
+        try {
+            URL url = new URL(urlToDownload);
+            //sending regId to update the lastConnected-status on the database
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            //<rant>
+            //Read it with streams, using much boilerplate,
+            //because apparently that is more awesome compared to just using the Apache HttpClient Libs.
+            //Srsly, this is 2014, we have libs to do this for us now.
+            //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L118
+            //</rant>
+            InputStream is = urlConnection.getInputStream();
+            if (is == null) {
+                //Apparently there is no inputstream.
+                //We're done here
+                return null;
+            }
+
+            //Why does Sunshine use a StringBuffer instead of a StringBuilder?
+            //A StringBuffer is ThreadSafe (Synchronised) but has worse performance.
+            //There is no need to use a ThreadSafe StringBuffer here, this sync-option will never be called multiple times from other threads.
+            //Because of 'android:allowParallelSyncs="false"' in R.xml.syncadapter
+            //See:
+            //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L120
+            //http://stackoverflow.com/questions/355089/stringbuilder-and-stringbuffer
+            StringBuilder sb = new StringBuilder();
+            br = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while (true) {
+                line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                //Chained append is better than concat
+                //https://github.com/udacity/Sunshine/blob/6.10-update-map-intent/app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java#L132
+                sb.append(line).append("\n");
+            }
+            if (sb.length() == 0) {
+                //empty
+                sendACRAReport("Util.httpDownload", "Empty Response", urlToDownload);
+                return null;
+            }
+
+            json = sb.toString();
+        } catch (IOException e) {
+            Log.e("Convention", "Error while downloading http data from " + urlToDownload, e);
+            sendACRAReport("Util.httpDownload", "Error while downloading (IOException)", urlToDownload, e);
+            return null;
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (br != null) {
+                //*cough* boilerplate *cough*
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Log.e("Convention", "Error closing BufferedReader", e);
+                    sendACRAReport("Util.httpDownload", "Error closing BufferedReader (IOException)", urlToDownload, e);
+                }
+            }
+        }
+        //</editor-fold>
+        return json;
+    }
+
+    public static String httpPost(Context context, String urlString, String postData) throws IOException {
+        HttpURLConnection urlConnection = null;
+        BufferedReader br = null;
+        PrintWriter pw = null;
+        try {
+            URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            //http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true); //output, because post-data
+            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            //urlConnection.setRequestProperty("charset","utf-8");
+            urlConnection.setRequestProperty("Content-Length", "" + postData.getBytes().length); //simple int to String casting.
+            urlConnection.setUseCaches(false);
+            urlConnection.connect();
+            OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
+            pw = new PrintWriter(os);
+            pw.print(postData);
+            pw.flush();
+            pw.close();
+            InputStream is = urlConnection.getInputStream();
+            StringBuilder sb = new StringBuilder();
+            br = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while (true) {
+                line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                sb.append(line).append("\n");
+            }
+            if (sb.length() == 0) {
+                Log.e(context.getString(R.string.app_name), "Util.httpPost: Empty Response\n");
+                sendACRAReport("Util.httpPost", "Empty Response", urlString);
+            } else {
+                Log.e(context.getString(R.string.app_name), "Util.httpPost response:\n" + sb.toString().trim());
+                return sb.toString();
+            }
+        } catch (IOException ioe) {
+            Log.e(context.getString(R.string.app_name), "Util.httpPost: IOException");
+            sendACRAReport("Util.httpPost", "IOException", "error", ioe);
+            ioe.printStackTrace();
+            throw new IOException(ioe); //throw to method that called this.
+        } finally {
+            //*cough* boilerplate *cough*
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Log.e(context.getString(R.string.app_name), "Error closing BufferedReader", e);
+                    sendACRAReport("Util.httpPost", "Error closing BufferedReader (IOException)", urlString, e);
+                    e.printStackTrace();
+                }
+            }
+            if (pw != null) {
+                pw.close();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Send ACRA report
+     *
+     * @param errormethod
+     * @param errorname
+     * @param errordata
+     */
+    public static void sendACRAReport(String errormethod, String errorname, String errordata) {
+        ACRA.getErrorReporter().putCustomData("custom_errormethod", errormethod);
+        ACRA.getErrorReporter().putCustomData("custom_errorname", errorname);
+        ACRA.getErrorReporter().putCustomData("custom_errordata", errordata);
+        ACRA.getErrorReporter().handleException(new RuntimeException(errormethod + ": " + errorname + " \n" + errordata));
+    }
+
+    /**
+     * Send ACRA report
+     *
+     * @param errormethod
+     * @param errorname
+     * @param errordata
+     */
+    public static void sendACRAReport(String errormethod, String errorname, String errordata, Exception e) {
+        ACRA.getErrorReporter().putCustomData("custom_errormethod", errormethod);
+        ACRA.getErrorReporter().putCustomData("custom_errorname", errorname);
+        ACRA.getErrorReporter().putCustomData("custom_errordata", errordata);
+        ACRA.getErrorReporter().handleException(e);
     }
 }

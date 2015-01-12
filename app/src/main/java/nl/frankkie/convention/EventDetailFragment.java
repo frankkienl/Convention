@@ -309,6 +309,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     }
 
     public void persistFavorite(boolean checked) {
+        //sendToServer
+        Util.sendFavoriteDelta(getActivity(), mId, checked);
         if (checked) {
             //If checked, add a row to DB
             ContentValues cv = new ContentValues();

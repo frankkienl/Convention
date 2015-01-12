@@ -43,13 +43,22 @@ public class GcmUtil {
         try {
             if (prefs.getInt("gcm_app_version", Integer.MIN_VALUE) !=
                     context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode) {
+                Log.e(context.getString(R.string.app_name), "gcm wrong app version");
+                Util.sendACRAReport("GcmUtil.gcmGetRegId", "Gcm wrong app version", "gcm_app_version");
                 return "";
             }
         } catch (PackageManager.NameNotFoundException nnfe) {
             Log.e(context.getString(R.string.app_name), "This app is apparently not installed. Weird.\n" + nnfe);
+            Log.e(context.getString(R.string.app_name), "gcm package does not exist");
+            Util.sendACRAReport("GcmUtil.gcmGetRegId", "This app is not installed", "gcm_reg_id", nnfe);
             return "";
         }
-        return prefs.getString("gcm_reg_id", "");
+        String regId = prefs.getString("gcm_reg_id", "");
+        if ("".equals(regId)) {
+            Log.e(context.getString(R.string.app_name), "gcm not in SharedPreferences");
+            Util.sendACRAReport("GcmUtil.gcmGetRegId", "RegId empty", "gcm_reg_id");
+        }
+        return regId;
     }
 
     public static void gcmRegister(Context context) {
@@ -76,6 +85,7 @@ public class GcmUtil {
             editor.putInt("gcm_app_version", context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
         } catch (PackageManager.NameNotFoundException nnfe) {
             Log.e(context.getString(R.string.app_name), "This app is apparently not installed. Weird.\n" + nnfe);
+            Util.sendACRAReport("GcmUtil.gcmSetRegId", "This app is not installed", "gcm_reg_id", nnfe);
         }
         editor.apply();
     }
@@ -93,7 +103,7 @@ public class GcmUtil {
         PrintWriter pw = null;
         String postData = "regId=" + regId;
         try {
-            //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
+            //For rant, see nl.frankkie.convention.sync.Util
             URL url = new URL("http://wofje.8s.nl/hwcon/api/v1/gcmunregister.php");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
@@ -123,16 +133,20 @@ public class GcmUtil {
             }
             if (sb.length() == 0) {
                 Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer: Empty Response");
+                Util.sendACRAReport("GcmUtil.gcmSendUnregisterToServer", "Empty Response", url.toString());
             } else {
                 Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer response:\n" + sb.toString().trim());
                 if (!"ok".equals(sb.toString().trim())) {
                     //Server should return 'ok' onSucces, something else otherwise
                     //So some error has occured
-                    throw new IOException("gcmSendUnregisterToServer: Server did not send 'ok', something must be wrong.");
+                    IOException e = new IOException("gcmSendUnregisterToServer: Server did not send 'ok', something must be wrong.");
+                    Util.sendACRAReport("GcmUtil.gcmSendUnregisterToServer", "Server did not send 'ok', something must be wrong.", url.toString(), e);
+                    throw e;
                 }
             }
         } catch (IOException ioe) {
             Log.e(context.getString(R.string.app_name), "gcmSendUnregisterToServer: IOException");
+            Util.sendACRAReport("GcmUtil.gcmSendUnregisterToServer", "IOException", "", ioe);
             ioe.printStackTrace();
             throw new IOException(ioe); //throw to method that called this.
         } finally {
@@ -145,6 +159,7 @@ public class GcmUtil {
                     br.close();
                 } catch (IOException e) {
                     Log.e(context.getString(R.string.app_name), "Error closing BufferedReader", e);
+                    Util.sendACRAReport("GcmUtil.gcmSendUnregisterToServer", "Error closing BufferedReader (IOException)", "", e);
                     e.printStackTrace();
                 }
             }
@@ -171,10 +186,10 @@ public class GcmUtil {
          */
         String locale = Locale.getDefault().toString();
         PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        int appVersion= pInfo.versionCode;
-        String postData = "regId=" + regId + "&androidVersion=" + Build.VERSION.RELEASE + "&androidVersionInt=" + Build.VERSION.SDK_INT + "&brand=" + Build.BRAND + "&model=" + Build.MODEL + "&locale=" + locale + "&appVersion="+appVersion;
+        int appVersion = pInfo.versionCode;
+        String postData = "regId=" + regId + "&androidVersion=" + Build.VERSION.RELEASE + "&androidVersionInt=" + Build.VERSION.SDK_INT + "&brand=" + Build.BRAND + "&model=" + Build.MODEL + "&locale=" + locale + "&appVersion=" + appVersion;
         try {
-            //For rant, see nl.frankkie.convention.sync.ConventionSyncAdapter
+            //For rant, see nl.frankkie.convention.Util
             URL url = new URL("http://wofje.8s.nl/hwcon/api/v1/gcmregister.php");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
@@ -204,16 +219,20 @@ public class GcmUtil {
             }
             if (sb.length() == 0) {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId: Empty Response");
+                Util.sendACRAReport("GcmUtil.gcmSendRegIdToServer", "Empty Response", url.toString() + "\n" + postData);
             } else {
                 Log.e(context.getString(R.string.app_name), "gcmSendRegId response:\n" + sb.toString().trim());
                 if (!"ok".equals(sb.toString().trim())) { //remove whitespace
                     //Server should return 'ok' onSucces, something else otherwise
                     //So some error has occured
-                    throw new IOException("gcmSendRegId: Server did not send 'ok', something must be wrong.");
+                    IOException e = new IOException("gcmSendRegId: Server did not send 'ok', something must be wrong.");
+                    Util.sendACRAReport("GcmUtil.gcmSendRegIdToServer", "Server did not send 'ok', something must be wrong.", url.toString() + "\n" + postData, e);
+                    throw e;
                 }
             }
         } catch (IOException ioe) {
             Log.e(context.getString(R.string.app_name), "gcmSendRegId: IOException");
+            Util.sendACRAReport("GcmUtil.gcmSendRegIdToServer", "", "", ioe);
             ioe.printStackTrace();
             throw new IOException(ioe); //throw to method that called this.
         } finally {
@@ -226,6 +245,7 @@ public class GcmUtil {
                     br.close();
                 } catch (IOException e) {
                     Log.e(context.getString(R.string.app_name), "Error closing BufferedReader", e);
+                    Util.sendACRAReport("GcmUtil.gcmSendRegIdToServer", "Error closing BufferedReader", "", e);
                     e.printStackTrace();
                 }
             }
@@ -243,10 +263,10 @@ public class GcmUtil {
         } else if ("notification".equals(action)) {
             String message = intent.getStringExtra("message");
             Util.showNotification(context, message);
-        } else if ("downloadFavorites".equals(action)){
-            Util.syncData(context,Util.SYNCFLAG_DOWNLOAD_FAVORITES);            
-        } else if ("generateErrorReport".equals(action)){
-            ACRA.getErrorReporter().handleException(new RuntimeException("Error Report triggered by GCM"));            
+        } else if ("downloadFavorites".equals(action)) {
+            Util.syncData(context, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
+        } else if ("generateErrorReport".equals(action)) {
+            ACRA.getErrorReporter().handleException(new RuntimeException("Error Report triggered by GCM"));
         }
     }
 
@@ -269,10 +289,12 @@ public class GcmUtil {
                 gcmSetRegId(context, regId);
             } catch (IOException ioe) {
                 Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM\n" + ioe);
+                Util.sendACRAReport("GcmUtil.GcmRegisterTask.doInBackground", "", "", ioe);
                 ioe.printStackTrace();
-            } catch(PackageManager.NameNotFoundException e){
+            } catch (PackageManager.NameNotFoundException e) {
                 Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM, packagename not found\n" + e);
-                e.printStackTrace();      
+                Util.sendACRAReport("GcmUtil.GcmRegisterTask.doInBackground", "Error, cannot register for GCM, packagename not found", "", e);
+                e.printStackTrace();
             }
             return null;
         }
@@ -298,6 +320,7 @@ public class GcmUtil {
                 gcmSetRegId(context, ""); //empty
             } catch (IOException ioe) {
                 Log.e(context.getString(R.string.app_name), "Error, cannot register for GCM\n" + ioe);
+                Util.sendACRAReport("GcmUtil.GcmUnregisterTask.doInBackground", "Error, cannot register for GCM", "", ioe);
                 ioe.printStackTrace();
             }
             return null;
