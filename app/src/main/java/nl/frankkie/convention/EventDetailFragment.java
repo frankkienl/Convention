@@ -15,17 +15,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -66,6 +65,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     };
 
     String mId;
+    String mShareTitle; //title to share via ShareActionProvider.
+    ShareActionProvider mShareActionProvider;
     //Views
     TextView mTitle;
     TextView mDescription;
@@ -195,6 +196,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ITEM_SHARETITLE = "item_sharetitle";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -208,8 +210,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.eventdetailfragment, menu);
         MenuItem menuItem = menu.findItem(R.id.action_share);
-        android.support.v7.widget.ShareActionProvider mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-        mShareActionProvider.setShareIntent(createShareIntent());
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
         mStarMenuItem = menu.findItem(R.id.action_star);
         mStarMenuItem.setVisible(false); //set invisible here, make visible when data is loaded.
         mStarMenuItem.setCheckable(true);
@@ -220,8 +221,10 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         When loading is finished, the value will be saved in isLoadingFinished_isFavorite
         So we can set the correct value, now, when the menu is made.
         */
-        if (isLoadingFinished){
+        if (isLoadingFinished) {
             handleStar(isLoadingFinished_isFavorite);
+            //
+            mShareActionProvider.setShareIntent(createShareIntent());
         }
     }
 
@@ -241,7 +244,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         //We should use FLAG_ACTIVITY_NEW_DOCUMENT instead, but it has the same value (0x00080000)
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_text), mTitle.getText().toString()));
+        i.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_text), mShareTitle));
         return i;
     }
 
@@ -253,8 +256,10 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             //Set the id, that will be used in onCreateLoader (CursorLoader)
             mId = getArguments().getString(ARG_ITEM_ID);
         }
+        if (getArguments().containsKey(ARG_ITEM_SHARETITLE)) {
+            mShareTitle = getArguments().getString(ARG_ITEM_SHARETITLE);
+        }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

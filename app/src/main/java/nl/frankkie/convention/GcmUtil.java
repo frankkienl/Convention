@@ -44,7 +44,6 @@ public class GcmUtil {
             if (prefs.getInt("gcm_app_version", Integer.MIN_VALUE) !=
                     context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode) {
                 Log.e(context.getString(R.string.app_name), "gcm wrong app version");
-                Util.sendACRAReport("GcmUtil.gcmGetRegId", "Gcm wrong app version", "gcm_app_version");
                 return "";
             }
         } catch (PackageManager.NameNotFoundException nnfe) {
@@ -56,7 +55,6 @@ public class GcmUtil {
         String regId = prefs.getString("gcm_reg_id", "");
         if ("".equals(regId)) {
             Log.e(context.getString(R.string.app_name), "gcm not in SharedPreferences");
-            Util.sendACRAReport("GcmUtil.gcmGetRegId", "RegId empty", "gcm_reg_id");
         }
         return regId;
     }

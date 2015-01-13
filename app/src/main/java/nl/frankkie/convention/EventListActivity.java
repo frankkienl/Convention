@@ -149,13 +149,14 @@ public class EventListActivity extends ActionBarActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(String id, String shareTitle) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putString(EventDetailFragment.ARG_ITEM_ID, id);
+            arguments.putString(EventDetailFragment.ARG_ITEM_SHARETITLE, shareTitle);
             EventDetailFragment fragment = new EventDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -167,6 +168,7 @@ public class EventListActivity extends ActionBarActivity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, EventDetailActivity.class);
             detailIntent.putExtra(EventDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(EventDetailFragment.ARG_ITEM_SHARETITLE, shareTitle);
             startActivity(detailIntent);
         }
     }
@@ -187,7 +189,7 @@ public class EventListActivity extends ActionBarActivity
             String regId = GcmUtil.gcmGetRegId(this);
             //not using String.isEmpty, as this might not work on some older Android versions.
             //not sure from which version isEmpty is supported, not taking any chances here.
-            if (regId == null || "".equals(regId)){
+            if (regId == null || "".equals(regId)) {
                 //not registered yet
                 GcmUtil.gcmRegister(this);
             }

@@ -95,7 +95,7 @@ public class ScheduleListFragment extends ListFragment implements LoaderManager.
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(String id, String shareTitle);
     }
 
     /**
@@ -131,7 +131,7 @@ public class ScheduleListFragment extends ListFragment implements LoaderManager.
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = mScheduleListAdapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
-                    mCallbacks.onItemSelected("" + cursor.getLong(COL_ID));
+                    mCallbacks.onItemSelected("" + cursor.getLong(COL_ID), cursor.getString(1));
                 }
                 setActivatedPosition(position);
             }
@@ -164,7 +164,7 @@ public class ScheduleListFragment extends ListFragment implements LoaderManager.
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(String id, String shareTitle) {
         }
     };
 

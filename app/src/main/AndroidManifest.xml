@@ -7,8 +7,8 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Fix ShareActionProvider, does not always include title of event.
     - Implement Sync Favorites to the cloud
+    - Add About Screen, with version-number and licence info.
     - Use custom view for Map
     - Add Speakers Screen
     - Add News Screen
@@ -18,12 +18,13 @@
     - Add Android Wear companion app
     - Make it Android 2.3.3 compatible (now its 4.0+)
     - Widget
-    - Add more ACRA error reports.
     //Probaly not:
     - Twitter-screen?
     - Watchface?
 
     DONE:
+    - Add more ACRA error reports.
+    - Fix ShareActionProvider, does not always include title of event.
     - Star as ActionBarItem ?
     - Keep Map on correct floor onOrientationChange
     - Implement Notification

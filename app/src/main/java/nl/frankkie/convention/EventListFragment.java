@@ -92,7 +92,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(String id, String shareTitle);
     }
 
     /**
@@ -119,7 +119,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = mEventAdapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
-                    mCallbacks.onItemSelected("" + cursor.getLong(COL_ID));
+                    mCallbacks.onItemSelected("" + cursor.getLong(COL_ID),cursor.getString(1));
                 }
                 setActivatedPosition(position);
             }
@@ -159,7 +159,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(String id, String shareTitle) {
         }
     };
 

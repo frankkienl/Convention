@@ -45,6 +45,8 @@ public class EventDetailActivity extends ActionBarActivity {
             Bundle arguments = new Bundle();
             arguments.putString(EventDetailFragment.ARG_ITEM_ID,
                     getIntent().getStringExtra(EventDetailFragment.ARG_ITEM_ID));
+            arguments.putString(EventDetailFragment.ARG_ITEM_SHARETITLE,
+                    getIntent().getStringExtra(EventDetailFragment.ARG_ITEM_SHARETITLE));
             EventDetailFragment fragment = new EventDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
