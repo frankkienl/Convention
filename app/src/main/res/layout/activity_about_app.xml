@@ -25,20 +25,19 @@
                 style="@style/textStyle_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="About this App" />
+                android:text="@string/about_this_app" />
 
             <TextView
                 android:id="@+id/aboutapp_version"
                 style="@style/textStyle_details"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Version: 0.1-12" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 style="@style/textStyle_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Licences" />
+                android:text="@string/aboutapp_licences" />
         </LinearLayout>
 
         <WebView

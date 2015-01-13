@@ -263,6 +263,8 @@ public class GcmUtil {
             Util.showNotification(context, message);
         } else if ("downloadFavorites".equals(action)) {
             Util.syncData(context, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
+        } else if ("uploadFavorites".equals(action)){
+            Util.syncData(context, Util.SYNCFLAG_UPLOAD_FAVORITES);   
         } else if ("generateErrorReport".equals(action)) {
             ACRA.getErrorReporter().handleException(new RuntimeException("Error Report triggered by GCM"));
         }
