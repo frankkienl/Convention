@@ -78,7 +78,7 @@ public class GcmUtil {
     public static void gcmSetRegId(Context context, String regId) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("gmc_reg_id", regId);
+        editor.putString("gcm_reg_id", regId);
         try {
             editor.putInt("gcm_app_version", context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
         } catch (PackageManager.NameNotFoundException nnfe) {

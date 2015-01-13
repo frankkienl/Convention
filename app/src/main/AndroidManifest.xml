@@ -8,17 +8,18 @@
 
      TODO LIST
     - Implement Sync Favorites to the cloud
-    - Add About Screen, with version-number and licence info.
+    - Add About Screen, with version-number and licence info.    
+    - Add News Screen      
+    - Add NFC/QR Hunt (but give it a catchy friendship-related name)        
+    
+    //Probaly not:
     - Use custom view for Map
     - Add Speakers Screen
-    - Add News Screen
+    - Widget
     - Add search-feature (search-icon in actionbar)
-    - Add Setting screen (What settings are there?)    
-    - Add NFC Hunt (but give it a catchy friendship-related name)
+    - Add Setting screen (What settings are there?)  
     - Add Android Wear companion app
     - Make it Android 2.3.3 compatible (now its 4.0+)
-    - Widget
-    //Probaly not:
     - Twitter-screen?
     - Watchface?
 
