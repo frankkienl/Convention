@@ -7,8 +7,7 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Implement Sync Favorites to the cloud
-    - Add About Screen, with version-number and licence info.    
+    - Implement Sync Favorites to the cloud    
     - Add News Screen      
     - Add NFC/QR Hunt (but give it a catchy friendship-related name)        
     
@@ -24,6 +23,7 @@
     - Watchface?
 
     DONE:
+    - Add About Screen, with version-number and licence info.    
     - Add more ACRA error reports.
     - Fix ShareActionProvider, does not always include title of event.
     - Star as ActionBarItem ?
@@ -76,6 +76,14 @@
         <activity
             android:name="nl.frankkie.convention.AboutActivity"
             android:label="@string/title_activity_about"></activity>
+        <activity
+            android:name="nl.frankkie.convention.AboutAppActivity"
+            android:label="@string/title_event_detail"
+            android:parentActivityName="nl.frankkie.convention.AboutAppActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AboutActivity" />
+        </activity>
         <!--
         Don't reload WebView onConfigChange.
         http://developer.android.com/reference/android/webkit/WebView.html

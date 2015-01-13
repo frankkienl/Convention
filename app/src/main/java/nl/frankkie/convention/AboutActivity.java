@@ -113,6 +113,15 @@ public class AboutActivity extends ActionBarActivity implements NavigationDrawer
                 }
             }
         });
+        Button btnAboutApp = (Button) findViewById(R.id.about_btn_aboutapp);
+        btnAboutApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setClass(AboutActivity.this, AboutAppActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
 }

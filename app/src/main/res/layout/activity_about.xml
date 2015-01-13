@@ -124,6 +124,10 @@
                             android:paddingTop="15dp"
                             android:src="@drawable/hwcon_banner" />
 
+                        <Button android:id="@+id/about_btn_aboutapp"
+                            android:text="About this app"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>
