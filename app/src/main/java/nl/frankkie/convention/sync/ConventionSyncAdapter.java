@@ -15,18 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import nl.frankkie.convention.GcmUtil;
-import nl.frankkie.convention.R;
 import nl.frankkie.convention.Util;
 import nl.frankkie.convention.data.EventContract;
 
@@ -75,7 +66,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 Cursor cursor = getContext().getContentResolver().query(EventContract.FavoritesEntry.CONTENT_URI,
                         new String[]{EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID},
                         EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = 'event'", null, null);
-                if (cursor.getCount() == 0 ){
+                if (cursor.getCount() == 0) {
                     //no favorites.
                     //nothing to send.
                     //Maybe fix this some other way than to just return.
@@ -90,15 +81,15 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 cursor.close();
                 root.put("events", events);
                 JSONObject device = new JSONObject();
-                device.put("regId",GcmUtil.gcmGetRegId(getContext()));
-                root.put("device",device);
+                device.put("regId", GcmUtil.gcmGetRegId(getContext()));
+                root.put("device", device);
                 JSONObject wrapper = new JSONObject();
-                wrapper.put("data",root);
-                String json =wrapper.toString();
-                String postData = "json="+json;
+                wrapper.put("data", root);
+                String json = wrapper.toString();
+                String postData = "json=" + json;
                 ////////////////////////////
-               String response = Util.httpPost(getContext(),"http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php",postData);
-                if (!"ok".equals(response.trim())){
+                String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php", postData);
+                if (!"ok".equals(response.trim())) {
                     //There muse be something wrong                    
                 }
                 /////////////////////////////

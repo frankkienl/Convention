@@ -9,7 +9,7 @@
      TODO LIST
     - Add accounts, to sync favorites between devices.
     - Add News Screen      
-    - Add NFC/QR Hunt (but give it a catchy friendship-related name)        
+    - Add NFC/QR Hunt (but give it a catchy friendship-related name)         
     
     //Probaly not:
     - Use custom view for Map
@@ -23,6 +23,7 @@
     - Watchface?
 
     DONE:
+    - Easter Egg
     - Implement Sync Favorites to the cloud
     - Add About Screen, with version-number and licence info.    
     - Add more ACRA error reports.
@@ -83,8 +84,9 @@
             android:parentActivityName="nl.frankkie.convention.AboutAppActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AboutActivity" />
+                android:value=".AboutActivity" />            
         </activity>
+        <activity android:name=".EasterEggActivity"></activity>
         <!--
         Don't reload WebView onConfigChange.
         http://developer.android.com/reference/android/webkit/WebView.html

@@ -8,13 +8,18 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
  * Created by FrankkieNL on 13-1-2015.
  */
 public class AboutAppActivity extends ActionBarActivity {
+    
+    int timesClicked = 0;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +43,19 @@ public class AboutAppActivity extends ActionBarActivity {
 
         WebView wv = (WebView) findViewById(R.id.aboutapp_webview);
         wv.loadUrl("file:///android_asset/licences.html");
+        
+        //Easter Egg stuff
+        ImageView image = (ImageView) findViewById(R.id.aboutapp_frankkienl_image);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timesClicked++;
+                if (timesClicked >= 10){
+                    Intent i = new Intent(AboutAppActivity.this,EasterEggActivity.class);
+                    startActivity(i);
+                }
+            }
+        });
     }
 
     @Override
