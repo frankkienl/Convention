@@ -15,10 +15,20 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <ImageView
+            android:id="@+id/aboutapp_frankkienl_image"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_alignParentRight="true"
+            android:adjustViewBounds="true"
+            android:paddingTop="16dp"
+            android:src="@drawable/frankkienl" />
+
         <LinearLayout
             android:id="@+id/aboutapp_textcontainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/aboutapp_frankkienl_image"
             android:orientation="vertical">
 
             <TextView
@@ -30,6 +40,13 @@
             <TextView
                 android:id="@+id/aboutapp_version"
                 style="@style/textStyle_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/aboutapp_frankkienl_description"
+                android:text="@string/aboutapp_frankkienl_description"
+                style="@style/textStyle_details"
+                android:autoLink="web"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

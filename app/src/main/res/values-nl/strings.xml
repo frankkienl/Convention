@@ -52,4 +52,5 @@
     <string name="about_this_app">Over deze App</string>
     <string name="aboutapp_licences">Open source licenties</string>
     <string name="title_activity_about_app">Over deze App</string>
+    <string name="aboutapp_frankkienl_description">Deze app is gemaakt door FrankkieNL \nVoor meer apps, zie: \nhttp://frankkie.nl/</string>
 </resources>
