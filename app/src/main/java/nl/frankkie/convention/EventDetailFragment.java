@@ -16,7 +16,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -76,6 +75,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     TextView mLocation;
     TextView mLocationDescription;
     TextView mLocationFloor;
+    ImageView mImage;
     TextView mSpeakersHeader;
     LinearLayout mSpeakersContainer;
     MenuItem mStarMenuItem;
@@ -126,6 +126,12 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 mEndTime.setText(Util.getDataTimeString(data.getLong(5)));
                 String color = data.getString(6);
                 String image = data.getString(7);
+                Ion.with(this)
+                        .load(image)
+                        .withBitmap()
+                        .error(R.drawable.transparentpixel)
+                        .placeholder(R.drawable.transparentpixel)
+                        .intoImageView(mImage);
                 int locationId = data.getInt(8);
                 mLocation.setText(data.getString(9));
                 mLocationDescription.setText(data.getString(10));
@@ -275,6 +281,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         mLocation = (TextView) rootView.findViewById(R.id.event_detail_location);
         mLocationDescription = (TextView) rootView.findViewById(R.id.event_detail_location_description);
         mLocationFloor = (TextView) rootView.findViewById(R.id.event_detail_location_floor);
+        mImage = (ImageView) rootView.findViewById(R.id.event_detail_image);
         mSpeakersHeader = (TextView) rootView.findViewById(R.id.event_detail_label_speakers);
         mSpeakersHeader.setVisibility(View.GONE); //Make visible (again) if there are Speakers for this event.
         mSpeakersContainer = (LinearLayout) rootView.findViewById(R.id.event_detail_speakers_container);
