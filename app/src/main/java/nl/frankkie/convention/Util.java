@@ -121,12 +121,12 @@ public class Util {
         builder.setContentText(message);
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         builder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher2));
         builder.setVibrate(new long[]{50, 250, 50, 250}); //delay,vibrate,delay,etc.
         //http://stackoverflow.com/questions/8801122/set-notification-sound-from-assets-folder
         //The docs are not clear about how to add sound, StackOverflow to the rescue!
         builder.setSound(Uri.parse("android.resource://nl.frankkie.convention/raw/yay"));
-        builder.setSmallIcon(R.drawable.ic_stat_amber_notification);
+        builder.setSmallIcon(R.drawable.ic_stat_notification);
         Intent i = new Intent(context, EventListActivity.class);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
         builder.setContentIntent(pi);
