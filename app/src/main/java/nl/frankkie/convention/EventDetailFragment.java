@@ -156,7 +156,9 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 TextView sDescription = (TextView) speakerItem.findViewById(R.id.event_detail_speaker_item_description);
                 ImageView sImageView = (ImageView) speakerItem.findViewById(R.id.event_detail_speaker_item_image);
                 sName.setText(data.getString(1));
-                sDescription.setText(data.getString(2));
+                String descriptionString = data.getString(2);
+                descriptionString = descriptionString.replace("\\n","\n");
+                sDescription.setText(descriptionString);
                 String sImageUrl = data.getString(4);
                 mSpeakersContainer.addView(speakerItem);
 
