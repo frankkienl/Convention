@@ -4,9 +4,6 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Created by fbouwens on 19-11-14.
  */

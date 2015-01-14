@@ -1,6 +1,5 @@
 package nl.frankkie.convention.data;
 
-import android.app.usage.UsageEvents;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;

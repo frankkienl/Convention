@@ -4,7 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import nl.frankkie.convention.data.EventContract.*;
+import nl.frankkie.convention.data.EventContract.EventEntry;
+import nl.frankkie.convention.data.EventContract.FavoritesEntry;
+import nl.frankkie.convention.data.EventContract.LocationEntry;
+import nl.frankkie.convention.data.EventContract.SpeakerEntry;
+import nl.frankkie.convention.data.EventContract.SpeakersInEventsEntry;
 
 /**
  * Created by fbouwens on 19-11-14.

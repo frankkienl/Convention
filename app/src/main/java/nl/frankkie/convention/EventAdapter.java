@@ -2,19 +2,12 @@ package nl.frankkie.convention;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import nl.frankkie.convention.data.EventContract;
 
 /**
  * Created by fbouwens on 21-11-14.
