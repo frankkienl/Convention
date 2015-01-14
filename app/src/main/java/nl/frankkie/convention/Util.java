@@ -126,7 +126,7 @@ public class Util {
         //http://stackoverflow.com/questions/8801122/set-notification-sound-from-assets-folder
         //The docs are not clear about how to add sound, StackOverflow to the rescue!
         builder.setSound(Uri.parse("android.resource://nl.frankkie.convention/raw/yay"));
-        builder.setSmallIcon(R.drawable.ic_stat_notification);
+        builder.setSmallIcon(R.drawable.ic_stat_notification_heart);
         Intent i = new Intent(context, EventListActivity.class);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
         builder.setContentIntent(pi);

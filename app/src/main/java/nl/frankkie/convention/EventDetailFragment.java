@@ -166,8 +166,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                 Ion.with(this)
                         .load(sImageUrl)
                         .withBitmap()
-                        .error(R.drawable.ic_launcher)
-                        .placeholder(R.drawable.ic_launcher)
+                        .error(R.drawable.ic_launcher2)
+                        .placeholder(R.drawable.ic_launcher2)
                         .intoImageView(sImageView);
             }
         }
