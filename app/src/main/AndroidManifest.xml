@@ -7,7 +7,7 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Add acounts, to sync favorites between devices.
+    - Add accounts, to sync favorites between devices.
     - Add News Screen      
     - Add NFC/QR Hunt (but give it a catchy friendship-related name)        
     
@@ -79,7 +79,7 @@
             android:label="@string/title_activity_about"></activity>
         <activity
             android:name="nl.frankkie.convention.AboutAppActivity"
-            android:label="@string/title_event_detail"
+            android:label="@string/title_activity_about_app"
             android:parentActivityName="nl.frankkie.convention.AboutAppActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

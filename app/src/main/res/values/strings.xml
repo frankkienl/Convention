@@ -58,6 +58,7 @@
     <string name="about_map_app_not_found">There is no mapping app (like Google Maps) installed. Please install a mapping app and try again.</string>
     <string name="about_this_app">About this App</string>
     <string name="aboutapp_licences">Licences</string>
+    <string name="title_activity_about_app">About this App</string>
     <!-- Endof dont translate // -->
 
 </resources>
