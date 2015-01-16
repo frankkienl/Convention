@@ -15,7 +15,7 @@ import nl.frankkie.convention.data.EventContract.SpeakersInEventsEntry;
  */
 public class EventDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "events.db";
 
     public EventDbHelper(Context context) {
@@ -31,7 +31,9 @@ public class EventDbHelper extends SQLiteOpenHelper {
         String sqlEvent = "CREATE TABLE " + EventEntry.TABLE_NAME + " ( " +
                 EventEntry._ID + " INTEGER PRIMARY KEY, " +
                 EventEntry.COLUMN_NAME_TITLE + " TEXT, " +
-                EventEntry.COLUMN_NAME_DESCRIPTION + " TEXT, " +
+                EventEntry.COLUMN_NAME_TITLE_NL + " TEXT, " +
+                EventEntry.COLUMN_NAME_DESCRIPTION + " TEXT, " +                
+                EventEntry.COLUMN_NAME_DESCRIPTION_NL + " TEXT, " +
                 EventEntry.COLUMN_NAME_KEYWORDS + " TEXT, " +
                 EventEntry.COLUMN_NAME_IMAGE + " TEXT, " +
                 EventEntry.COLUMN_NAME_COLOR + " TEXT, " +
@@ -44,7 +46,9 @@ public class EventDbHelper extends SQLiteOpenHelper {
         String sqlSpeaker = "CREATE TABLE " + SpeakerEntry.TABLE_NAME + " ( " +
                 SpeakerEntry._ID + " INTEGER PRIMARY KEY, " +
                 SpeakerEntry.COLUMN_NAME_NAME + " TEXT, " +
+                SpeakerEntry.COLUMN_NAME_NAME_NL + " TEXT, " +
                 SpeakerEntry.COLUMN_NAME_DESCRIPTION + " TEXT, " +
+                SpeakerEntry.COLUMN_NAME_DESCRIPTION_NL + " TEXT, " +
                 SpeakerEntry.COLUMN_NAME_IMAGE + " TEXT, " +
                 SpeakerEntry.COLUMN_NAME_COLOR + " TEXT )";
         db.execSQL(sqlSpeaker);
@@ -52,7 +56,9 @@ public class EventDbHelper extends SQLiteOpenHelper {
         String sqlLocation = "CREATE TABLE " + LocationEntry.TABLE_NAME + " ( " +
                 LocationEntry._ID + " INTEGER PRIMARY KEY, " +
                 LocationEntry.COLUMN_NAME_NAME + " TEXT, " +
+                LocationEntry.COLUMN_NAME_NAME_NL + " TEXT, " +
                 LocationEntry.COLUMN_NAME_DESCRIPTION + " TEXT, " +
+                LocationEntry.COLUMN_NAME_DESCRIPTION_NL + " TEXT, " +
                 LocationEntry.COLUMN_NAME_MAP_LOCATION + " TEXT, " +
                 LocationEntry.COLUMN_NAME_FLOOR + " INTEGER )";
         db.execSQL(sqlLocation);

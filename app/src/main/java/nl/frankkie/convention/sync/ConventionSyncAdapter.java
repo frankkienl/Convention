@@ -115,7 +115,9 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues values = new ContentValues();
                 values.put(EventContract.EventEntry._ID, event.getInt("_id"));
                 values.put(EventContract.EventEntry.COLUMN_NAME_TITLE, event.getString("title"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_TITLE_NL, event.getString("title_nl"));
                 values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, event.getString("description"));
+                values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION_NL, event.getString("description_nl"));
                 values.put(EventContract.EventEntry.COLUMN_NAME_KEYWORDS, event.getString("keywords"));
                 values.put(EventContract.EventEntry.COLUMN_NAME_IMAGE, event.getString("image"));
                 values.put(EventContract.EventEntry.COLUMN_NAME_COLOR, event.getString("color"));
@@ -142,7 +144,9 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues values = new ContentValues();
                 values.put(EventContract.SpeakerEntry._ID, speaker.getInt("_id"));
                 values.put(EventContract.SpeakerEntry.COLUMN_NAME_NAME, speaker.getString("name"));
+                values.put(EventContract.SpeakerEntry.COLUMN_NAME_NAME_NL, speaker.getString("name_nl"));
                 values.put(EventContract.SpeakerEntry.COLUMN_NAME_DESCRIPTION, speaker.getString("description"));
+                values.put(EventContract.SpeakerEntry.COLUMN_NAME_DESCRIPTION_NL, speaker.getString("description_nl"));
                 values.put(EventContract.SpeakerEntry.COLUMN_NAME_IMAGE, speaker.getString("image"));
                 values.put(EventContract.SpeakerEntry.COLUMN_NAME_COLOR, speaker.getString("color"));
                 speakerCVs[i] = values;
@@ -160,7 +164,9 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues values = new ContentValues();
                 values.put(EventContract.LocationEntry._ID, location.getInt("_id"));
                 values.put(EventContract.LocationEntry.COLUMN_NAME_NAME, location.getString("name"));
+                values.put(EventContract.LocationEntry.COLUMN_NAME_NAME_NL, location.getString("name_nl"));
                 values.put(EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION, location.getString("description"));
+                values.put(EventContract.LocationEntry.COLUMN_NAME_DESCRIPTION_NL, location.getString("description_nl"));
                 values.put(EventContract.LocationEntry.COLUMN_NAME_MAP_LOCATION, location.getString("map_location"));
                 values.put(EventContract.LocationEntry.COLUMN_NAME_FLOOR, location.getInt("floor"));
                 locationCVs[i] = values;
