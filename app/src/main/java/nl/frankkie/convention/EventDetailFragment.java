@@ -16,6 +16,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -120,7 +121,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             if (data != null && data.moveToFirst()) {
                 int eventId = data.getInt(0);
                 mTitle.setText(data.getString(1));
-                mDescription.setText(data.getString(2));
+                String descriptionString = data.getString(2);                
+                mDescription.setText(Html.fromHtml(descriptionString));                
                 mKeywords.setText(data.getString(3));
                 mStartTime.setText(Util.getDataTimeString(data.getLong(4)));
                 mEndTime.setText(Util.getDataTimeString(data.getLong(5)));
