@@ -36,6 +36,7 @@
                 style="@android:style/TextAppearance.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:lines="3"
                 android:gravity="center"
                 android:text="@string/placeholder_short" />
 
