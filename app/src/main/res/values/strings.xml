@@ -31,7 +31,7 @@
     <string name="label_speakers">Speakers</string>
 
     <string name="star_tip_title">Tip</string>
-    <string name="star_tip_message">Click the Star to add this Event to \'My Schedule\'. \nDo this for all Events you intend to attend.</string>
+    <string name="star_tip_message">Click the Star to add this Event to \'My Schedule\'. \nDo this for all Events you intend to attend.\n\nLogin with Google+ to automatically sync between all your devices.</string>
     <!--
         Specific for this convention
         Change these when using for another convention
@@ -60,6 +60,8 @@
     <string name="aboutapp_licences">Licences</string>
     <string name="title_activity_about_app">About this App</string>
     <string name="aboutapp_frankkienl_description">This app has been made by FrankkieNL \nFor more apps see: \nhttp://frankkie.nl/</string>
+    <string name="title_section_qr_hunt">QR Hunt</string>
+    <string name="title_section_login">Login/Logout</string>
     <!-- Endof dont translate // -->
 
 </resources>

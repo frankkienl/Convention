@@ -28,7 +28,7 @@
     <string name="label_time">Tijd</string>
     <string name="label_location">Lokatie</string>
     <string name="label_speakers">Speakers</string>
-    <string name="star_tip_message">Klik op de Ster om dit Event toe te voegen aan \'Mijn Planning\'. \nDoe dit voor alle Events die je wilt bijwonen.</string>
+    <string name="star_tip_message">Klik op de Ster om dit Event toe te voegen aan \'Mijn Planning\'. \nDoe dit voor alle Events die je wilt bijwonen.\n\nLog in met Google+ om automatisch te synchroniseren tussen al je apparaten.</string>
     <string name="star_tip_title">Hint</string>
     <string name="title_activity_schedule">Planning</string>
 
@@ -53,4 +53,6 @@
     <string name="aboutapp_licences">Open source licenties</string>
     <string name="title_activity_about_app">Over deze App</string>
     <string name="aboutapp_frankkienl_description">Deze app is gemaakt door FrankkieNL \nVoor meer apps, zie: \nhttp://frankkie.nl/</string>
+    <string name="title_section_qr_hunt">QR Jacht</string>
+    <string name="title_section_login">Log in/Log uit</string>
 </resources>

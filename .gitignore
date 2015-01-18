@@ -5,7 +5,7 @@
 .DS_Store
 /build
 app/src/main/assets/acrapassword.json
-app/src/main/assets/acrapassword.json
+app/src/main/assets/googleplus_credentials.txt
 *.db
 GCM.txt
 app/app-release.apk

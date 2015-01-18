@@ -72,6 +72,16 @@ public class Util {
                 break;
             }
             case 3: {
+                if (!(thisAct instanceof QrHuntActivity))
+                    navigateFromNavDrawer(thisAct, new Intent(thisAct, QrHuntActivity.class));
+                break;
+            }
+            case 4: {
+                if (!(thisAct instanceof LoginActivity))
+                    navigateFromNavDrawer(thisAct, new Intent(thisAct, LoginActivity.class));
+                break;
+            }
+            case 5: {
                 if (!(thisAct instanceof AboutActivity))
                     navigateFromNavDrawer(thisAct, new Intent(thisAct, AboutActivity.class));
                 break;

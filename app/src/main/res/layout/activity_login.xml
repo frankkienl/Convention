@@ -16,24 +16,41 @@
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="nl.frankkie.convention.MapActivity">
+        tools:context="nl.frankkie.convention.LoginActivity">
         <!-- As the main content view, the view below consumes the entire
                  space available using match_parent in both dimensions. -->
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="nl.frankkie.convention.MapActivity">
-
-            <!--
-            TODO: Use custom view for map instead of WebView
-            //-->
-
-            <WebView
-                android:id="@+id/map_webview"
+            android:padding="16dp"
+            tools:context="nl.frankkie.convention.LoginActivity">
+            
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+                
+                <TextView
+                    android:id="@+id/login_header"
+                    style="@style/textStyle_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Login" />
 
+                <TextView
+                    style="@style/textStyle_details"
+                    android:text="\nLogin to sync to you schedule between all you devices.\n\nLogging in is required to participate in the QR Hunt!\n\nUse the button below to login."
+                    android:layout_below="@id/login_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                
+                <com.google.android.gms.common.SignInButton
+                    android:layout_alignParentBottom="true"
+                    android:paddingBottom="16dp"
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
         </FrameLayout>
         <!-- android:layout_gravity="start" tells DrawerLayout to treat
              this as a sliding drawer on the left side for left-to-right
