@@ -82,6 +82,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 root.put("events", events);
                 JSONObject device = new JSONObject();
                 device.put("regId", GcmUtil.gcmGetRegId(getContext()));
+                device.put("username", Util.getUserEmail(getContext()));
                 root.put("device", device);
                 JSONObject wrapper = new JSONObject();
                 wrapper.put("data", root);

@@ -3,10 +3,13 @@ package nl.frankkie.convention;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -205,8 +208,9 @@ public class LoginActivity extends ActionBarActivity implements
     public void onConnected(Bundle bundle) {
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentUserEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
+        Util.setUserEmail(this, currentUserEmail);
         Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_LONG).show();
-    }
+    }   
 
     @Override
     public void onConnectionSuspended(int i) {
