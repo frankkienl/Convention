@@ -50,6 +50,15 @@
                     android:id="@+id/sign_in_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+                <Button
+                    android:text="@string/sign_out"
+                    android:id="@+id/sign_out_button"
+                    android:visibility="gone"
+                    android:layout_below="@id/sign_in_button"
+                    android:paddingBottom="16dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </RelativeLayout>
         </FrameLayout>
         <!-- android:layout_gravity="start" tells DrawerLayout to treat

@@ -55,4 +55,5 @@
     <string name="aboutapp_frankkienl_description">Deze app is gemaakt door FrankkieNL \nVoor meer apps, zie: \nhttp://frankkie.nl/</string>
     <string name="title_section_qr_hunt">QR Jacht</string>
     <string name="title_section_login">Log in/Log uit</string>
+    <string name="sign_out">Sign out</string>
 </resources>

@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import nl.frankkie.convention.GcmUtil;
+import nl.frankkie.convention.GoogleApiUtil;
 import nl.frankkie.convention.Util;
 import nl.frankkie.convention.data.EventContract;
 
@@ -82,7 +83,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 root.put("events", events);
                 JSONObject device = new JSONObject();
                 device.put("regId", GcmUtil.gcmGetRegId(getContext()));
-                device.put("username", Util.getUserEmail(getContext()));
+                device.put("username", GoogleApiUtil.getUserEmail(getContext()));
                 root.put("device", device);
                 JSONObject wrapper = new JSONObject();
                 wrapper.put("data", root);

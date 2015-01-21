@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -15,6 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
@@ -138,6 +141,7 @@ public class LoginActivity extends ActionBarActivity implements
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
     }
 
@@ -149,6 +153,18 @@ public class LoginActivity extends ActionBarActivity implements
                 resolveSignInError();
             }
         });
+        findViewById(R.id.sign_out_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+         mGoogleApiClient.connect();
     }
 
     private void resolveSignInError() {
@@ -208,17 +224,22 @@ public class LoginActivity extends ActionBarActivity implements
     public void onConnected(Bundle bundle) {
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentUserEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
-        Util.setUserEmail(this, currentUserEmail);
-        Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_LONG).show();
+        GoogleApiUtil.setUserEmail(this, currentUserEmail);
+        Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_SHORT).show();
+        //Remove login button, as already logged in.
+        findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+        findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
     }   
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Toast.makeText(this,"Google Play Services: Connection Suspended", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        //Toast.makeText(this,"Google Play Services: Connection Failed", Toast.LENGTH_LONG).show();
+        //this can happen when user is not logged in yet, so don't display error message in that case.
+        mSignInIntent = connectionResult.getResolution();
     }
 }

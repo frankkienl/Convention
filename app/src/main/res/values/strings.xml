@@ -54,6 +54,7 @@
     <string name="placeholder_short" translatable="false">Lorem ipsum</string>
     <string name="placeholder_long" translatable="false">Lorem ipsum dolor sit amet.</string>
     <string name="placeholder_very_long" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent viverra aliquam neque id ultrices. Nullam lobortis orci eu varius tincidunt. In convallis lorem diam. Maecenas auctor sagittis porttitor. Curabitur dapibus neque odio, in finibus orci rutrum non. Nullam dapibus elit id magna porta, id condimentum purus pretium. Aenean non erat rutrum, finibus dui ut, ornare odio. Aliquam mollis pretium neque, at consequat ligula posuere vitae. Vestibulum sed venenatis felis. Nullam lorem lorem, bibendum vitae urna nec, viverra consequat erat.</string>
+    <!-- Endof dont translate // -->
     <string name="schedule_empty">There is nothing in your Schedule, yet! \nClick on the Star at Events in Browse-section to add them to \'My Schedule\'. \nDo this for all Events you intend to attend.</string>
     <string name="about_map_app_not_found">There is no mapping app (like Google Maps) installed. Please install a mapping app and try again.</string>
     <string name="about_this_app">About this App</string>
@@ -62,6 +63,13 @@
     <string name="aboutapp_frankkienl_description">This app has been made by FrankkieNL \nFor more apps see: \nhttp://frankkie.nl/</string>
     <string name="title_section_qr_hunt">QR Hunt</string>
     <string name="title_section_login">Login/Logout</string>
-    <!-- Endof dont translate // -->
+    <!-- Google Play Games //-->
+    <string name="google_play_games_app_id" translatable="false">445536900909</string>
+    <string name="achievement_ready_to_go" translatable="false">CgkIra7G4PsMEAIQAA</string>
+    <string name="achievement_personal_schedule" translatable="false">CgkIra7G4PsMEAIQAQ</string>
+    <string name="achievement_its_a_start" translatable="false">CgkIra7G4PsMEAIQAg</string>
+    <string name="achievement_easter_egg" translatable="false">CgkIra7G4PsMEAIQAw</string>
+    <string name="achievement_find_5" translatable="false">CgkIra7G4PsMEAIQBA</string>
+    <string name="sign_out">Sign out</string>
 
 </resources>

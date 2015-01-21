@@ -29,4 +29,5 @@ dependencies {
     compile 'com.koushikdutta.ion:ion:2.+'
     //Google Play Serivces, needed for GCM (Push Notifications) and Google+ Login
     compile 'com.google.android.gms:play-services-plus:6.5.87'
+    compile 'com.google.android.gms:play-services-games:6.5.87'
 }

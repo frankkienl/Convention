@@ -312,24 +312,4 @@ public class Util {
         ACRA.getErrorReporter().putCustomData("custom_errordata", errordata);
         ACRA.getErrorReporter().handleException(e);
     }
-
-    /**
-     * Set user email, according to Google+ 
-     * @param context
-     * @param userEmail emailadres from Google+
-     */
-    public static void setUserEmail(Context context, String userEmail){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString("google_plus_email", userEmail).commit();
-    }
-
-    /**
-     * Get user email 
-     * @param context
-     * @return emailadres of user according to Google+, empty string when unknown.
-     */
-    public static String getUserEmail(Context context){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("google_plus_email","");
-    }
 }
