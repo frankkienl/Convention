@@ -71,5 +71,6 @@
     <string name="achievement_easter_egg" translatable="false">CgkIra7G4PsMEAIQAw</string>
     <string name="achievement_find_5" translatable="false">CgkIra7G4PsMEAIQBA</string>
     <string name="sign_out">Sign out</string>
+    <string name="view_achievements">View Achievements</string>
 
 </resources>

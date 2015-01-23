@@ -26,6 +26,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.achievement.Achievement;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
@@ -156,7 +157,17 @@ public class LoginActivity extends ActionBarActivity implements
         findViewById(R.id.sign_out_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                Games.signOut(mGoogleApiClient);
+                mGoogleApiClient.disconnect();
+                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+                findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+                findViewById(R.id.view_achievements).setVisibility(View.GONE);
+            }
+        });
+        findViewById(R.id.view_achievements).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoogleApiUtil.showAchievements(LoginActivity.this, mGoogleApiClient);
             }
         });
     }
@@ -225,10 +236,13 @@ public class LoginActivity extends ActionBarActivity implements
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentUserEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         GoogleApiUtil.setUserEmail(this, currentUserEmail);
-        Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_SHORT).show();
         //Remove login button, as already logged in.
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+        findViewById(R.id.view_achievements).setVisibility(View.VISIBLE);
+        //Unlock the first Achievement
+        Games.Achievements.unlock(mGoogleApiClient,getString(R.string.achievement_ready_to_go));
     }   
 
     @Override

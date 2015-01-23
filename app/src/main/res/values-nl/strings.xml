@@ -56,4 +56,5 @@
     <string name="title_section_qr_hunt">QR Jacht</string>
     <string name="title_section_login">Log in/Log uit</string>
     <string name="sign_out">Sign out</string>
+    <string name="view_achievements">Bekijk prestaties</string>
 </resources>
