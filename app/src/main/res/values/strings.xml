@@ -72,5 +72,7 @@
     <string name="achievement_find_5" translatable="false">CgkIra7G4PsMEAIQBA</string>
     <string name="sign_out">Sign out</string>
     <string name="view_achievements">View Achievements</string>
+    <string name="qrlist_empty_placeholder">QR code list is empty</string>
+    <string name="qrlist_empty_names_hidden">No QR codes found yet!</string>
 
 </resources>

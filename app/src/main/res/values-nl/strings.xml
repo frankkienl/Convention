@@ -57,4 +57,6 @@
     <string name="title_section_login">Log in/Log uit</string>
     <string name="sign_out">Sign out</string>
     <string name="view_achievements">Bekijk prestaties</string>
+    <string name="qrlist_empty_placeholder">QR code lijst is leeg</string>
+    <string name="qrlist_empty_names_hidden">Nog geen QR codes gevonden!</string>
 </resources>

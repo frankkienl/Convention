@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import org.acra.ACRA;
+
 import nl.frankkie.convention.util.GcmUtil;
 import nl.frankkie.convention.util.Util;
 
@@ -186,6 +188,7 @@ public class EventListActivity extends ActionBarActivity
                 GooglePlayServicesUtil.showErrorNotification(flag, this);
             } else {
                 Log.e(getString(R.string.app_name), "Google Play Services not supported.");
+                ACRA.getErrorReporter().handleException(new RuntimeException("Google Play Services not supported."));
             }
         } else {
             //GCM is available!!
