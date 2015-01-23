@@ -17,6 +17,8 @@ public class EventContract {
     public static final String PATH_LOCATION = "location";
     public static final String PATH_SPEAKERS_IN_EVENTS = "speakers_in_events";
     public static final String PATH_FAVORITES = "favorites";
+    public static final String PATH_QR = "qr";
+    public static final String PATH_QRFOUND = "qrfound";
 
     /**
      * Events
@@ -139,6 +141,52 @@ public class EventContract {
         }
         public static Uri buildFavoritesByTypeEventUri(long eventId){
             return ContentUris.withAppendedId(CONTENT_URI.buildUpon().appendPath("event").build(), eventId);
+        }
+    }
+
+    /**
+     * QR Hunt
+     * This table will contain the data from the server.
+     * This table will not contain user-data. (found or not)
+     * I want to keep this in a separate table.
+     */
+    public static final class QrEntry implements BaseColumns {
+        public static Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_QR).build();
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_QR;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_QR;
+        public static final String TABLE_NAME = "qr";
+        public static final String COLUMN_NAME_HASH = "hash";
+        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_NAME_NL = "name_nl";
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
+        public static final String COLUMN_NAME_DESCRIPTION_NL = "description_nl";
+        public static final String COLUMN_NAME_IMAGE = "image";
+
+        public static Uri buildQrUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    /**
+     * QR Found
+     * This table will contain rows for all QR-codes that are found,
+     * with the time when the QR is found for the first time.
+     * (No row = not found)
+     */
+    public static final class QrFoundEntry implements BaseColumns {
+        public static Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_QRFOUND).build();
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_QRFOUND;
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_QRFOUND;
+        public static final String TABLE_NAME = "qrfound";
+        public static final String COLUMN_NAME_QR_ID = "qr_id"; //which one
+        public static final String COLUMN_NAME_TIME = "time_found"; //record the time when this QR was first found.
+
+        public static Uri buildQrUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
 }

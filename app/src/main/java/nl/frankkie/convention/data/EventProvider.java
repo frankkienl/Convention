@@ -22,6 +22,8 @@ public class EventProvider extends ContentProvider {
      * event/speakers
      * speakers
      * location
+     * favorites
+     * qr
      */
     //content://nl.frankkie.convention/event/ (LIST)
     public static final int EVENT = 100;
@@ -45,6 +47,17 @@ public class EventProvider extends ContentProvider {
     public static final int FAVORITES = 500;
     //content://nl.frankkie.convention/favorites/event (LIST of favorites of event type)
     public static final int FAVORITES_EVENTS = 501;
+    //content://nl.frankkie.convention/qr/ (LIST of QR codes to be found)
+    public static final int QR = 600;
+    //content://nl.frankkie.convention/qr/ID (ITEM)
+    public static final int QR_ID = 601;
+    //content://nl.frankkie.convention/qrfound/ (LIST of found codes, with times)
+    public static final int QR_FOUND = 700;
+    //content://nl.frankkie.convention/qrfound/ID (ITEM, note: is found-id, not qr-id)
+    public static final int QR_FOUND_ID = 701;
+    //content://nl.frankkie.convention/qrfound/qr/ID (ITEM, using QR-id)
+    public static final int QR_FOUND_QR_ID = 702;
+
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     SQLiteOpenHelper mOpenHelper;
@@ -325,6 +338,21 @@ public class EventProvider extends ContentProvider {
             }
             case FAVORITES_EVENTS: {
                 return EventContract.FavoritesEntry.CONTENT_TYPE; //list of all favorites of type event
+            }
+            case QR: {
+                return EventContract.QrEntry.CONTENT_TYPE; //list
+            }
+            case QR_ID: {
+                return EventContract.QrEntry.CONTENT_ITEM_TYPE; //1 qr code (with hash)
+            }
+            case QR_FOUND: {
+                return EventContract.QrFoundEntry.CONTENT_TYPE; //list of found qr-codes
+            }
+            case QR_FOUND_ID: {
+                return EventContract.QrFoundEntry.CONTENT_ITEM_TYPE; //1 found qr (with time) by found_id
+            }
+            case QR_FOUND_QR_ID: {
+                return EventContract.QrFoundEntry.CONTENT_ITEM_TYPE; //1 found qr (with time) by qr_id
             }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

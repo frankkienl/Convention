@@ -15,7 +15,7 @@ import nl.frankkie.convention.data.EventContract.SpeakersInEventsEntry;
  */
 public class EventDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
     public static final String DATABASE_NAME = "events.db";
 
     public EventDbHelper(Context context) {
@@ -76,6 +76,25 @@ public class EventDbHelper extends SQLiteOpenHelper {
                 "UNIQUE(" + FavoritesEntry.COLUMN_NAME_TYPE + "," + //Made type & id unique to prevent duplicates
                 FavoritesEntry.COLUMN_NAME_ITEM_ID + ") ON CONFLICT REPLACE" + " )";
         db.execSQL(sqlFavorites);
+
+        //Added in DB-version 8
+        String sqlQr = "CREATE TABLE " + EventContract.QrEntry.TABLE_NAME + " ( " +
+                EventContract.QrEntry._ID + " INTEGER PRIMARY KEY, " +
+                EventContract.QrEntry.COLUMN_NAME_HASH + " TEXT, " +
+                EventContract.QrEntry.COLUMN_NAME_NAME + " TEXT, " +
+                EventContract.QrEntry.COLUMN_NAME_NAME_NL + " TEXT, " +
+                EventContract.QrEntry.COLUMN_NAME_DESCRIPTION + " TEXT, " +
+                EventContract.QrEntry.COLUMN_NAME_DESCRIPTION_NL + " TEXT, " +
+                EventContract.QrEntry.COLUMN_NAME_IMAGE + " TEXT )";
+        db.execSQL(sqlQr);
+
+        String sqlQrFound = "CREATE TABLE " + EventContract.QrFoundEntry.TABLE_NAME + " ( " +
+                EventContract.QrFoundEntry._ID + " INTEGER PRIMARY KEY, " +
+                EventContract.QrFoundEntry.COLUMN_NAME_QR_ID + " INTEGER, " +
+                EventContract.QrFoundEntry.COLUMN_NAME_TIME + " TEXT, " +
+                "UNIQUE(" + EventContract.QrFoundEntry.COLUMN_NAME_QR_ID + ") ON CONFLICT IGNORE )";
+                //Made qr_id unique to preserve first time_found when found multiple times, and to prevent duplicates.
+        db.execSQL(sqlQrFound);
     }
 
     @Override
@@ -87,7 +106,14 @@ public class EventDbHelper extends SQLiteOpenHelper {
         db.execSQL(sql + SpeakerEntry.TABLE_NAME);
         db.execSQL(sql + SpeakersInEventsEntry.TABLE_NAME);
         //For future updates, don't delete favorites, but upgrade.
-        db.execSQL(sql + FavoritesEntry.TABLE_NAME);
+        if (oldVersion <= 7) {
+            //Favorites table not changed since db-version 7
+            //Don't delete if not needed
+            db.execSQL(sql + FavoritesEntry.TABLE_NAME);
+        }
+        //QR-hunt tables added in DB-version 8
+        db.execSQL(sql + EventContract.QrEntry.TABLE_NAME);
+        db.execSQL(sql + EventContract.QrFoundEntry.TABLE_NAME);
         //
         createTables(db);
     }
