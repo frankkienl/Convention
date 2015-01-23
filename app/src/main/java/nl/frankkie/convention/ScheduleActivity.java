@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import nl.frankkie.convention.util.Util;
+
 
 /**
  * THIS IS LIKE A COPY OF EventListActivity

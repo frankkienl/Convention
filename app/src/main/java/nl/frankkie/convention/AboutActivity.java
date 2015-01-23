@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import nl.frankkie.convention.util.Util;
+
 
 public class AboutActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 

@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
+import nl.frankkie.convention.util.Util;
+
 
 public class MapActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 

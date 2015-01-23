@@ -17,9 +17,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import nl.frankkie.convention.GcmUtil;
-import nl.frankkie.convention.GoogleApiUtil;
-import nl.frankkie.convention.Util;
+import nl.frankkie.convention.util.GcmUtil;
+import nl.frankkie.convention.util.GoogleApiUtil;
+import nl.frankkie.convention.util.Util;
 import nl.frankkie.convention.data.EventContract;
 
 /**

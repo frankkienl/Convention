@@ -1,4 +1,4 @@
-package nl.frankkie.convention;
+package nl.frankkie.convention.util;
 
 import android.app.Activity;
 import android.content.Context;

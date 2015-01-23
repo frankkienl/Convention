@@ -1,4 +1,4 @@
-package nl.frankkie.convention;
+package nl.frankkie.convention.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -7,11 +7,9 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -32,6 +30,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import nl.frankkie.convention.AboutActivity;
+import nl.frankkie.convention.EventListActivity;
+import nl.frankkie.convention.LoginActivity;
+import nl.frankkie.convention.MapActivity;
+import nl.frankkie.convention.QrHuntActivity;
+import nl.frankkie.convention.R;
+import nl.frankkie.convention.ScheduleActivity;
 
 /**
  * Created by fbouwens on 10-12-14.

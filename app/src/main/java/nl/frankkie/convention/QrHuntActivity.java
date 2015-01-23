@@ -9,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import nl.frankkie.convention.util.Util;
+
 /**
  * Created by FrankkieNL on 18-1-2015.
  */

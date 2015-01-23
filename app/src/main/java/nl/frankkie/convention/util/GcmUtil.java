@@ -1,4 +1,4 @@
-package nl.frankkie.convention;
+package nl.frankkie.convention.util;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
+
+import nl.frankkie.convention.R;
 
 /**
  * Created by FrankkieNL on 20-12-2014.
@@ -187,7 +189,7 @@ public class GcmUtil {
         int appVersion = pInfo.versionCode;
         String postData = "regId=" + regId + "&androidVersion=" + Build.VERSION.RELEASE + "&androidVersionInt=" + Build.VERSION.SDK_INT + "&brand=" + Build.BRAND + "&model=" + Build.MODEL + "&locale=" + locale + "&appVersion=" + appVersion;
         try {
-            //For rant, see nl.frankkie.convention.Util
+            //For rant, see nl.frankkie.convention.util.Util
             URL url = new URL("http://wofje.8s.nl/hwcon/api/v1/gcmregister.php");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");

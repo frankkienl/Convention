@@ -14,6 +14,9 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import nl.frankkie.convention.util.GcmUtil;
+import nl.frankkie.convention.util.Util;
+
 
 /**
  * An activity representing a list of Events. This activity

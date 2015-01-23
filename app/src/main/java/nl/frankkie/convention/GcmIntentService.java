@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import nl.frankkie.convention.util.GcmUtil;
+
 /**
  * Created by FrankkieNL on 19-12-2014.
  */

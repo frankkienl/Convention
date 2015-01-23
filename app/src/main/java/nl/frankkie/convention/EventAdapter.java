@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import nl.frankkie.convention.util.Util;
+
 /**
  * Created by fbouwens on 21-11-14.
  */

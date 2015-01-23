@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 
 import nl.frankkie.convention.data.EventContract;
+import nl.frankkie.convention.util.Util;
 
 /**
  * A fragment representing a single Event detail screen.
