@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -19,7 +20,7 @@ import nl.frankkie.convention.data.EventContract;
 /**
  * Created by fbouwens on 23-01-15.
  */
-public class QrListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class QrListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 /*
     Rubber Ducky needed.
     How much is the user allowed to know (in advance) ?
@@ -88,9 +89,23 @@ public class QrListFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mListAdapter = new QrListAdapter(getActivity(), null, 0); //Cursor comes later
+        //mListAdapter = new QrListAdapter(getActivity(), null, 0); //Cursor comes later
         View v = inflater.inflate(R.layout.fragment_qr_list, container, false);
-        mListView = (ListView) v.findViewById(android.R.id.list);
+        //mListView = (ListView) v.findViewById(android.R.id.list);
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mListAdapter = new QrListAdapter(getActivity(), null, 0);
+        mListView = getListView();
+        mListView.setAdapter(mListAdapter);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(QRLIST_LOADER, null, this);
     }
 }

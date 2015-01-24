@@ -28,12 +28,17 @@
             <!--
             TODO: Fill
             //-->
-            
-            <TextView
-                android:text="TODO"
-                android:textSize="46sp"
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/qrlist"
+                android:name="nl.frankkie.convention.QrListFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                tools:context=".QrListActivity"
+                tools:layout="@android:layout/list_content" />
 
         </FrameLayout>
         <!-- android:layout_gravity="start" tells DrawerLayout to treat
