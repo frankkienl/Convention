@@ -17,12 +17,13 @@ import com.google.android.gms.plus.Plus;
 
 import org.acra.ACRA;
 
+import nl.frankkie.convention.util.GoogleApiUtil;
 import nl.frankkie.convention.util.Util;
 
 /**
  * Created by FrankkieNL on 18-1-2015.
  */
-public class QrHuntActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class QrHuntActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleApiUtil.GiveMeGoogleApiClient {
 
     //<editor-fold desc="ActionBar Stuff">
     /**
@@ -157,14 +158,19 @@ public class QrHuntActivity extends ActionBarActivity implements NavigationDrawe
     public void onConnectionFailed(ConnectionResult connectionResult) {
         //silently ignore errors
     }
+
+    @Override
+    public GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
+    }
     //</editor-fold>
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.activity_qrhunt);
-        
+
         initToolbar();
 
         initGoogleApi();

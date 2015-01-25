@@ -46,5 +46,12 @@ public class GoogleApiUtil {
         }
     }
 
-
+    /**
+     * Interface to get GoogleApiClient from Activity.
+     * Best way to communicate between fragment and activity 
+     * http://developer.android.com/training/basics/fragments/communicating.html 
+     */
+    public static interface GiveMeGoogleApiClient {
+        public GoogleApiClient getGoogleApiClient();
+    }
 }

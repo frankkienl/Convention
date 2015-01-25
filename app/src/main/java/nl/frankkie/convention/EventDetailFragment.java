@@ -27,9 +27,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.games.Games;
 import com.koushikdutta.ion.Ion;
 
 import nl.frankkie.convention.data.EventContract;
+import nl.frankkie.convention.util.GoogleApiUtil;
 import nl.frankkie.convention.util.Util;
 
 /**
@@ -84,6 +86,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     //workaround for when onLoadFinished is called before actionbar is loaded
     boolean isLoadingFinished = false;
     boolean isLoadingFinished_isFavorite = false;
+    private GoogleApiUtil.GiveMeGoogleApiClient apiClientGetter;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -122,8 +125,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             if (data != null && data.moveToFirst()) {
                 int eventId = data.getInt(0);
                 mTitle.setText(data.getString(1));
-                String descriptionString = data.getString(2);                
-                mDescription.setText(Html.fromHtml(descriptionString));                
+                String descriptionString = data.getString(2);
+                mDescription.setText(Html.fromHtml(descriptionString));
                 mKeywords.setText(data.getString(3));
                 mStartTime.setText(Util.getDataTimeString(data.getLong(4)));
                 mEndTime.setText(Util.getDataTimeString(data.getLong(5)));
@@ -270,6 +273,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
         if (getArguments().containsKey(ARG_ITEM_SHARETITLE)) {
             mShareTitle = getArguments().getString(ARG_ITEM_SHARETITLE);
         }
+
+        apiClientGetter = (GoogleApiUtil.GiveMeGoogleApiClient) getActivity();
     }
 
     @Override
@@ -336,6 +341,8 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             cv.put(EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID, mId); //Id of this Event
             getActivity().getContentResolver().insert(EventContract.FavoritesEntry.CONTENT_URI, cv);
             //I made favorites.type && favorites.item_id UNIQUE, to prevent duplicates.
+            //Google Play Games
+            Games.Achievements.increment(apiClientGetter.getGoogleApiClient(), getActivity().getString(R.string.achievement_personal_schedule), 1);
         } else {
             //If not checked, remove row from DB
             //We use EventID in where-clause, hence, we don't need to know the RowID of the Favorite.
