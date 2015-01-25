@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.acra.ACRA;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,11 +96,15 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     //There muse be something wrong                    
                 }
                 /////////////////////////////
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (Exception e) {
+                ACRA.getErrorReporter().handleException(e);
                 e.printStackTrace();
             }
+        }
+        ///
+        if ((syncFlags & Util.SYNCFLAG_UPLOAD_QRFOUND) == Util.SYNCFLAG_UPLOAD_QRFOUND){
+            //TODO: implement upload QR Found
+
         }
     }
 
@@ -110,7 +115,6 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
 
             //<editor-fold desc="events">
             JSONArray events = data.getJSONArray("events");
-            //Yes thats a word now
             ContentValues[] eventCVs = new ContentValues[events.length()];
             for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);

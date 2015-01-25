@@ -326,8 +326,6 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
     }
 
     public void persistFavorite(boolean checked) {
-        //sendToServer
-        Util.sendFavoriteDelta(getActivity(), mId, checked);
         if (checked) {
             //If checked, add a row to DB
             ContentValues cv = new ContentValues();
@@ -345,5 +343,7 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
                     EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = '" + EventContract.FavoritesEntry.TYPE_EVENT +
                             "' AND " + EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID + " = ?", new String[]{mId});
         }
+        //sendToServer, after persisting in local database
+        Util.sendFavoriteDelta(getActivity(), mId, checked);
     }
 }

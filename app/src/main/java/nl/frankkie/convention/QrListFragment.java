@@ -1,6 +1,7 @@
 package nl.frankkie.convention;
 
 import android.app.usage.UsageEvents;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -158,10 +159,35 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
             String regId = GcmUtil.gcmGetRegId(context);
             String hash = Util.sha1Hash(qrdata + "_" + regId);
             //Check database
-            /*
-            SELECT * FROM
-             */
-            //Cursor cursor = context.getContentResolver().query();
+            Cursor cursor = context.getContentResolver().query(
+                    EventContract.QrEntry.buildQrByHashUri(hash),
+                    QRLIST_COLUMNS, //projection (which columns)
+                    null, //selection - intentionally null
+                    null, //selectionArgs - intentionally null
+                    null //sortorder does not matter with 1 result
+            );
+            int numRows = cursor.getCount();
+            if (numRows == 0){
+                //Not on the list
+                Toast.makeText(context,"QR Code not on the list!", Toast.LENGTH_LONG).show();
+                return null;
+            }
+            //if not found before, add a row.
+            cursor.moveToFirst();
+            String timeFound = cursor.getString(COL_FOUND_TIME);
+            if (timeFound == null || "".equals(timeFound)){
+                //not found before. Add row
+                ContentValues cv = new ContentValues();
+                cv.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, cursor.getInt(COL_ID));
+                cv.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, System.currentTimeMillis());
+                context.getContentResolver().insert(EventContract.QrFoundEntry.CONTENT_URI, cv);
+                Toast.makeText(context, "Good work! You have found QR Code:\n" + cursor.getString(COL_NAME), Toast.LENGTH_LONG).show();
+                //Sync to cloud!!!!
+
+            } else {
+                Toast.makeText(context, "You have found this QR Code before. Go look for another one!", Toast.LENGTH_LONG).show();
+            }
+            cursor.close();
             return null;
         }
     }

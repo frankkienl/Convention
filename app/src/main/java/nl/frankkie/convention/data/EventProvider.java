@@ -1,5 +1,6 @@
 package nl.frankkie.convention.data;
 
+import android.app.usage.UsageEvents;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -345,6 +346,20 @@ public class EventProvider extends ContentProvider {
             }
             case QR_HASH: {
                 //TODO: IMPLETMENT THIS !!!
+                if (selection == null || "".equals(selection)) {
+                    selection = EventContract.QrEntry.TABLE_NAME + "." + EventContract.QrEntry.COLUMN_NAME_HASH + " = ?";
+                    selectionArgs = new String[]{uri.getLastPathSegment()};
+                }
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        sQrWithFoundQueryBuilder.getTables(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
             }
             case QR_FOUND: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -433,6 +448,9 @@ public class EventProvider extends ContentProvider {
             }
             case QR_ID: {
                 return EventContract.QrEntry.CONTENT_ITEM_TYPE; //1 qr code (with hash)
+            }
+            case QR_HASH: {
+                return EventContract.QrEntry.CONTENT_ITEM_TYPE; //1 qr code (with found_time) by hash
             }
             case QR_FOUND: {
                 return EventContract.QrFoundEntry.CONTENT_TYPE; //list of found qr-codes

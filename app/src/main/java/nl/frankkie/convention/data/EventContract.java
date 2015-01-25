@@ -167,6 +167,11 @@ public class EventContract {
         public static Uri buildQrUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Uri buildQrByHashUri(String hash){
+            //content://nl.frankkie.convention/qr/hash/<HASH>
+            return CONTENT_URI.buildUpon().appendPath("hash").appendPath(hash).build();
+        }
     }
 
     /**
