@@ -17,10 +17,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import nl.frankkie.convention.data.EventContract;
 import nl.frankkie.convention.util.GcmUtil;
 import nl.frankkie.convention.util.GoogleApiUtil;
 import nl.frankkie.convention.util.Util;
-import nl.frankkie.convention.data.EventContract;
 
 /**
  * Created by FrankkieNL on 6-12-2014.
@@ -194,6 +194,28 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             getContext().getContentResolver().notifyChange(EventContract.SpeakersInEventsEntry.CONTENT_URI, null);
             //</editor-fold>
 
+            //<editor-fold desc="qr">
+            //QR is a separate table, to keep the userdata (found or not) separate from the convention-data
+            if (data.has("qr")) {
+                JSONArray qrs = data.getJSONArray("qr");
+                ContentValues[] qrCVs = new ContentValues[qrs.length()];
+                for (int i = 0; i < qrs.length(); i++) {
+                    JSONObject qr = qrs.getJSONObject(i);
+                    ContentValues qrCV = new ContentValues();
+                    qrCV.put(EventContract.QrEntry._ID, qr.getInt("_id"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_HASH, qr.getInt("hash"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_NAME, qr.getInt("name"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_NAME_NL, qr.getInt("name_nl"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_DESCRIPTION, qr.getInt("description"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_DESCRIPTION_NL, qr.getInt("description_nl"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_IMAGE, qr.getInt("image"));
+                    qrCVs[i] = qrCV;
+                }
+                getContext().getContentResolver().delete(EventContract.QrEntry.CONTENT_URI, null, null);
+                getContext().getContentResolver().bulkInsert(EventContract.QrEntry.CONTENT_URI, qrCVs);
+                getContext().getContentResolver().notifyChange(EventContract.QrEntry.CONTENT_URI, null);
+            }
+            //</editor-fold>
         } catch (JSONException e) {
             Log.e("Convention", "Error in SyncAdapter.onPerformSync, ConventionData JSON ", e);
         }

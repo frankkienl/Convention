@@ -58,7 +58,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
             EventContract.QrEntry.COLUMN_NAME_NAME,
             EventContract.QrEntry.COLUMN_NAME_DESCRIPTION,
             EventContract.QrEntry.COLUMN_NAME_IMAGE,
-            EventContract.QrFoundEntry.COLUMN_NAME_TIME
+            EventContract.QrFoundEntry.TABLE_NAME + "." + EventContract.QrFoundEntry.COLUMN_NAME_TIME
     };
 
     @Override

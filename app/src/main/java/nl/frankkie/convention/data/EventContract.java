@@ -185,7 +185,7 @@ public class EventContract {
         public static final String COLUMN_NAME_QR_ID = "qr_id"; //which one
         public static final String COLUMN_NAME_TIME = "time_found"; //record the time when this QR was first found.
 
-        public static Uri buildQrUri(long id){
+        public static Uri buildQrFoundUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }

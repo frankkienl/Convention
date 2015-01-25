@@ -65,6 +65,7 @@ public class EventProvider extends ContentProvider {
     private static final SQLiteQueryBuilder sEventWithLocationQueryBuilder;
     private static final SQLiteQueryBuilder sSpeakersWithEventQueryBuilder;
     private static final SQLiteQueryBuilder sFavoriteEventsWithLocationQueryBuilder;
+    private static final SQLiteQueryBuilder sQrWithFoundQueryBuilder;
 
     static {
         // Sunshine combines location with weather, this app will combine event and location
@@ -91,7 +92,7 @@ public class EventProvider extends ContentProvider {
                 EventContract.SpeakersInEventsEntry.TABLE_NAME + " INNER JOIN " +
                         EventContract.SpeakerEntry.TABLE_NAME + " ON " +
                         EventContract.SpeakersInEventsEntry.TABLE_NAME +
-                         "." + EventContract.SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID +
+                        "." + EventContract.SpeakersInEventsEntry.COLUMN_NAME_SPEAKER_ID +
                         " = " + EventContract.SpeakerEntry.TABLE_NAME + "." + EventContract.SpeakerEntry._ID
         );
         //Get all favorite Events (with location)
@@ -99,7 +100,7 @@ public class EventProvider extends ContentProvider {
         sFavoriteEventsWithLocationQueryBuilder = new SQLiteQueryBuilder();
         sFavoriteEventsWithLocationQueryBuilder.setTables(
                 EventContract.EventEntry.TABLE_NAME + " JOIN " +
-                       EventContract.LocationEntry.TABLE_NAME + " ON " +
+                        EventContract.LocationEntry.TABLE_NAME + " ON " +
                         EventContract.EventEntry.TABLE_NAME +
                         "." + EventContract.EventEntry.COLUMN_NAME_LOCATION_ID +
                         " = " + EventContract.LocationEntry.TABLE_NAME + "." +
@@ -108,6 +109,17 @@ public class EventProvider extends ContentProvider {
                         EventContract.FavoritesEntry.TABLE_NAME + "." +
                         EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID + " = " +
                         EventContract.EventEntry.TABLE_NAME + "." + EventContract.EventEntry._ID
+        );
+        //Get all QR codes to be found, with the time_found column from QrFound.
+        //SELECT qr._id, qr.hash, qr.name, qr.description, qr.image, qrfound.time_found FROM qr JOIN qrfound ON qrfound.qr_id = qr._id 
+        sQrWithFoundQueryBuilder = new SQLiteQueryBuilder();
+        sQrWithFoundQueryBuilder.setTables(
+                EventContract.QrEntry.TABLE_NAME + " LEFT JOIN " + //Left Join, so just give an empty value when time_found == null, instead of ignoring whole row.
+                        EventContract.QrFoundEntry.TABLE_NAME + " ON " +
+                        EventContract.QrFoundEntry.TABLE_NAME +
+                        "." + EventContract.QrFoundEntry.COLUMN_NAME_QR_ID +
+                        " = " + EventContract.QrEntry.TABLE_NAME + "." +
+                        EventContract.QrEntry._ID
         );
     }
 
@@ -125,6 +137,11 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKERS_IN_EVENTS + "/event/#", SPEAKERS_IN_EVENTS_EVENT_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES, FAVORITES);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES + "/event", FAVORITES_EVENTS);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR, QR);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR + "/#", QR_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND, QR_FOUND);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND + "/#", QR_FOUND_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND + "/qr/#", QR_FOUND_QR_ID);
         return matcher;
     }
 
@@ -167,7 +184,7 @@ public class EventProvider extends ContentProvider {
                         projection,
                         selection,
                         selectionArgs,
-                        null,null,
+                        null, null,
                         sortOrder
 
                 );
@@ -271,15 +288,15 @@ public class EventProvider extends ContentProvider {
                 break;
             }
             case FAVORITES: {
-               retCursor = mOpenHelper.getReadableDatabase().query(
-                       EventContract.FavoritesEntry.TABLE_NAME,
-                       projection,
-                       selection,
-                       selectionArgs,
-                       null, //having
-                       null, //group by
-                       sortOrder
-               );
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.FavoritesEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, //having
+                        null, //group by
+                        sortOrder
+                );
                 break;
             }
             case FAVORITES_EVENTS: {
@@ -294,6 +311,72 @@ public class EventProvider extends ContentProvider {
                         selectionArgs,
                         null, //having
                         null, //group by
+                        sortOrder
+                );
+                break;
+            }
+            case QR: {
+                //List all QR's to find, with time_found (from the other table)                
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        sQrWithFoundQueryBuilder.getTables(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case QR_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.QrEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case QR_FOUND: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.QrFoundEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case QR_FOUND_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.QrFoundEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case QR_FOUND_QR_ID: {
+                //get found by QR id
+                if (selection == null || "".equals(selection)) {
+                    selection = EventContract.QrFoundEntry.TABLE_NAME + "." + EventContract.QrFoundEntry.COLUMN_NAME_QR_ID + " = ?";
+                    selectionArgs = new String[]{uri.getLastPathSegment()};
+                }
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        EventContract.QrFoundEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
                         sortOrder
                 );
                 break;
@@ -409,10 +492,28 @@ public class EventProvider extends ContentProvider {
             }
             case FAVORITES: {
                 long id = db.insert(EventContract.FavoritesEntry.TABLE_NAME, null, values);
-                if (id != -1L){
+                if (id != -1L) {
                     returnUri = EventContract.FavoritesEntry.buildFavoriteUri(id);
                 } else {
                     throw new SQLException("Failed to insert Favorite row into: " + uri);
+                }
+                break;
+            }
+            case QR: {
+                long id = db.insert(EventContract.QrEntry.TABLE_NAME, null, values);
+                if (id != -1L) {
+                    returnUri = EventContract.QrEntry.buildQrUri(id);
+                } else {
+                    throw new SQLException("Failed to insert Qr row into: " + uri);
+                }
+                break;
+            }
+            case QR_FOUND: {
+                long id = db.insert(EventContract.QrFoundEntry.TABLE_NAME, null, values);
+                if (id != -1L) {
+                    returnUri = EventContract.QrFoundEntry.buildQrFoundUri(id);
+                } else {
+                    throw new SQLException("Failed to insert QrFound row into: " + uri);
                 }
                 break;
             }
@@ -493,6 +594,9 @@ public class EventProvider extends ContentProvider {
                 }
                 return returnInt;
             }
+            //TODO: implement BulkInsert for QR
+            //Note: No Rush, default implementation is to use regular insert when BulkInsert is not implement.
+            //It'll work, but less optimized.
             default:
                 return super.bulkInsert(uri, values);
         }
@@ -522,6 +626,14 @@ public class EventProvider extends ContentProvider {
             }
             case FAVORITES: {
                 numberOfRowsDeleted = db.delete(EventContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            case QR: {
+                numberOfRowsDeleted = db.delete(EventContract.QrEntry.TABLE_NAME, selection, selectionArgs);
+                break;                
+            }
+            case QR_FOUND: {
+                numberOfRowsDeleted = db.delete(EventContract.QrFoundEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
             default:
@@ -559,6 +671,14 @@ public class EventProvider extends ContentProvider {
             }
             case FAVORITES: {
                 rowsUpdated = db.update(EventContract.FavoritesEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            }
+            case QR: {
+                rowsUpdated = db.update(EventContract.QrEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            }
+            case QR_FOUND: {
+                rowsUpdated = db.update(EventContract.QrFoundEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }
             default:
