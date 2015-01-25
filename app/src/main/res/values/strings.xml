@@ -74,5 +74,6 @@
     <string name="view_achievements">View Achievements</string>
     <string name="qrlist_empty_placeholder">QR code list is empty</string>
     <string name="qrlist_empty_names_hidden">No QR codes found yet!</string>
+    <string name="qr_scan">Scan</string>
 
 </resources>

@@ -1,8 +1,11 @@
 package nl.frankkie.convention;
 
 import android.app.usage.UsageEvents;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,9 +16,16 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import nl.frankkie.convention.data.EventContract;
+import nl.frankkie.convention.util.GcmUtil;
+import nl.frankkie.convention.util.Util;
 
 /**
  * Created by fbouwens on 23-01-15.
@@ -92,7 +102,33 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
         //mListAdapter = new QrListAdapter(getActivity(), null, 0); //Cursor comes later
         View v = inflater.inflate(R.layout.fragment_qr_list, container, false);
         //mListView = (ListView) v.findViewById(android.R.id.list);
+        Button scanButton = (Button) v.findViewById(R.id.qr_scan);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanQR();
+            }
+        });
         return v;
+    }
+
+    public void scanQR(){
+        IntentIntegrator ii = new IntentIntegrator(getActivity());
+        ii.initiateScan();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if (intentResult != null){
+            //Check if correct QR code and stuff
+            //Doing this in AsyncTask, becauase database lookup can take time, same goes for hashing.
+            CheckQRCodeTask task = new CheckQRCodeTask(getActivity(), intentResult.getContents());
+            task.execute();
+        } else {
+            Toast.makeText(getActivity(),"No QR code scanned", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -107,5 +143,26 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(QRLIST_LOADER, null, this);
+    }
+
+    public class CheckQRCodeTask extends AsyncTask<Void,Void,Void>{
+        Context context;
+        String qrdata;
+        public CheckQRCodeTask(Context context, String qrdata){
+            this.context = context;
+            this.qrdata = qrdata;
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            //Create Hash
+            String regId = GcmUtil.gcmGetRegId(context);
+            String hash = Util.sha1Hash(qrdata + "_" + regId);
+            //Check database
+            /*
+            SELECT * FROM
+             */
+            //Cursor cursor = context.getContentResolver().query();
+            return null;
+        }
     }
 }

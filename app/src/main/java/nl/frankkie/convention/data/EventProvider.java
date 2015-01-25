@@ -51,7 +51,9 @@ public class EventProvider extends ContentProvider {
     public static final int QR = 600;
     //content://nl.frankkie.convention/qr/ID (ITEM)
     public static final int QR_ID = 601;
-    //content://nl.frankkie.convention/qrfound/ (LIST of found codes, with times)
+    //content://nl.frankkie.convention/qr/hash/ID (ITEM)
+    public static final int QR_HASH = 602;
+    //content://nl.frankkie.convention/qrfound/ (LIST of found codes, with times, without names and description)
     public static final int QR_FOUND = 700;
     //content://nl.frankkie.convention/qrfound/ID (ITEM, note: is found-id, not qr-id)
     public static final int QR_FOUND_ID = 701;
@@ -139,6 +141,7 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES + "/event", FAVORITES_EVENTS);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR, QR);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR + "/#", QR_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR + "/hash/#", QR_HASH); //find by hash
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND, QR_FOUND);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND + "/#", QR_FOUND_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND + "/qr/#", QR_FOUND_QR_ID);
@@ -339,6 +342,9 @@ public class EventProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
+            }
+            case QR_HASH: {
+                //TODO: IMPLETMENT THIS !!!
             }
             case QR_FOUND: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -594,7 +600,23 @@ public class EventProvider extends ContentProvider {
                 }
                 return returnInt;
             }
-            //TODO: implement BulkInsert for QR
+            case QR: {
+                db.beginTransaction();
+                int returnInt = 0; // number of rows added
+                try {
+                    for (ContentValues value : values){
+                        long id = db.insert(EventContract.QrEntry.TABLE_NAME, null, value);
+                        if (id != -1L){
+                            returnInt++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                return returnInt;
+            }
+            //TODO: implement BulkInsert for QRFOUND
             //Note: No Rush, default implementation is to use regular insert when BulkInsert is not implement.
             //It'll work, but less optimized.
             default:

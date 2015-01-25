@@ -327,7 +327,7 @@ public class Util {
      * @param toHash
      * @return hash
      */
-    String sha1Hash(String toHash) {
+    public static String sha1Hash(String toHash) {
         // http://stackoverflow.com/questions/5980658/how-to-sha1-hash-a-string-in-android
         String hash = null;
         try {

@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:text="@string/qr_scan"
+        android:layout_margin="5dp"
+        android:id="@+id/qr_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"

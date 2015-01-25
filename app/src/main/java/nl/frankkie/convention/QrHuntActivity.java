@@ -135,7 +135,7 @@ public class QrHuntActivity extends ActionBarActivity implements NavigationDrawe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data); //send to fragment
         try {
             mGoogleApiClient.connect();
         } catch (Exception e) {
