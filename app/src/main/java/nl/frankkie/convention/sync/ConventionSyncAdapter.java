@@ -49,15 +49,15 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
         if ((syncFlags & Util.SYNCFLAG_CONVENTION_DATA) == Util.SYNCFLAG_CONVENTION_DATA) {
             String regId = GcmUtil.gcmGetRegId(getContext());
             //CHANGE THIS URL WHEN USING FOR OTHER CONVENTION
-            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadconventiondata.php?regId=" + regId);
+            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadconventiondata.php?regId=" + regId + "&username=" + GoogleApiUtil.getUserEmail(getContext()));
             if (json != null) {
                 parseConventionDataJSON(json);
             }
         }
         if ((syncFlags & Util.SYNCFLAG_DOWNLOAD_FAVORITES) == Util.SYNCFLAG_DOWNLOAD_FAVORITES) {
             String regId = GcmUtil.gcmGetRegId(getContext());
-            //TODO add Username here, when google login is ready for use. "&username=" 
-            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadfavorites.php?regId=" + regId);
+            //With username "&username=", for syncing between devices of same user
+            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadfavorites.php?regId=" + regId + "&username=" + GoogleApiUtil.getUserEmail(getContext()));
             if (json != null) {
                 parseFavoritesDataJson(json);
             }

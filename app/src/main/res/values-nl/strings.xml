@@ -65,4 +65,5 @@
     <string name="qr_not_on_list">QR Code staat niet op de lijst!</string>
     <string name="qr_found">Goed gedaan! Je hebt een QR Code gevonden.</string>
     <string name="qr_found_already">Je hebt deze QR Code al eerder gevonden. Zoek voor een andere!</string>
+    <string name="about_view_map">Bekijk op kaart</string>
 </resources>

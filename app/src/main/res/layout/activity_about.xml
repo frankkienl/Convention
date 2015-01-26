@@ -73,7 +73,7 @@
                             android:id="@+id/about_view_maps"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="View on Map" />
+                            android:text="@string/about_view_map" />
 
                         <!-- Date and Time //-->
                         <TextView
@@ -125,7 +125,7 @@
                             android:src="@drawable/hwcon_banner" />
 
                         <Button android:id="@+id/about_btn_aboutapp"
-                            android:text="About this app"
+                            android:text="@string/about_this_app"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
