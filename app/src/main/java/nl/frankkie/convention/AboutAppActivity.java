@@ -12,6 +12,8 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.acra.ACRA;
+
 /**
  * Created by FrankkieNL on 13-1-2015.
  */
@@ -36,7 +38,8 @@ public class AboutAppActivity extends ActionBarActivity {
         try {
             versionString = "Version: " + this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName + "-" + this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode;
         } catch (PackageManager.NameNotFoundException nnfe){
-            nnfe.printStackTrace();            
+            nnfe.printStackTrace();
+            ACRA.getErrorReporter().handleException(nnfe);
         }
         version.setText(versionString);
 

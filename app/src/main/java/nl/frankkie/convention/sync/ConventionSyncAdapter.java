@@ -68,32 +68,30 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                 Cursor cursor = getContext().getContentResolver().query(EventContract.FavoritesEntry.CONTENT_URI,
                         new String[]{EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID},
                         EventContract.FavoritesEntry.COLUMN_NAME_TYPE + " = 'event'", null, null);
-                if (cursor.getCount() == 0) {
-                    //no favorites.
-                    //nothing to send.
-                    //Maybe fix this some other way than to just return.
-                    return;
-                }
-                JSONObject root = new JSONObject();
-                JSONArray events = new JSONArray();
-                cursor.moveToFirst();
-                do {
-                    events.put(cursor.getString(0));
-                } while (cursor.moveToNext());
-                cursor.close();
-                root.put("events", events);
-                JSONObject device = new JSONObject();
-                device.put("regId", GcmUtil.gcmGetRegId(getContext()));
-                device.put("username", GoogleApiUtil.getUserEmail(getContext()));
-                root.put("device", device);
-                JSONObject wrapper = new JSONObject();
-                wrapper.put("data", root);
-                String json = wrapper.toString();
-                String postData = "json=" + json;
-                ////////////////////////////
-                String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php", postData);
-                if (!"ok".equals(response.trim())) {
-                    //There muse be something wrong                    
+                if (cursor.getCount() != 0) {
+                    //Only do this when there is data to be send
+                    JSONObject root = new JSONObject();
+                    JSONArray events = new JSONArray();
+                    cursor.moveToFirst();
+                    do {
+                        events.put(cursor.getString(0));
+                    } while (cursor.moveToNext());
+                    cursor.close();
+                    root.put("events", events);
+                    JSONObject device = new JSONObject();
+                    device.put("regId", GcmUtil.gcmGetRegId(getContext()));
+                    device.put("username", GoogleApiUtil.getUserEmail(getContext()));
+                    root.put("device", device);
+                    JSONObject wrapper = new JSONObject();
+                    wrapper.put("data", root);
+                    String json = wrapper.toString();
+                    String postData = "json=" + json;
+                    ////////////////////////////
+                    String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php", postData);
+                    if (!"ok".equals(response.trim())) {
+                        //There muse be something wrong
+                        Util.sendACRAReport("Server did not send 'ok', Favorites","http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php",postData + "\n" + response);
+                    }
                 }
                 /////////////////////////////
             } catch (Exception e) {
@@ -102,9 +100,47 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
         ///
-        if ((syncFlags & Util.SYNCFLAG_UPLOAD_QRFOUND) == Util.SYNCFLAG_UPLOAD_QRFOUND){
-            //TODO: implement upload QR Found
-
+        if ((syncFlags & Util.SYNCFLAG_UPLOAD_QRFOUND) == Util.SYNCFLAG_UPLOAD_QRFOUND) {
+            try {
+                Cursor cursor = getContext().getContentResolver().query(
+                        EventContract.QrFoundEntry.CONTENT_URI, //table
+                        new String[]{EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, //projection
+                                EventContract.QrFoundEntry.COLUMN_NAME_TIME},
+                        null, //selection
+                        null, //selectionArgs
+                        null //sort-order
+                );
+                if (cursor.getCount() != 0) {
+                    JSONObject root = new JSONObject();
+                    JSONArray qrsfound = new JSONArray();
+                    cursor.moveToFirst();
+                    do {
+                        JSONObject qrfound = new JSONObject();
+                        qrfound.put("qr_id", cursor.getString(0));
+                        qrfound.put("found_time", cursor.getString(1));
+                        qrsfound.put(qrfound);
+                    } while (cursor.moveToNext());
+                    cursor.close();
+                    root.put("qrsfound",qrsfound);
+                    JSONObject device = new JSONObject();
+                    device.put("regId", GcmUtil.gcmGetRegId(getContext()));
+                    device.put("username", GoogleApiUtil.getUserEmail(getContext()));
+                    root.put("device", device);
+                    JSONObject wrapper = new JSONObject();
+                    wrapper.put("data", root);
+                    String json = wrapper.toString();
+                    String postData = "json=" + json;
+                    ////////////////////////////
+                    String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadqrsfound.php", postData);
+                    if (!"ok".equals(response.trim())) {
+                        //There muse be something wrong
+                        Util.sendACRAReport("Server did not send 'ok', QRs","http://wofje.8s.nl/hwcon/api/v1/uploadqrsfound.php",postData + "\n" + response);
+                    }
+                }
+            } catch (Exception e) {
+                ACRA.getErrorReporter().handleException(e);
+                e.printStackTrace();
+            }
         }
     }
 
