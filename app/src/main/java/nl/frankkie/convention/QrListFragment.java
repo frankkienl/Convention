@@ -53,6 +53,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
     //The booleans are not used yet.
     public static boolean showNumber = true; //User can know how many there are in total
     public static boolean showNames = true; //Show list of names; showNumber has more priority
+    public static boolean showDescription = false; //Show description when not found yet.
     public static boolean showImage = false; //Show image when not found yet.
 
     int QRLIST_LOADER = 0;

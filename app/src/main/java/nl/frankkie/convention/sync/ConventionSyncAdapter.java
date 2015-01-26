@@ -243,12 +243,12 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     JSONObject qr = qrs.getJSONObject(i);
                     ContentValues qrCV = new ContentValues();
                     qrCV.put(EventContract.QrEntry._ID, qr.getInt("_id"));
-                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_HASH, qr.getInt("hash"));
-                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_NAME, qr.getInt("name"));
-                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_NAME_NL, qr.getInt("name_nl"));
-                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_DESCRIPTION, qr.getInt("description"));
-                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_DESCRIPTION_NL, qr.getInt("description_nl"));
-                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_IMAGE, qr.getInt("image"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_HASH, qr.getString("hash"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_NAME, qr.getString("name"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_NAME_NL, qr.getString("name_nl"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_DESCRIPTION, qr.getString("description"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_DESCRIPTION_NL, qr.getString("description_nl"));
+                    qrCV.put(EventContract.QrEntry.COLUMN_NAME_IMAGE, qr.getString("image"));
                     qrCVs[i] = qrCV;
                 }
                 getContext().getContentResolver().delete(EventContract.QrEntry.CONTENT_URI, null, null);
@@ -258,6 +258,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             //</editor-fold>
         } catch (JSONException e) {
             Log.e("Convention", "Error in SyncAdapter.onPerformSync, ConventionData JSON ", e);
+            ACRA.getErrorReporter().handleException(e);
         }
         //</editor-fold>
     }
@@ -281,6 +282,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             //TODO add code to sync other types of favorites.
         } catch (JSONException e) {
             Log.e("Convention", "Error in SyncAdapter.onPerformSync, ConventionData JSON ", e);
+            ACRA.getErrorReporter().handleException(e);
         }
     }
 }

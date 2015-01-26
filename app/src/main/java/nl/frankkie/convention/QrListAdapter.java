@@ -1,6 +1,8 @@
 package nl.frankkie.convention;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +31,13 @@ public class QrListAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-        viewHolder.mName.setText(cursor.getString(QrListFragment.COL_NAME));
-        viewHolder.mDescription.setText(cursor.getString(QrListFragment.COL_DESCRIPTION));
         String imageStr = cursor.getString(QrListFragment.COL_IMAGE);
         int foundTime = cursor.getInt(QrListFragment.COL_FOUND_TIME);
-        if (foundTime > 0) { //is found? non-zero is yes.
+        final String name = (QrListFragment.showNames || foundTime > 0) ? cursor.getString(QrListFragment.COL_NAME) : "???";
+        final String description = (QrListFragment.showDescription || foundTime > 0) ? cursor.getString(QrListFragment.COL_DESCRIPTION) : "???";
+        if (foundTime > 0 || QrListFragment.showImage) { //is found? non-zero is yes.
             //When found, show image.
             Ion.with(context)
                     .load(imageStr)
@@ -43,23 +45,29 @@ public class QrListAdapter extends CursorAdapter {
                     .error(R.drawable.ic_launcher2)
                     .placeholder(R.drawable.ic_launcher2)
                     .intoImageView(viewHolder.mImage);
-            //description
-            viewHolder.mDescription.setText(cursor.getString(QrListFragment.COL_DESCRIPTION));
-            viewHolder.mName.setText(cursor.getString(QrListFragment.COL_NAME));
-        } else {
-            //Not found, check if still allowed to show image
-            if (QrListFragment.showImage) {
-                Ion.with(context)
-                        .load(imageStr)
-                        .withBitmap()
-                        .error(R.drawable.ic_launcher2_gray)
-                        .placeholder(R.drawable.ic_launcher2_gray)
-                        .intoImageView(viewHolder.mImage);
-            } else {
-                //Not found, not allowed to show image
-                viewHolder.mImage.setImageResource(R.drawable.ic_launcher2_gray);
-            }
+        } else {            
+            //Not found, and not allowed to show image, dont show.
+            viewHolder.mImage.setImageResource(R.drawable.ic_launcher2_gray);
         }
+
+        viewHolder.mName.setText(name);
+        viewHolder.mDescription.setText(description);
+
+        //This does not work somehow. Maybe use ListView.setOnItemClickListener instead?
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                AlertDialog.Builder b = new AlertDialog.Builder(context);
+//                b.setTitle(name);
+//                b.setMessage(description);
+//                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        //nothing, just close dialog
+//                    }
+//                });
+//            }
+//        });
     }
 
     public class ViewHolder {
