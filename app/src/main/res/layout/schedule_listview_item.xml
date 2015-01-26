@@ -27,7 +27,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
             <!-- Just using built-in styles for text //-->
@@ -41,7 +41,7 @@
                 android:id="@+id/schedule_listview_item_eventname"
                 style="@android:style/TextAppearance.Medium"
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_short" />

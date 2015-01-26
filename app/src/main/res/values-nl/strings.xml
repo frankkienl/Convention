@@ -60,4 +60,9 @@
     <string name="qrlist_empty_placeholder">QR code lijst is leeg</string>
     <string name="qrlist_empty_names_hidden">Nog geen QR codes gevonden!</string>
     <string name="qr_scan">Scan</string>
+    <string name="barcodescanner_not_installed_title">Installeer Barcode Scanner</string>
+    <string name="barcodescanner_not_installed_message">Deze app vereist de Barcode Scanner app. Wil je deze app nu installeren?\n(Dit is verplicht om mee te doen in de QR Jacht) </string>
+    <string name="qr_not_on_list">QR Code staat niet op de lijst!</string>
+    <string name="qr_found">Goed gedaan! Je hebt een QR Code gevonden.</string>
+    <string name="qr_found_already">Je hebt deze QR Code al eerder gevonden. Zoek voor een andere!</string>
 </resources>

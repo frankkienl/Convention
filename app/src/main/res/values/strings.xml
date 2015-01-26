@@ -75,5 +75,10 @@
     <string name="qrlist_empty_placeholder">QR code list is empty</string>
     <string name="qrlist_empty_names_hidden">No QR codes found yet!</string>
     <string name="qr_scan">Scan</string>
+    <string name="barcodescanner_not_installed_title">Install Barcode Scanner</string>
+    <string name="barcodescanner_not_installed_message">This application requires Barcode Scanner. Would you like to install it?\n(Required to participate in the QR Hunt)</string>
+    <string name="qr_not_on_list">QR Code not on the list!</string>
+    <string name="qr_found">Good work! You have found a QR Code.</string>
+    <string name="qr_found_already">You have found this QR Code before. Go look for another one!</string>
 
 </resources>

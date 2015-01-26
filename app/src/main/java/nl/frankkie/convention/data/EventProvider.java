@@ -130,7 +130,7 @@ public class EventProvider extends ContentProvider {
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_EVENT, EVENT);
-        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_EVENT + "/#", EVENT_ID);
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_EVENT + "/#", EVENT_ID); //# = numbers
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKER, SPEAKER);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_SPEAKER + "/#", SPEAKER_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_LOCATION, LOCATION);
@@ -142,7 +142,7 @@ public class EventProvider extends ContentProvider {
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_FAVORITES + "/event", FAVORITES_EVENTS);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR, QR);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR + "/#", QR_ID);
-        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR + "/hash/#", QR_HASH); //find by hash
+        matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QR + "/hash/*", QR_HASH); //find by hash, * = numbers and letters
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND, QR_FOUND);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND + "/#", QR_FOUND_ID);
         matcher.addURI(EventContract.CONTENT_AUTHORITY, EventContract.PATH_QRFOUND + "/qr/#", QR_FOUND_QR_ID);

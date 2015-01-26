@@ -25,7 +25,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +32,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+
+import nl.frankkie.convention.R;
 
 /**
  * <p>A utility class which helps ease integration with Barcode Scanner via {@link Intent}s. This is a simple
@@ -171,10 +173,11 @@ public class IntentIntegrator {
     }
 
     private void initializeConfiguration() {
-        title = DEFAULT_TITLE;
-        message = DEFAULT_MESSAGE;
-        buttonYes = DEFAULT_YES;
-        buttonNo = DEFAULT_NO;
+        //MOD BY @F, using resources instead of hard-coded.
+        title = activity.getString(R.string.barcodescanner_not_installed_title);
+        message = activity.getString(R.string.barcodescanner_not_installed_message);
+        buttonYes = activity.getString(android.R.string.yes);
+        buttonNo = activity.getString(android.R.string.no);
         targetApplications = TARGET_ALL_KNOWN;
     }
 

@@ -192,6 +192,13 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             mStarMenuItem.setChecked(true);
             mStarMenuItem.setTitle(R.string.action_star_remove);
             mStarMenuItem.setIcon(android.R.drawable.btn_star_big_on);
+            //Google Play Games
+            try {
+                Games.Achievements.increment(apiClientGetter.getGoogleApiClient(), getActivity().getString(R.string.achievement_personal_schedule), 1);
+            } catch(IllegalStateException e){
+                //This happens when GoogleApiClient is not connected yet.
+                //Ignore this error, user gets Achievement next time.
+            }
         } else {
             mStarMenuItem.setChecked(false);
             mStarMenuItem.setTitle(R.string.action_star_add);
@@ -341,8 +348,6 @@ public class EventDetailFragment extends Fragment implements LoaderManager.Loade
             cv.put(EventContract.FavoritesEntry.COLUMN_NAME_ITEM_ID, mId); //Id of this Event
             getActivity().getContentResolver().insert(EventContract.FavoritesEntry.CONTENT_URI, cv);
             //I made favorites.type && favorites.item_id UNIQUE, to prevent duplicates.
-            //Google Play Games
-            Games.Achievements.increment(apiClientGetter.getGoogleApiClient(), getActivity().getString(R.string.achievement_personal_schedule), 1);
         } else {
             //If not checked, remove row from DB
             //We use EventID in where-clause, hence, we don't need to know the RowID of the Favorite.

@@ -8,11 +8,13 @@
 
      TODO LIST
     - Add accounts, to sync favorites between devices.
-    - Add News Screen      
-    - Add NFC/QR Hunt (but give it a catchy friendship-related name)
+    - Add QR Hunt
     - Add introduction screen
-    
+    - Check for hard-coded Strings in the code, move to resources
+
     //Probaly not:
+    - Swipe event for next/previous (like in Feedly)
+    - Add News Screen
     - Use custom view for Map
     - Add Speakers Screen
     - Widget

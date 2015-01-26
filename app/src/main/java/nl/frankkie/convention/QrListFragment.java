@@ -1,5 +1,6 @@
 package nl.frankkie.convention;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -57,6 +59,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
     private QrListAdapter mListAdapter;
     private ListView mListView;
     private GoogleApiUtil.GiveMeGoogleApiClient apiClientGetter;
+    Handler handler = new Handler();
 
     public static final int COL_ID = 0;
     public static final int COL_HASH = 1;
@@ -116,8 +119,12 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
     }
 
     public void scanQR() {
-        IntentIntegrator ii = new IntentIntegrator(getActivity());
-        ii.initiateScan();
+        IntentIntegrator ii = new IntentIntegrator(this); //yes, this Fragment, not the getActivity(). So it will use the onActivityResult of the Fragment.
+        AlertDialog ad = ii.initiateScan(IntentIntegrator.QR_CODE_TYPES); //Only Look for QR Codes
+        if (ad!=null){
+            //Show error-dialog (barcode scanner app not installed)
+            ad.show();
+        }
     }
 
     @Override
@@ -174,7 +181,13 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
             int numRows = cursor.getCount();
             if (numRows == 0) {
                 //Not on the list
-                Toast.makeText(context, "QR Code not on the list!", Toast.LENGTH_LONG).show();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Toast-messages from AsyncTask is a no-no. Use Handler.
+                        Toast.makeText(context, R.string.qr_not_on_list, Toast.LENGTH_LONG).show();
+                    }
+                });
                 return null;
             }
             //if not found before, add a row.
@@ -186,14 +199,25 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
                 cv.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, cursor.getInt(COL_ID));
                 cv.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, System.currentTimeMillis());
                 context.getContentResolver().insert(EventContract.QrFoundEntry.CONTENT_URI, cv);
-                Toast.makeText(context, "Good work! You have found QR Code:\n" + cursor.getString(COL_NAME), Toast.LENGTH_LONG).show();
+                final String nameOfQrCode = cursor.getString(COL_NAME);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, context.getString(R.string.qr_found) + "\n" + nameOfQrCode, Toast.LENGTH_LONG).show();
+                    }
+                });
                 //Google Play Games
                 Games.Achievements.unlock(apiClientGetter.getGoogleApiClient(),getActivity().getString(R.string.achievement_its_a_start));
                 Games.Achievements.increment(apiClientGetter.getGoogleApiClient(),getActivity().getString(R.string.achievement_find_5),1);                
                 //Sync to cloud
                 Util.sendQrFound(getActivity());
             } else {
-                Toast.makeText(context, "You have found this QR Code before. Go look for another one!", Toast.LENGTH_LONG).show();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, R.string.qr_found_already, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
             cursor.close();
             return null;

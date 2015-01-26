@@ -9,6 +9,7 @@
     FrameLayout.setBackground(Drawable) only works on api16+
     //-->
     <FrameLayout
+        android:background="#ddd"
         android:id="@+id/gridview_item_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

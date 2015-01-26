@@ -6,7 +6,6 @@
 
     <Button
         android:text="@string/qr_scan"
-        android:layout_margin="5dp"
         android:id="@+id/qr_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
