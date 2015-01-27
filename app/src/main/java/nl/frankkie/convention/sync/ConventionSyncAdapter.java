@@ -90,7 +90,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php", postData);
                     if (!"ok".equals(response.trim())) {
                         //There muse be something wrong
-                        Util.sendACRAReport("Server did not send 'ok', Favorites","http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php",postData + "\n" + response);
+                        Util.sendACRAReport("Server did not send 'ok', Favorites", "http://wofje.8s.nl/hwcon/api/v1/uploadfavorites.php", postData + "\n" + response);
                     }
                 }
                 /////////////////////////////
@@ -117,11 +117,14 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     do {
                         JSONObject qrfound = new JSONObject();
                         qrfound.put("qr_id", cursor.getString(0));
-                        qrfound.put("found_time", cursor.getString(1));
+                        long unixTimestamp = Long.parseLong(cursor.getString(1)) / 1000L;
+                        //http://stackoverflow.com/questions/732034/getting-unixtime-in-java
+                        //Devide by 1000, to get Unix Timestamp. Server uses timestamp.
+                        qrfound.put("found_time", unixTimestamp);
                         qrsfound.put(qrfound);
                     } while (cursor.moveToNext());
                     cursor.close();
-                    root.put("qrsfound",qrsfound);
+                    root.put("qrsfound", qrsfound);
                     JSONObject device = new JSONObject();
                     device.put("regId", GcmUtil.gcmGetRegId(getContext()));
                     device.put("username", GoogleApiUtil.getUserEmail(getContext()));
@@ -131,16 +134,48 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     String json = wrapper.toString();
                     String postData = "json=" + json;
                     ////////////////////////////
-                    String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadqrsfound.php", postData);
+                    String response = Util.httpPost(getContext(), "http://wofje.8s.nl/hwcon/api/v1/uploadqrfound.php", postData);
                     if (!"ok".equals(response.trim())) {
                         //There muse be something wrong
-                        Util.sendACRAReport("Server did not send 'ok', QRs","http://wofje.8s.nl/hwcon/api/v1/uploadqrsfound.php",postData + "\n" + response);
+                        Util.sendACRAReport("Server did not send 'ok', QRs", "http://wofje.8s.nl/hwcon/api/v1/uploadqrfound.php", postData + "\n" + response);
                     }
                 }
             } catch (Exception e) {
                 ACRA.getErrorReporter().handleException(e);
                 e.printStackTrace();
             }
+        }
+        ////
+        if ((syncFlags & Util.SYNCFLAG_DOWNLOAD_QRFOUND) == Util.SYNCFLAG_DOWNLOAD_QRFOUND) {
+            String regId = GcmUtil.gcmGetRegId(getContext());
+            String json = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/downloadqrfound.php?regId=" + regId + "&username=" + GoogleApiUtil.getUserEmail(getContext()));
+            if (json != null) {
+                parseQrFoundDataJson(json);
+            }
+        }
+    }
+
+    public void parseQrFoundDataJson(String json) {
+        try {
+            JSONObject data = new JSONObject(json).getJSONObject("data");
+            JSONArray qrsfound = data.getJSONArray("qrsfound");
+            ContentValues[] qrfCVs = new ContentValues[qrsfound.length()];
+            for (int i = 0; i < qrsfound.length(); i++) {
+                JSONObject qrf = qrsfound.getJSONObject(i);
+                ContentValues qrCV = new ContentValues();
+                qrCV.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, qrf.getString("qrId"));
+                qrCV.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, qrf.getString("found_time"));
+                qrfCVs[i] = qrCV;
+            }
+
+            //Delete old values
+            getContext().getContentResolver().delete(EventContract.QrFoundEntry.CONTENT_URI, null, null); //null deletes all rows
+            //Insert new ones
+            getContext().getContentResolver().bulkInsert(EventContract.QrFoundEntry.CONTENT_URI, qrfCVs);
+            //Notify observers
+            getContext().getContentResolver().notifyChange(EventContract.QrFoundEntry.CONTENT_URI, null);
+        } catch (Exception e) {
+            ACRA.getErrorReporter().handleException(e);
         }
     }
 
