@@ -163,7 +163,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             for (int i = 0; i < qrsfound.length(); i++) {
                 JSONObject qrf = qrsfound.getJSONObject(i);
                 ContentValues qrCV = new ContentValues();
-                qrCV.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, qrf.getString("qrId"));
+                qrCV.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, qrf.getString("qr_id"));
                 qrCV.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, qrf.getString("found_time"));
                 qrfCVs[i] = qrCV;
             }
@@ -174,6 +174,8 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
             getContext().getContentResolver().bulkInsert(EventContract.QrFoundEntry.CONTENT_URI, qrfCVs);
             //Notify observers
             getContext().getContentResolver().notifyChange(EventContract.QrFoundEntry.CONTENT_URI, null);
+            //Notify QR list.
+            getContext().getContentResolver().notifyChange(EventContract.QrEntry.CONTENT_URI, null);
         } catch (Exception e) {
             ACRA.getErrorReporter().handleException(e);
         }
