@@ -72,4 +72,5 @@
     <string name="qr_tip_message">Zoek de verborgen QR codes, scan ze met de camera van je apparaat. Vind alle QR codes!</string>
     <string name="logging_in">Inloggen...</string>
     <string name="google_play_games_error">Probleem met Google Play Games</string>
+    <string name="ask_nickname">Wat je nickname?</string>
 </resources>

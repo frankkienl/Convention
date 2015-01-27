@@ -81,6 +81,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     JSONObject device = new JSONObject();
                     device.put("regId", GcmUtil.gcmGetRegId(getContext()));
                     device.put("username", GoogleApiUtil.getUserEmail(getContext()));
+                    device.put("nickname", GoogleApiUtil.getUserNickname(getContext()));
                     root.put("device", device);
                     JSONObject wrapper = new JSONObject();
                     wrapper.put("data", root);
@@ -128,6 +129,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     JSONObject device = new JSONObject();
                     device.put("regId", GcmUtil.gcmGetRegId(getContext()));
                     device.put("username", GoogleApiUtil.getUserEmail(getContext()));
+                    device.put("nickname", GoogleApiUtil.getUserNickname(getContext()));                            
                     root.put("device", device);
                     JSONObject wrapper = new JSONObject();
                     wrapper.put("data", root);

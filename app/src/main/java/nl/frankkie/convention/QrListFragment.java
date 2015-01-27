@@ -186,6 +186,10 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
 
         @Override
         protected Void doInBackground(Void... params) {
+            if (qrdata == null || "".equals(qrdata)){
+                //No data
+                return null;                
+            }
             //Check 1
             //Does it have the with HWcon uri-scheme
             if (!qrdata.startsWith("hwcon://qr?uuid=")){

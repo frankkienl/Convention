@@ -1,12 +1,15 @@
 package nl.frankkie.convention;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -156,7 +160,11 @@ public class LoginActivity extends ActionBarActivity implements
             public void onClick(View v) {
                 Games.signOut(mGoogleApiClient);
                 mGoogleApiClient.disconnect();
+                //delete data
                 GoogleApiUtil.setUserLoggedIn(LoginActivity.this, false);
+                GoogleApiUtil.setUserEmail(LoginActivity.this, "");
+                GoogleApiUtil.setUserNickname(LoginActivity.this, "");
+                //
                 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
                 findViewById(R.id.sign_out_button).setVisibility(View.GONE);
                 findViewById(R.id.view_achievements).setVisibility(View.GONE);
@@ -242,8 +250,36 @@ public class LoginActivity extends ActionBarActivity implements
         findViewById(R.id.view_achievements).setVisibility(View.VISIBLE);
         //Unlock the first Achievement
         Games.Achievements.unlock(mGoogleApiClient,getString(R.string.achievement_ready_to_go));
+        //Sync Favorites from Cloud
+        Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
+        //Ask user for Nickname (forum-name)
+        askUserForNickname(currentUser);
     }   
 
+    public void askUserForNickname(final Person currentUser){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle(R.string.ask_nickname);
+        final EditText ed = new EditText(this);
+        ed.setHint(R.string.ask_nickname);
+        b.setView(ed);
+        b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {                
+                String nickname = ed.getText().toString();
+                GoogleApiUtil.setUserNickname(LoginActivity.this, nickname);
+            }
+        });
+        b.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                //no nickname? we use your name from Google Plus                                
+                String nickname = currentUser.getDisplayName();
+                GoogleApiUtil.setUserNickname(LoginActivity.this, nickname);
+            }
+        });
+        b.create().show();
+    }
+    
     @Override
     public void onConnectionSuspended(int i) {
         Toast.makeText(this,"Google Play Services: Connection Suspended", Toast.LENGTH_LONG).show();

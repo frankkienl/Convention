@@ -87,5 +87,6 @@
     <string name="qr_tip_message">Search the hidden QR codes, and scan them with your Camera of your device. Find all QR codes!</string>
     <string name="logging_in">Logging in...</string>
     <string name="google_play_games_error">Error with Google Play Games</string>
+    <string name="ask_nickname">What's your nickname?</string>
 
 </resources>

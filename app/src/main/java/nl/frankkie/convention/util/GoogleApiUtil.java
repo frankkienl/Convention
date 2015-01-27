@@ -45,6 +45,17 @@ public class GoogleApiUtil {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("google_plus_loggedin",false);
     }
+    
+    public static void setUserNickname(Context context, String name){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String nickname = name;
+        prefs.edit().putString("user_nickname", nickname).apply();
+    }
+    
+    public static String getUserNickname(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("user_nickname","");                
+    }
 
     public static void showAchievements(Activity context, GoogleApiClient mGoogleApiClient){
         int REQUEST_ACHIEVEMENTS = 9009;
