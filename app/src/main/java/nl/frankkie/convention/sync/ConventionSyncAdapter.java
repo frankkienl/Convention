@@ -118,9 +118,7 @@ public class ConventionSyncAdapter extends AbstractThreadedSyncAdapter {
                     do {
                         JSONObject qrfound = new JSONObject();
                         qrfound.put("qr_id", cursor.getString(0));
-                        long unixTimestamp = Long.parseLong(cursor.getString(1)) / 1000L;
-                        //http://stackoverflow.com/questions/732034/getting-unixtime-in-java
-                        //Devide by 1000, to get Unix Timestamp. Server uses timestamp.
+                        long unixTimestamp = Long.parseLong(cursor.getString(1));                         
                         qrfound.put("found_time", unixTimestamp);
                         qrsfound.put(qrfound);
                     } while (cursor.moveToNext());

@@ -160,6 +160,8 @@ public class LoginActivity extends ActionBarActivity implements
             public void onClick(View v) {
                 Games.signOut(mGoogleApiClient);
                 mGoogleApiClient.disconnect();
+                mGoogleApiClient = null; //kill old instance
+                initGooglePlus(); //make new client
                 //delete data
                 GoogleApiUtil.setUserLoggedIn(LoginActivity.this, false);
                 GoogleApiUtil.setUserEmail(LoginActivity.this, "");
@@ -252,6 +254,8 @@ public class LoginActivity extends ActionBarActivity implements
         Games.Achievements.unlock(mGoogleApiClient,getString(R.string.achievement_ready_to_go));
         //Sync Favorites from Cloud
         Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
+        //Sync QRS found from other device maybe :P
+        Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);
         //Ask user for Nickname (forum-name)
         askUserForNickname(currentUser);
     }   

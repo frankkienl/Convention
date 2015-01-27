@@ -261,7 +261,10 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
                 //not found before. Add row
                 ContentValues cv = new ContentValues();
                 cv.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, cursor.getInt(COL_ID));
-                cv.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, System.currentTimeMillis());
+                long unixtimestamp = System.currentTimeMillis() / 1000L;
+                //http://stackoverflow.com/questions/732034/getting-unixtime-in-java
+                //Devide by 1000, to get Unix Timestamp. Server uses timestamp.
+                cv.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, unixtimestamp);
                 context.getContentResolver().insert(EventContract.QrFoundEntry.CONTENT_URI, cv);
                 //Notify URI, so the list refreshes.
                 context.getContentResolver().notifyChange(EventContract.QrEntry.CONTENT_URI,null,false);
@@ -286,7 +289,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
                             ACRA.getErrorReporter().handleException(e);
                         }
                     }
-                }, 1000);
+                }, 1000); //wait a second for silent auto login to complete.
             } else {
                 handler.post(new Runnable() {
                     @Override
