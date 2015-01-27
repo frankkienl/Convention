@@ -36,6 +36,16 @@ public class GoogleApiUtil {
         return prefs.getString("google_plus_email","");
     }
 
+    public static void setUserLoggedIn(Context context, boolean loggedIn){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean("google_plus_loggedin", loggedIn).commit();
+    }
+
+    public static boolean isUserLoggedIn(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean("google_plus_loggedin",false);
+    }
+
     public static void showAchievements(Activity context, GoogleApiClient mGoogleApiClient){
         int REQUEST_ACHIEVEMENTS = 9009;
         try {

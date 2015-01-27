@@ -81,5 +81,9 @@
     <string name="qr_found">Good work! You have found a QR Code.</string>
     <string name="qr_found_already">You have found this QR Code before. Go look for another one!</string>
     <string name="about_view_map">View on Map</string>
+    <string name="qr_place_in_rectangle">Place QR code in rectangle to scan.</string>
+    <string name="qr_login_required_title">Login required</string>
+    <string name="qr_login_required_message">Its required that you sign in using Google Play Games to participate in the QR Hunt.</string>
+    <string name="qr_tip_message">Search the hidden QR codes, and scan them with your Camera of your device. Find all QR codes!</string>
 
 </resources>

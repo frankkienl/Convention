@@ -7,10 +7,10 @@
     Change the versionName and versionCode in build.gradle (module: app).
 
      TODO LIST
-    - Add accounts, to sync favorites between devices.
     - Add QR Hunt
     - Add introduction screen
     - Check for hard-coded Strings in the code, move to resources
+    - Try to reduce APK-size
 
     //Probaly not:
     - Swipe event for next/previous (like in Feedly)
@@ -26,6 +26,7 @@
     - Watchface?
 
     DONE:
+    - Add accounts, to sync favorites between devices.
     - Easter Egg
     - Implement Sync Favorites to the cloud
     - Add About Screen, with version-number and licence info.    
@@ -102,7 +103,16 @@
             android:label="@string/title_activity_schedule"></activity>
         
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".QrHuntActivity"></activity>
+        <activity android:name=".QrHuntActivity">
+        <!-- hwcon://qr?key=val
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="hwcon" android:host="qr" />
+            </intent-filter>
+        //-->
+        </activity>
 
         <provider
             android:name="nl.frankkie.convention.data.EventProvider"

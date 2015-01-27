@@ -256,7 +256,6 @@ public class GcmUtil {
     }
 
     public static void gcmHandleMessage(Context context, Intent intent) {
-        //TODO
         String action = intent.getStringExtra("action");
         if ("downloadConventionData".equals(action)) {
             Util.syncConventionData(context);
@@ -269,6 +268,10 @@ public class GcmUtil {
             Util.syncData(context, Util.SYNCFLAG_UPLOAD_FAVORITES);   
         } else if ("generateErrorReport".equals(action)) {
             ACRA.getErrorReporter().handleException(new RuntimeException("Error Report triggered by GCM"));
+        } else if ("uploadQrsFound".equals(action)){
+            Util.syncData(context,Util.SYNCFLAG_UPLOAD_QRFOUND);
+        } else if ("downloadQrsFound".equals(action)){
+            Util.syncData(context, Util.SYNCFLAG_DOWNLOAD_QRFOUND);
         }
     }
 

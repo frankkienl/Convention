@@ -3,6 +3,7 @@ package nl.frankkie.convention;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,17 +15,20 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import org.acra.ACRA;
 
 import nl.frankkie.convention.data.EventContract;
 import nl.frankkie.convention.util.GcmUtil;
@@ -120,12 +124,10 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
     }
 
     public void scanQR() {
-        IntentIntegrator ii = new IntentIntegrator(this); //yes, this Fragment, not the getActivity(). So it will use the onActivityResult of the Fragment.
-        AlertDialog ad = ii.initiateScan(IntentIntegrator.QR_CODE_TYPES); //Only Look for QR Codes
-        if (ad!=null){
-            //Show error-dialog (barcode scanner app not installed)
-            ad.show();
-        }
+        IntentIntegrator ii = IntentIntegrator.forSupportFragment(this); //yes, this Fragment, not the getActivity(). So it will use the onActivityResult of the Fragment.
+        ii.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES); //Only Look for QR Codes
+        ii.setCaptureLayout(R.layout.qr_capture);
+        ii.initiateScan();
     }
 
     @Override
@@ -148,6 +150,22 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
         mListAdapter = new QrListAdapter(getActivity(), null, 0);
         mListView = getListView();
         mListView.setAdapter(mListAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                QrListAdapter.ViewHolder viewHolder = (QrListAdapter.ViewHolder) view.getTag();
+                AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+                b.setTitle(viewHolder.mName.getText().toString());
+                b.setMessage(viewHolder.mDescription.getText().toString());
+                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //remove dialog
+                    }
+                });
+                b.create().show();
+            }
+        });
     }
 
     @Override
@@ -168,10 +186,50 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
 
         @Override
         protected Void doInBackground(Void... params) {
+            //Check 1
+            //Does it have the with HWcon uri-scheme
+            if (!qrdata.startsWith("hwcon://qr?uuid=")){
+                Log.e("HWcon","QR code does not start with the correct URI-scheme");
+                //Not a QR hunt code, but some other code
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Toast-messages from AsyncTask is a no-no. Use Handler.
+                        Toast.makeText(context, R.string.qr_not_on_list, Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            }
+
+            //Check 2
+            //Does it parse as a uri
+            //Get uuid from qr-uri
+            String uuid = "";
+            try {
+                Uri uri = Uri.parse(qrdata);
+                //uuid = uri.getLastPathSegment();
+                uuid = uri.getQueryParameter("uuid");
+            } catch (Exception e){
+                Log.e("HWcon","QR code does not parse as a correct URI");
+                ACRA.getErrorReporter().handleException(e);
+                //Not a correct Uri.
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Toast-messages from AsyncTask is a no-no. Use Handler.
+                        Toast.makeText(context, R.string.qr_not_on_list, Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            }
+
+            //Check 3
+            //Is this QR code in the database
             //Create Hash
             String regId = GcmUtil.gcmGetRegId(context);
-            String hash = Util.sha1Hash(qrdata + "_" + regId);
-            //Check database
+            String hash = Util.sha1Hash(uuid + regId); //regId is the Salt.
+            Log.e("HWcon", uuid);
+            Log.e("HWcon", hash);
             Cursor cursor = context.getContentResolver().query(
                     EventContract.QrEntry.buildQrByHashUri(hash),
                     QRLIST_COLUMNS, //projection (which columns)
@@ -181,6 +239,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
             );
             int numRows = cursor.getCount();
             if (numRows == 0) {
+                Log.e("HWcon","QR code is not found in the database.");
                 //Not on the list
                 handler.post(new Runnable() {
                     @Override
@@ -200,6 +259,8 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
                 cv.put(EventContract.QrFoundEntry.COLUMN_NAME_QR_ID, cursor.getInt(COL_ID));
                 cv.put(EventContract.QrFoundEntry.COLUMN_NAME_TIME, System.currentTimeMillis());
                 context.getContentResolver().insert(EventContract.QrFoundEntry.CONTENT_URI, cv);
+                //Notify URI, so the list refreshes.
+                context.getContentResolver().notifyChange(EventContract.QrEntry.CONTENT_URI,null,false);
                 final String nameOfQrCode = cursor.getString(COL_NAME);
                 handler.post(new Runnable() {
                     @Override
@@ -207,11 +268,21 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
                         Toast.makeText(context, context.getString(R.string.qr_found) + "\n" + nameOfQrCode, Toast.LENGTH_LONG).show();
                     }
                 });
-                //Google Play Games
-                Games.Achievements.unlock(apiClientGetter.getGoogleApiClient(),getActivity().getString(R.string.achievement_its_a_start));
-                Games.Achievements.increment(apiClientGetter.getGoogleApiClient(),getActivity().getString(R.string.achievement_find_5),1);                
                 //Sync to cloud
                 Util.sendQrFound(getActivity());
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Google Play Games
+                        try {
+                            Games.Achievements.unlock(apiClientGetter.getGoogleApiClient(), getActivity().getString(R.string.achievement_its_a_start));
+                            Games.Achievements.increment(apiClientGetter.getGoogleApiClient(), getActivity().getString(R.string.achievement_find_5), 1);
+                        } catch (Exception e){
+                            ACRA.getErrorReporter().handleException(e);
+                        }
+                    }
+                }, 1000);
             } else {
                 handler.post(new Runnable() {
                     @Override

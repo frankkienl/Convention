@@ -66,4 +66,8 @@
     <string name="qr_found">Goed gedaan! Je hebt een QR Code gevonden.</string>
     <string name="qr_found_already">Je hebt deze QR Code al eerder gevonden. Zoek voor een andere!</string>
     <string name="about_view_map">Bekijk op kaart</string>
+    <string name="qr_place_in_rectangle">Plaats de QR code in de rechthoek om hem te scannen.</string>
+    <string name="qr_login_required_title">Inloggen noodzakelijk</string>
+    <string name="qr_login_required_message">Het is noodzakelijk dat je inlogt met Google Play Games om mee te doen met de QR Jacht.</string>
+    <string name="qr_tip_message">Zoek de verborgen QR codes, scan ze met de camera van je apparaat. Vind alle QR codes!</string>
 </resources>

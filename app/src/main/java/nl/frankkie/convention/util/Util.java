@@ -116,6 +116,7 @@ public class Util {
     public static final int SYNCFLAG_DOWNLOAD_FAVORITES = 2;
     public static final int SYNCFLAG_UPLOAD_FAVORITES = 4;
     public static final int SYNCFLAG_UPLOAD_QRFOUND = 8;
+    public static final int SYNCFLAG_DOWNLOAD_QRFOUND = 16; //for sync between devices
 
     public static void syncData(Context context, int syncWhatFlags) {
         //Create Account needed for SyncAdapter
@@ -354,7 +355,8 @@ public class Util {
         return hash;
     }
 
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    //using lower-case now.
+    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
 
     public static String bytesToHex(byte[] bytes) {
         // http://stackoverflow.com/questions/5980658/how-to-sha1-hash-a-string-in-android

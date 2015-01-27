@@ -1,8 +1,12 @@
 package nl.frankkie.convention;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +21,7 @@ import com.google.android.gms.plus.Plus;
 
 import org.acra.ACRA;
 
+import nl.frankkie.convention.util.GcmUtil;
 import nl.frankkie.convention.util.GoogleApiUtil;
 import nl.frankkie.convention.util.Util;
 
@@ -174,5 +179,58 @@ public class QrHuntActivity extends ActionBarActivity implements NavigationDrawe
         initToolbar();
 
         initGoogleApi();
+
+        if (!GoogleApiUtil.isUserLoggedIn(this)){
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setTitle(R.string.qr_login_required_title);
+            b.setMessage(R.string.qr_login_required_message);
+            b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Go to LoginActivity
+                    Intent i = new Intent(QrHuntActivity.this, LoginActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    finish();
+                }
+            });
+            b.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    //Haha, you thought you could do the QR hunt without logging in by removing this dialog.
+                    //No, you're not :P Login is required.
+                    //Go to LoginActivity
+                    Intent i = new Intent(QrHuntActivity.this, LoginActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    finish();
+                }
+            });
+            b.create().show();
+        } else {
+            showQrTip();
+        }
+    }
+    public void showQrTip() {
+        //Show QR-tip
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean shownStarTip = prefs.getBoolean("prefs_shown_qr_tip", false);
+        if (!shownStarTip) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.title_section_qr_hunt);
+            //builder.setMessage(R.string.qr_tip_message);
+            builder.setView(this.getLayoutInflater().inflate(R.layout.qr_tip, null, false));
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Set to shown=true, when user presses the OK-button.
+                    prefs.edit().putBoolean("prefs_shown_qr_tip", true).apply();
+                    //Using apply (instead of commit), because we don't want to stall the UI-thread.
+                    //apply will make the change in memory, and then save it to persistent story
+                    //on a background thread.
+                }
+            });
+            builder.create().show();
+        }
     }
 }

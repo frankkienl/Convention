@@ -156,6 +156,7 @@ public class LoginActivity extends ActionBarActivity implements
             public void onClick(View v) {
                 Games.signOut(mGoogleApiClient);
                 mGoogleApiClient.disconnect();
+                GoogleApiUtil.setUserLoggedIn(LoginActivity.this, false);
                 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
                 findViewById(R.id.sign_out_button).setVisibility(View.GONE);
                 findViewById(R.id.view_achievements).setVisibility(View.GONE);
@@ -233,6 +234,7 @@ public class LoginActivity extends ActionBarActivity implements
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentUserEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         GoogleApiUtil.setUserEmail(this, currentUserEmail);
+        GoogleApiUtil.setUserLoggedIn(this, true);
         //Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_SHORT).show();
         //Remove login button, as already logged in.
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
