@@ -6,13 +6,9 @@
     Note about version:
     Change the versionName and versionCode in build.gradle (module: app).
 
-     TODO LIST
-    - Add QR Hunt
+    //todo if time left, probaly not:
     - Add introduction screen
-    - Check for hard-coded Strings in the code, move to resources
     - Try to reduce APK-size
-
-    //Probaly not:
     - Swipe event for next/previous (like in Feedly)
     - Add News Screen
     - Use custom view for Map
@@ -26,6 +22,8 @@
     - Watchface?
 
     DONE:
+    - Check for hard-coded Strings in the code, move to resources
+    - Add QR Hunt
     - Add accounts, to sync favorites between devices.
     - Easter Egg
     - Implement Sync Favorites to the cloud

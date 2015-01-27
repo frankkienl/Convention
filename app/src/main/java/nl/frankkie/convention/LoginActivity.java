@@ -147,7 +147,7 @@ public class LoginActivity extends ActionBarActivity implements
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(LoginActivity.this, "Logging In", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, R.string.logging_in, Toast.LENGTH_LONG).show();
                 resolveSignInError();
             }
         });
@@ -203,7 +203,7 @@ public class LoginActivity extends ActionBarActivity implements
                         });
                 d.show();
             } else {
-                Toast.makeText(LoginActivity.this,"Error",Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this,R.string.google_play_games_error,Toast.LENGTH_LONG).show();
             }
         }
     }
