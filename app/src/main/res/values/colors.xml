@@ -3,4 +3,5 @@
     <color name="actionbar_background">#F80</color>
     <color name="gridview_clicked">#AAA</color>
     <color name="gridview_active">#AAF</color>
+    <color name="gridview_normal">#DDD</color>
 </resources>
