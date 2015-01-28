@@ -12,5 +12,5 @@
         android:drawable="@color/gridview_active" />
 
     <!-- Default, "just hangin' out" state. -->
-    <item android:drawable="@android:color/transparent" />
+    <item android:drawable="@color/gridview_normal" />
 </selector>
