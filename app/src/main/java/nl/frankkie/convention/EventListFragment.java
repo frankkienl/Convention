@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -110,7 +111,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mEventAdapter = new EventAdapter(getActivity(), null, 0);
 
-        mGridView = (GridView) inflater.inflate(R.layout.fragment_event_gridlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_event_gridlist, container, false);     
+        mGridView = (GridView) view.findViewById(R.id.event_list);
         mGridView.setAdapter(mEventAdapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -124,7 +126,9 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 
-        return mGridView;
+        mGridView.setEmptyView(view.findViewById(R.id.event_list_empty));
+        
+        return view;
     }
 
     @Override
