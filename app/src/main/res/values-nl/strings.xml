@@ -73,4 +73,5 @@
     <string name="logging_in">Inloggen...</string>
     <string name="google_play_games_error">Probleem met Google Play Games</string>
     <string name="ask_nickname">Wat je nickname?</string>
+    <string name="browse_empty">Even geduld aub... Data wordt gesynchroniseerd.</string>
 </resources>

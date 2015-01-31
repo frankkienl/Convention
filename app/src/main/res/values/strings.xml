@@ -88,5 +88,6 @@
     <string name="logging_in">Logging in...</string>
     <string name="google_play_games_error">Error with Google Play Games</string>
     <string name="ask_nickname">What\'s your nickname?</string>
+    <string name="browse_empty">Please wait until data is synced...</string>
 
 </resources>
