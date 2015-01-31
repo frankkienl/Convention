@@ -244,6 +244,9 @@ public class LoginActivity extends ActionBarActivity implements
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentUserEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         GoogleApiUtil.setUserEmail(this, currentUserEmail);
+        //Ask user for Nickname (forum-name)
+        askUserForNickname(currentUser);
+        //Now, set logged in and stuff.
         GoogleApiUtil.setUserLoggedIn(this, true);
         //Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_SHORT).show();
         //Remove login button, as already logged in.
@@ -255,12 +258,15 @@ public class LoginActivity extends ActionBarActivity implements
         //Sync Favorites from Cloud
         Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
         //Sync QRS found from other device maybe :P
-        Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);
-        //Ask user for Nickname (forum-name)
-        askUserForNickname(currentUser);
+        Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);        
     }   
 
     public void askUserForNickname(final Person currentUser){
+        if (GoogleApiUtil.isUserLoggedIn(this) 
+                || !"".equals(GoogleApiUtil.getUserNickname(this))){
+            //Is already logged in, no need to ask for username
+            return;
+        }            
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(R.string.ask_nickname);
         final EditText ed = new EditText(this);
