@@ -71,7 +71,7 @@
     <string name="qr_login_required_message">Het is noodzakelijk dat je inlogt met Google Play Games om mee te doen met de QR Jacht.</string>
     <string name="qr_tip_message">Zoek de verborgen QR codes, scan ze met de camera van je apparaat. Vind alle QR codes!</string>
     <string name="logging_in">Inloggen...</string>
-    <string name="google_play_games_error">Probleem met Google Play Games</string>
+    <string name="google_play_games_error">Probleem met Google Play Games, start app opnieuw op aub.</string>
     <string name="ask_nickname">Wat je nickname?</string>
     <string name="browse_empty">Even geduld aub... Data wordt gesynchroniseerd.</string>
 </resources>
