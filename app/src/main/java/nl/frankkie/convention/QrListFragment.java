@@ -192,7 +192,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
             }
             //Check 1
             //Does it have the with HWcon uri-scheme
-            if (!qrdata.startsWith("hwcon://qr?uuid=")){
+            if (!qrdata.startsWith("http://wofje.8s.nl/hwcon/webapp/qrhunt.php?qr=")){
                 Log.e("HWcon","QR code does not start with the correct URI-scheme");
                 //Not a QR hunt code, but some other code
                 handler.post(new Runnable() {
@@ -212,7 +212,7 @@ public class QrListFragment extends ListFragment implements LoaderManager.Loader
             try {
                 Uri uri = Uri.parse(qrdata);
                 //uuid = uri.getLastPathSegment();
-                uuid = uri.getQueryParameter("uuid");
+                uuid = uri.getQueryParameter("qr");
             } catch (Exception e){
                 Log.e("HWcon","QR code does not parse as a correct URI");
                 ACRA.getErrorReporter().handleException(e);
