@@ -6,10 +6,8 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,7 +32,7 @@ import nl.frankkie.convention.util.Util;
 /**
  * Created by FrankkieNL on 18-1-2015.
  */
-public class LoginActivity extends ActionBarActivity implements 
+public class LoginActivity extends ActionBarActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     //<editor-fold desc="ActionBar Stuff">
@@ -183,7 +181,7 @@ public class LoginActivity extends ActionBarActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-         mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     private void resolveSignInError() {
@@ -200,7 +198,7 @@ public class LoginActivity extends ActionBarActivity implements
         } else {
             //Show Error Dialog
             if (GooglePlayServicesUtil.isUserRecoverableError(mSignInError)) {
-                Dialog d =  GooglePlayServicesUtil.getErrorDialog(
+                Dialog d = GooglePlayServicesUtil.getErrorDialog(
                         mSignInError,
                         this,
                         RC_SIGN_IN,
@@ -213,7 +211,7 @@ public class LoginActivity extends ActionBarActivity implements
                         });
                 d.show();
             } else {
-                Toast.makeText(LoginActivity.this,R.string.google_play_games_error,Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, R.string.google_play_games_error, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -254,19 +252,19 @@ public class LoginActivity extends ActionBarActivity implements
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
         findViewById(R.id.view_achievements).setVisibility(View.VISIBLE);
         //Unlock the first Achievement
-        Games.Achievements.unlock(mGoogleApiClient,getString(R.string.achievement_ready_to_go));
+        Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_ready_to_go));
         //Sync Favorites from Cloud
         Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
         //Sync QRS found from other device maybe :P
-        Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);        
-    }   
+        Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);
+    }
 
-    public void askUserForNickname(final Person currentUser){
-        if (GoogleApiUtil.isUserLoggedIn(this) 
-                || !"".equals(GoogleApiUtil.getUserNickname(this))){
+    public void askUserForNickname(final Person currentUser) {
+        if (GoogleApiUtil.isUserLoggedIn(this)
+                || !"".equals(GoogleApiUtil.getUserNickname(this))) {
             //Is already logged in, no need to ask for username
             return;
-        }            
+        }
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(R.string.ask_nickname);
         final EditText ed = new EditText(this);
@@ -274,8 +272,18 @@ public class LoginActivity extends ActionBarActivity implements
         b.setView(ed);
         b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {                
+            public void onClick(DialogInterface dialog, int which) {
                 String nickname = ed.getText().toString();
+                if (nickname == null || "".equals(nickname.trim())) {
+                    //so you left the field blank >.>
+                    //Google+ nickname it is
+                    nickname = currentUser.getDisplayName();
+                    if (nickname == null || "".equals(nickname.trim())) {
+                        //so you have an incomplete Google+ profile >.>
+                        //Emailadres it is
+                        nickname = GoogleApiUtil.getUserEmail(LoginActivity.this);
+                    }
+                }
                 GoogleApiUtil.setUserNickname(LoginActivity.this, nickname);
             }
         });
@@ -284,15 +292,20 @@ public class LoginActivity extends ActionBarActivity implements
             public void onCancel(DialogInterface dialog) {
                 //no nickname? we use your name from Google Plus                                
                 String nickname = currentUser.getDisplayName();
+                if (nickname == null || "".equals(nickname.trim())) {
+                    //so you have an incomplete Google+ profile >.>
+                    //Emailadres it is
+                    nickname = GoogleApiUtil.getUserEmail(LoginActivity.this);
+                }
                 GoogleApiUtil.setUserNickname(LoginActivity.this, nickname);
             }
         });
         b.create().show();
     }
-    
+
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this,"Google Play Services: Connection Suspended", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Google Play Services: Connection Suspended", Toast.LENGTH_LONG).show();
     }
 
     @Override
