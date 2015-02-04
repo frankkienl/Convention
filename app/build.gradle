@@ -7,8 +7,8 @@ android {
         applicationId "nl.frankkie.convention"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 20
-        versionName "0.1"
+        versionCode 21
+        versionName "1.0"
     }
     buildTypes {
         release {
