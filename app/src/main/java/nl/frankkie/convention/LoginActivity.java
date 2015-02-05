@@ -3,10 +3,13 @@ package nl.frankkie.convention;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -25,6 +28,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import org.acra.ACRA;
 
 import nl.frankkie.convention.util.GoogleApiUtil;
 import nl.frankkie.convention.util.Util;
@@ -242,10 +247,6 @@ public class LoginActivity extends ActionBarActivity implements
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentUserEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
         GoogleApiUtil.setUserEmail(this, currentUserEmail);
-        //Ask user for Nickname (forum-name)
-        askUserForNickname(currentUser);
-        //Now, set logged in and stuff.
-        GoogleApiUtil.setUserLoggedIn(this, true);
         //Toast.makeText(LoginActivity.this,"Logged In", Toast.LENGTH_SHORT).show();
         //Remove login button, as already logged in.
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
@@ -257,8 +258,20 @@ public class LoginActivity extends ActionBarActivity implements
         Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_FAVORITES);
         //Sync QRS found from other device maybe :P
         Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);
+        //Send to server
+        if (!GoogleApiUtil.isUserLoggedIn(this)) {
+            LoggedInTask task = new LoggedInTask(this, currentUserEmail, currentUser);
+            task.execute();
+        }
+        //Now, set logged in and stuff.
+        GoogleApiUtil.setUserLoggedIn(this, true);
     }
 
+    /**
+     * @param currentUser
+     * @deprecated
+     */
+    @Deprecated
     public void askUserForNickname(final Person currentUser) {
         if (GoogleApiUtil.isUserLoggedIn(this)
                 || !"".equals(GoogleApiUtil.getUserNickname(this))) {
@@ -303,6 +316,53 @@ public class LoginActivity extends ActionBarActivity implements
         b.create().show();
     }
 
+    public static void askUserForNickname(final Context c, final String defaultNickname) {
+        if (!"".equals(GoogleApiUtil.getUserNickname(c))) {
+            //Is already logged in, no need to ask for username
+            return;
+        }
+        AlertDialog.Builder b = new AlertDialog.Builder(c);
+        b.setTitle(R.string.ask_nickname);
+        final EditText ed = new EditText(c);
+        ed.setHint(R.string.ask_nickname);
+        ed.setText(defaultNickname);
+        b.setView(ed);
+        b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String nickname = ed.getText().toString();
+                if (nickname == null || "".equals(nickname.trim())) {
+                    //so you left the field blank >.>
+                    //default nickname it is
+                    nickname = defaultNickname;
+                    if (nickname == null || "".equals(nickname.trim())) {
+                        //Emailadres it is
+                        nickname = GoogleApiUtil.getUserEmail(c);
+                    }
+                } else if (!nickname.equals(defaultNickname)) {
+                    //User has given a new nickname, send to server
+                    ChangeNicknameTask task = new ChangeNicknameTask(GoogleApiUtil.getUserEmail(c),nickname);
+                    task.execute();
+                }
+                GoogleApiUtil.setUserNickname(c, nickname);
+            }
+        });
+        b.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                //no nickname? we use your name from Google Plus                                
+                String nickname = defaultNickname;
+                if (nickname == null || "".equals(nickname.trim())) {
+                    //Emailadres it is
+                    nickname = GoogleApiUtil.getUserEmail(c);
+                }
+                GoogleApiUtil.setUserNickname(c, nickname);
+            }
+        });
+        b.create().show();
+    }
+
+
     @Override
     public void onConnectionSuspended(int i) {
         Toast.makeText(this, "Google Play Services: Connection Suspended", Toast.LENGTH_LONG).show();
@@ -313,5 +373,68 @@ public class LoginActivity extends ActionBarActivity implements
         //Toast.makeText(this,"Google Play Services: Connection Failed", Toast.LENGTH_LONG).show();
         //this can happen when user is not logged in yet, so don't display error message in that case.
         mSignInIntent = connectionResult.getResolution();
+    }
+
+    public static class ChangeNicknameTask extends AsyncTask<Void, Void, Void> {
+
+        String email;
+        String nickname;
+
+        public ChangeNicknameTask(String email, String nickname) {
+            this.email = email;
+            this.nickname = nickname;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname);
+            } catch (Exception e) {
+                ACRA.getErrorReporter().handleException(e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public static class LoggedInTask extends AsyncTask<Void, Void, String> {
+
+        Context context;
+        String email;
+        Person user;
+        Dialog d;
+
+        public LoggedInTask(Context context, String email, Person user) {
+            this.context = context;
+            this.email = email;
+            this.user = user;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            d = ProgressDialog.show(context, context.getString(R.string.logging_in), context.getString(R.string.logging_in));
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String response = null;
+            try {
+                response = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName());
+            } catch (Exception e) {
+                e.printStackTrace();
+                ACRA.getErrorReporter().handleException(e);
+            }
+            return response.trim();
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            try {
+                d.dismiss();
+            } catch (Exception e) {
+                //ignore.                   
+            }
+            askUserForNickname(context, response);
+        }
     }
 }
