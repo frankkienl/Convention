@@ -31,6 +31,7 @@ import com.google.android.gms.plus.model.people.Person;
 
 import org.acra.ACRA;
 
+import nl.frankkie.convention.util.GcmUtil;
 import nl.frankkie.convention.util.GoogleApiUtil;
 import nl.frankkie.convention.util.Util;
 
@@ -341,7 +342,7 @@ public class LoginActivity extends ActionBarActivity implements
                     }
                 } else if (!nickname.equals(defaultNickname)) {
                     //User has given a new nickname, send to server
-                    ChangeNicknameTask task = new ChangeNicknameTask(GoogleApiUtil.getUserEmail(c),nickname);
+                    ChangeNicknameTask task = new ChangeNicknameTask(GoogleApiUtil.getUserEmail(c),nickname,GcmUtil.gcmGetRegId(c));
                     task.execute();
                 }
                 GoogleApiUtil.setUserNickname(c, nickname);
@@ -379,16 +380,18 @@ public class LoginActivity extends ActionBarActivity implements
 
         String email;
         String nickname;
+        String regId;
 
-        public ChangeNicknameTask(String email, String nickname) {
+        public ChangeNicknameTask(String email, String nickname, String regId) {
             this.email = email;
             this.nickname = nickname;
+            this.regId = regId;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname);
+                Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname + "&regId=" + regId);
             } catch (Exception e) {
                 ACRA.getErrorReporter().handleException(e);
                 e.printStackTrace();
