@@ -89,5 +89,6 @@
     <string name="google_play_games_error">Error with Google Play Games, please restart the app.</string>
     <string name="ask_nickname">What\'s your nickname?</string>
     <string name="browse_empty">Please wait until data is synced...</string>
+    <string name="login_details">\nLogin to sync to you schedule between all you devices.\n\nLogging in is required to participate in the QR Hunt!\n\nUse the button below to login.</string>
 
 </resources>

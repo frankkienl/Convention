@@ -74,4 +74,5 @@
     <string name="google_play_games_error">Probleem met Google Play Games, start app opnieuw op aub.</string>
     <string name="ask_nickname">Wat je nickname?</string>
     <string name="browse_empty">Even geduld aub... Data wordt gesynchroniseerd.</string>
+    <string name="login_details">\nLogin om je schema te synchroniseren tussen je toestellen.\n\nInloggen is verplicht om mee te kunnen doen met de QR Jacht!\n\nGebruik de knop hieronder om in te loggen.</string>
 </resources>

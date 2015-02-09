@@ -261,7 +261,7 @@ public class LoginActivity extends ActionBarActivity implements
         Util.syncData(this, Util.SYNCFLAG_DOWNLOAD_QRFOUND);
         //Send to server
         if (!GoogleApiUtil.isUserLoggedIn(this)) {
-            LoggedInTask task = new LoggedInTask(this, currentUserEmail, currentUser);
+            LoggedInTask task = new LoggedInTask(this, currentUserEmail, currentUser, GcmUtil.gcmGetRegId(this));            
             task.execute();
         }
         //Now, set logged in and stuff.
@@ -405,12 +405,14 @@ public class LoginActivity extends ActionBarActivity implements
         Context context;
         String email;
         Person user;
+        String regId;
         Dialog d;
 
-        public LoggedInTask(Context context, String email, Person user) {
+        public LoggedInTask(Context context, String email, Person user, String regId) {
             this.context = context;
             this.email = email;
             this.user = user;
+            this.regId = regId;
         }
 
         @Override
@@ -422,7 +424,7 @@ public class LoginActivity extends ActionBarActivity implements
         protected String doInBackground(Void... params) {
             String response = null;
             try {
-                response = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName());
+                response = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName() + "&regId=" + regId);
             } catch (Exception e) {
                 e.printStackTrace();
                 ACRA.getErrorReporter().handleException(e);

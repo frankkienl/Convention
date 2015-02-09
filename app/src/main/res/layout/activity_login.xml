@@ -42,7 +42,7 @@
 
                 <TextView
                     style="@style/textStyle_details"
-                    android:text="\nLogin to sync to you schedule between all you devices.\n\nLogging in is required to participate in the QR Hunt!\n\nUse the button below to login."
+                    android:text="@string/login_details"
                     android:layout_below="@id/login_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
