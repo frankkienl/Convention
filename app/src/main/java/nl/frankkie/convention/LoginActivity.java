@@ -390,10 +390,12 @@ public class LoginActivity extends ActionBarActivity implements
 
         @Override
         protected Void doInBackground(Void... params) {
+            String url = "http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&regId=" + regId + "&nickname=" + nickname;
+            url = url.replace(" ","+");
             try {
-                Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname + "&regId=" + regId);
+                Util.httpDownload(url);
             } catch (Exception e) {
-                ACRA.getErrorReporter().putCustomData("url","http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname + "&regId=" + regId);
+                ACRA.getErrorReporter().putCustomData("url",url);
                 ACRA.getErrorReporter().handleException(e);
                 e.printStackTrace();
             }
@@ -424,12 +426,14 @@ public class LoginActivity extends ActionBarActivity implements
         @Override
         protected String doInBackground(Void... params) {
             String response = null;
+            String url = "http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&regId=" + regId + "&gplusname=" + user.getDisplayName();
+            url = url.replace(" ","+");
             try {
-                response = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName() + "&regId=" + regId);
+                response = Util.httpDownload(url);
                 response = response.trim();
             } catch (Exception e) {
                 e.printStackTrace();
-                ACRA.getErrorReporter().putCustomData("url","http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName() + "&regId=" + regId);
+                ACRA.getErrorReporter().putCustomData("url",url);
                 ACRA.getErrorReporter().handleException(e);
             }
             return response;
