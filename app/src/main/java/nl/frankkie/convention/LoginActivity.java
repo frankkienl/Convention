@@ -393,6 +393,7 @@ public class LoginActivity extends ActionBarActivity implements
             try {
                 Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname + "&regId=" + regId);
             } catch (Exception e) {
+                ACRA.getErrorReporter().putCustomData("url","http://wofje.8s.nl/hwcon/api/v1/changenickname.php?useremail=" + email + "&nickname=" + nickname + "&regId=" + regId);
                 ACRA.getErrorReporter().handleException(e);
                 e.printStackTrace();
             }
@@ -425,11 +426,13 @@ public class LoginActivity extends ActionBarActivity implements
             String response = null;
             try {
                 response = Util.httpDownload("http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName() + "&regId=" + regId);
+                response = response.trim();
             } catch (Exception e) {
                 e.printStackTrace();
+                ACRA.getErrorReporter().putCustomData("url","http://wofje.8s.nl/hwcon/api/v1/applogin.php?useremail=" + email + "&gplusname=" + user.getDisplayName() + "&regId=" + regId);
                 ACRA.getErrorReporter().handleException(e);
             }
-            return response.trim();
+            return response;
         }
 
         @Override
@@ -438,6 +441,9 @@ public class LoginActivity extends ActionBarActivity implements
                 d.dismiss();
             } catch (Exception e) {
                 //ignore.                   
+            }
+            if (response == null){
+                response = "";                
             }
             askUserForNickname(context, response);
         }
