@@ -40,7 +40,7 @@ Other Images:
   What I've done:  
   <img width="144" height="144" src="https://raw.githubusercontent.com/frankkienl/Convention/master/screenshots/Amber_notification.png" alt="raw image"/>
   &nbsp; --&gt; &nbsp;
-  <img src="https://raw.githubusercontent.com/frankkienl/Convention/master/app/src/main/res/drawable-xxhdpi/ic_stat_amber_notification.png" alt="image" />
+  <img src="https://raw.githubusercontent.com/frankkienl/Convention/387e0b94060f6c6cef5c25ea4bbf0e92b6d7fd12/app/src/main/res/drawable-xxhdpi/ic_stat_amber_notification.png" alt="image" />
   &nbsp; --&gt; &nbsp;
   <img width="384" height="640" src="https://raw.githubusercontent.com/frankkienl/Convention/master/screenshots/Phone/device-2014-12-28-151808.png" alt="result" />
   
