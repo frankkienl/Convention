@@ -13,7 +13,7 @@ https://support.google.com/googleplay/android-developer/answer/1078870?hl=en
   What I've done now:  
   <img width="144" height="144" src="https://raw.githubusercontent.com/frankkienl/Convention/master/screenshots/Amber_nobackground.png" alt="raw image"/>
   &nbsp; --&gt; &nbsp;
-  <img src="https://raw.githubusercontent.com/frankkienl/Convention/master/app/src/main/res/drawable-xxhdpi/ic_launcher.png" alt="App Icon" />
+  <img src="https://raw.githubusercontent.com/frankkienl/Convention/d1e441eec553ff1d5c4735adc63db2c3c7a157d4/app/src/main/ic_launcher-web.png" alt="App Icon" />
 
 - Feature Graphic  
   1024x500, no transparency, PNG (or JPG)  
